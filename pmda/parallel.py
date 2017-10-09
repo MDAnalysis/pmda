@@ -15,16 +15,11 @@ classes.
 
 """
 from __future__ import absolute_import
-import six
-from six.moves import range, zip
-import inspect
-import logging
-import warnings
 
+import inspect
 import numpy as np
-from .. import coordinates, Universe
-from ..core.groups import AtomGroup
-from ..lib.log import ProgressMeter, _set_verbose
+import MDAnalysis as mda
+
 from joblib import cpu_count
 
 from dask.delayed import delayed
@@ -32,8 +27,6 @@ from dask.distributed import Client
 import dask
 from dask import multiprocessing
 from dask.multiprocessing import get
-
-logger = logging.getLogger(__name__)
 
 
 class ParallelAnalysisBase(object):
@@ -84,79 +77,85 @@ class ParallelAnalysisBase(object):
 
     """
 
-    def __init__(self,
-                 trajectory,
-                 ag,
-                 func,
-                 start=None,
-                 stop=None,
-                 step=None,
-                 *args,
-                 **kwargs):
+    def __init__(self, universe, atomgroups):
         """
         Parameters
         ----------
-        trajectory : mda.Reader
-            A trajectory Reader
+        Universe : mda.Universe
+            A Universe
+        atomgroups : array of mda.AtomGroup
+            atomgroups that are iterated in parallel
+        """
+        self._universe = universe
+        self._agroups = atomgroups
+
+    def _conclude(self):
+        """Finalise the results you've gathered.
+
+        Called at the end of the run() method to finish everything up.
+
+        In general this method should unpack `self._results` to sensible
+        variables
+
+        """
+        pass
+
+    def _prepare(self):
+        """additional preparation to run"""
+        pass
+
+    def _single_frame(self, ts, atomgroups):
+        """must return computed values"""
+        raise NotImplementedError
+
+    def run(self, n_jobs=1, start=None, stop=None, step=None):
+        """Perform the calculation
+
+        Parameters
+        ----------
+        n_jobs : int, optional
+            number of jobs to start, if `-1` use number of logical cpu cores
         start : int, optional
             start frame of analysis
         stop : int, optional
             stop frame of analysis
         step : int, optional
             number of frames to skip between each analysed frame
-        verbose : bool, optional
-            Turn on verbosity
         """
-        self._trajectory = trajectory
-        self._ag = ag
-        start, stop, step = trajectory.check_slice_indices(start, stop, step)
-        self.start = start
-        self.stop = stop
-        self.step = step
-        self.n_frames = len(range(start, stop, step))
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-
-    def _conclude(self):
-        """Finalise the results you've gathered.
-
-        Called at the end of the run() method to finish everything up.
-        """
-        self.results = np.hstack(self.results)
-
-    def run(self, n_jobs=1):
-        """Perform the calculation"""
         if n_jobs == -1:
             n_jobs = cpu_count()
-        n_blocks = n_jobs
-        bsize = int(np.ceil(self.n_frames / float(n_blocks)))
-        blocks = []
-        top = self._ag.universe.filename
-        traj = self._ag.universe.trajectory.filename
-        indices = self._ag.indices
 
+        start, stop, step = self._universe.trajectory.check_slice_indices(
+            start, stop, step)
+        n_frames = len(range(start, stop, step))
+
+        n_blocks = n_jobs
+        bsize = int(np.ceil(n_frames / float(n_blocks)))
+        top = self._universe.filename
+        traj = self._universe.trajectory.filename
+        indices = [ag.indices for ag in self._agroups]
+
+        blocks = []
         for b in range(n_blocks):
-            start = b * bsize + self.start
-            stop = (b + 1) * bsize * self.step
             task = delayed(
-                self.para_helper,
-                pure=False)(start, stop, self.step, indices, top, traj,
-                            *self.args, **self.kwargs)
+                self.dask_helper, pure=False)(
+                    b * bsize + start,
+                    (b + 1) * bsize * step,
+                    step,
+                    indices,
+                    top,
+                    traj, )
             blocks.append(task)
         blocks = delayed(blocks)
-        self.results = blocks.compute()
-
+        self._results = blocks.compute()
         self._conclude()
         return self
 
-    def para_helper(self, start, stop, step, indices, top, traj, *args,
-                    **kwargs):
-        u = Universe(top, traj)
-        ag = u.atoms[indices]
-
+    def dask_helper(self, start, stop, step, indices, top, traj):
+        """helper function to actually setup dask graph"""
+        u = mda.Universe(top, traj)
+        agroups = [u.atoms[idx] for idx in indices]
         res = []
-        for i, ts in enumerate(u.trajectory[start:stop:step]):
-            res.append(self.func(ag, *args, **kwargs))
-
+        for ts in u.trajectory[start:stop:step]:
+            res.append(self._single_frame(ts, agroups))
         return np.asarray(res)
