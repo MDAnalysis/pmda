@@ -74,8 +74,10 @@ class ParallelAnalysisBase(object):
         atomgroups : array of mda.AtomGroup
             atomgroups that are iterated in parallel
         """
-        self._universe = universe
-        self._agroups = atomgroups
+        self._trajectory = universe.trajectory
+        self._top = universe.filename
+        self._traj = universe.trajectory.filename
+        self._indices = [ag.indices for ag in atomgroups]
 
     def _conclude(self):
         """Finalise the results you've gathered.
@@ -96,7 +98,7 @@ class ParallelAnalysisBase(object):
         """must return computed values"""
         raise NotImplementedError
 
-    def run(self, n_jobs=1, start=None, stop=None, step=None):
+    def run(self, n_jobs=1, start=None, stop=None, step=None, get=None):
         """Perform the calculation
 
         Parameters
@@ -113,15 +115,12 @@ class ParallelAnalysisBase(object):
         if n_jobs == -1:
             n_jobs = cpu_count()
 
-        start, stop, step = self._universe.trajectory.check_slice_indices(
+        start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
 
         n_blocks = n_jobs
         bsize = int(np.ceil(n_frames / float(n_blocks)))
-        top = self._universe.filename
-        traj = self._universe.trajectory.filename
-        indices = [ag.indices for ag in self._agroups]
 
         with timeit() as total:
             blocks = []
@@ -131,12 +130,12 @@ class ParallelAnalysisBase(object):
                         b * bsize + start,
                         (b + 1) * bsize * step,
                         step,
-                        indices,
-                        top,
-                        traj, )
+                        self._indices,
+                        self._top,
+                        self._traj, )
                 blocks.append(task)
             blocks = delayed(blocks)
-            res = blocks.compute()
+            res = blocks.compute(get=get)
             self._results = np.asarray([el[0] for el in res])
             self._conclude()
 
