@@ -28,6 +28,37 @@ import dask
 from dask import multiprocessing
 from dask.multiprocessing import get
 
+from .util import timeit
+
+
+class Timing(object):
+    def __init__(self, io, compute, total):
+        self._io = io
+        self._compute = compute
+        self._total = total
+        self._cumulate = np.sum(io) + np.sum(compute)
+
+    @property
+    def io(self):
+        """io time per frame"""
+        return self._io
+
+    @property
+    def compute(self):
+        """compute time per frame"""
+        return self._compute
+
+    @property
+    def total(self):
+        """wall time"""
+        return self._total
+
+    @property
+    def cumulate_time(self):
+        """cumulative time of io and compute for each frame. This isn't equal to
+        `self.total / n_jobs` because `self.total` also includes the scheduler overhead"""
+        return self._cumulate
+
 
 class ParallelAnalysisBase(object):
     """Base class for defining parallel multi frame analysis
@@ -135,27 +166,42 @@ class ParallelAnalysisBase(object):
         traj = self._universe.trajectory.filename
         indices = [ag.indices for ag in self._agroups]
 
-        blocks = []
-        for b in range(n_blocks):
-            task = delayed(
-                self.dask_helper, pure=False)(
-                    b * bsize + start,
-                    (b + 1) * bsize * step,
-                    step,
-                    indices,
-                    top,
-                    traj, )
-            blocks.append(task)
-        blocks = delayed(blocks)
-        self._results = blocks.compute()
-        self._conclude()
+        with timeit() as total:
+            blocks = []
+            for b in range(n_blocks):
+                task = delayed(
+                    self.dask_helper, pure=False)(
+                        b * bsize + start,
+                        (b + 1) * bsize * step,
+                        step,
+                        indices,
+                        top,
+                        traj, )
+                blocks.append(task)
+            blocks = delayed(blocks)
+            res = blocks.compute()
+            self._results = np.asarray([el[0] for el in res])
+            self._conclude()
+
+        self.timing = Timing(
+            np.hstack([el[1] for el in res]),
+            np.hstack([el[2] for el in res]), total.elapsed)
         return self
 
     def dask_helper(self, start, stop, step, indices, top, traj):
         """helper function to actually setup dask graph"""
         u = mda.Universe(top, traj)
         agroups = [u.atoms[idx] for idx in indices]
+
         res = []
-        for ts in u.trajectory[start:stop:step]:
-            res.append(self._single_frame(ts, agroups))
-        return np.asarray(res)
+        times_io = []
+        times_compute = []
+        for i in range(start, stop, step):
+            with timeit() as b_io:
+                ts = u.trajectory[i]
+            with timeit() as b_compute:
+                res.append(self._single_frame(ts, agroups))
+            times_io.append(b_io.elapsed)
+            times_compute.append(b_compute.elapsed)
+
+        return np.asarray(res), np.asarray(times_io), np.asarray(times_compute)
