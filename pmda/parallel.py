@@ -49,7 +49,10 @@ class Timing(object):
     @property
     def cumulate_time(self):
         """cumulative time of io and compute for each frame. This isn't equal to
-        `self.total / n_jobs` because `self.total` also includes the scheduler overhead"""
+        `self.total / n_jobs` because `self.total` also includes the scheduler
+        overhead
+
+        """
         return self._cumulate
 
 
@@ -59,45 +62,6 @@ class ParallelAnalysisBase(object):
     The class it is designed as a template for creating multiframe analyses.
     This class will automatically take care of setting up the trajectory
     reader for iterating, and it offers to show a progress meter.
-
-    To define a new Analysis, `AnalysisBase` needs to be subclassed
-    `_single_frame` must be defined. It is also possible to define
-    `_prepare` and `_conclude` for pre and post processing. See the example
-    below.
-
-    .. code-block:: python
-
-       class NewAnalysis(AnalysisBase):
-           def __init__(self, atomgroup, parameter, **kwargs):
-               super(NewAnalysis, self).__init__(atomgroup.universe.trajectory,
-                                                 **kwargs)
-               self._parameter = parameter
-               self._ag = atomgroup
-
-           def _prepare(self):
-               # OPTIONAL
-               # Called before iteration on the trajectory has begun.
-               # Data structures can be set up at this time
-               self.result = []
-
-           def _single_frame(self):
-               # REQUIRED
-               # Called after the trajectory is moved onto each new frame.
-               # store result of `some_function` for a single frame
-               self.result.append(some_function(self._ag, self._parameter))
-
-           def _conclude(self):
-               # OPTIONAL
-               # Called once iteration on the trajectory is finished.
-               # Apply normalisation and averaging to results here.
-               self.result = np.asarray(self.result) / np.sum(self.result)
-
-    Afterwards the new analysis can be run like this.
-
-    .. code-block:: python
-
-       na = NewAnalysis(u.select_atoms('name CA'), 35).run()
-       print(na.result)
 
     """
 
