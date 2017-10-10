@@ -16,17 +16,10 @@ classes.
 """
 from __future__ import absolute_import
 
-import inspect
-import numpy as np
 import MDAnalysis as mda
-
-from joblib import cpu_count
-
 from dask.delayed import delayed
-from dask.distributed import Client
-import dask
-from dask import multiprocessing
-from dask.multiprocessing import get
+from joblib import cpu_count
+import numpy as np
 
 from .util import timeit
 
