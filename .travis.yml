@@ -1,0 +1,33 @@
+language: generic
+
+# Only build for develop and master (and PRs)
+branches:
+  only:
+    - master
+
+os:
+  linux
+
+env:
+  global:
+    # Set default python version to avoid repetition later
+    - PYTHON_VERSION=2.7
+    - PYTEST_LIST="testsuite/MDAnalysisTests"
+    - MAIN_CMD="pytest pmda"
+    - SETUP_CMD=""
+    - CONDA_DEPENDENCIES="mdanalysis dask joblib"
+    - CONDA_CHANNELS='conda-forge'
+    - CONDA_CHANNEL_PRIORITY=True
+    - NUMPY_VERSION=stable
+
+matrix:
+  fast_finish: true
+
+install:
+  - git clone git://github.com/astropy/ci-helpers.git
+  - source ci-helpers/travis/setup_conda.sh
+
+script:
+  - echo $MAIN_CMD $SETUP_CMD
+  - eval $MAIN_CMD $SETUP_CMD
+
