@@ -12,7 +12,6 @@ env:
   global:
     # Set default python version to avoid repetition later
     - PYTHON_VERSION=2.7
-    - PYTEST_LIST="testsuite/MDAnalysisTests"
     - MAIN_CMD="pytest pmda"
     - SETUP_CMD=""
     - CONDA_DEPENDENCIES="mdanalysis dask joblib"
@@ -26,6 +25,7 @@ matrix:
 install:
   - git clone git://github.com/astropy/ci-helpers.git
   - source ci-helpers/travis/setup_conda.sh
+  - python setup.py develop
 
 script:
   - echo $MAIN_CMD $SETUP_CMD
