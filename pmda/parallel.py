@@ -7,14 +7,15 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 """
-Parallel Analysis building blocks --- :mod:`MDAnalysis.analysis.base`
-=====================================================================
+Parallel Analysis building blocks --- :mod:`pmda.parallel`
+==========================================================
 
 A collection of useful building blocks for creating Analysis
 classes.
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, division
+from six.moves import range
 
 import MDAnalysis as mda
 from dask.delayed import delayed
@@ -25,6 +26,9 @@ from .util import timeit
 
 
 class Timing(object):
+    """
+    store various timeing results of obtained during a parallel analysis run
+    """
     def __init__(self, io, compute, total):
         self._io = io
         self._compute = compute

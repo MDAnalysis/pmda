@@ -18,6 +18,9 @@ from .parallel import ParallelAnalysisBase
 
 
 class RMSD(ParallelAnalysisBase):
+    """
+    RMSD analysis
+    """
     def __init__(self, mobile, ref):
         universe = mobile.universe
         super(RMSD, self).__init__(universe, (mobile, ))

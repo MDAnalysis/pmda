@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'MDAnalysis>=0.16',
         'dask',
+        'six',
         'joblib',  # cpu_count func currently
     ],
     tests_require=[
