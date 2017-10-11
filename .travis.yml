@@ -12,12 +12,17 @@ env:
   global:
     # Set default python version to avoid repetition later
     - PYTHON_VERSION=2.7
-    - MAIN_CMD="pytest pmda"
+    - MAIN_CMD="pytest pmda --pep8"
     - SETUP_CMD=""
-    - CONDA_DEPENDENCIES="mdanalysis dask joblib"
+    - CONDA_DEPENDENCIES="mdanalysis dask joblib pytest-pep8"
     - CONDA_CHANNELS='conda-forge'
     - CONDA_CHANNEL_PRIORITY=True
     - NUMPY_VERSION=stable
+    - BUILD_CMD='python setup.py develop'
+
+  matrix:
+    - NAME='standard'
+    - NAME='lint' MAIN_CMD='pylint pmda' BUILD_CMD=''
 
 matrix:
   fast_finish: true
@@ -25,7 +30,8 @@ matrix:
 install:
   - git clone git://github.com/astropy/ci-helpers.git
   - source ci-helpers/travis/setup_conda.sh
-  - python setup.py develop
+  - echo $BUILD_CMD
+  - $BUILD_CMD
 
 script:
   - echo $MAIN_CMD $SETUP_CMD
