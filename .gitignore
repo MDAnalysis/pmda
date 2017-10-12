@@ -2,3 +2,7 @@ build
 *.egg-info
 .pyc
 .cache
+docs/_build
+__pycache__
+*~
+.DS_Store
