@@ -59,7 +59,7 @@ class RMSD(ParallelAnalysisBase):
         self._ref_pos = ref.positions.copy()
 
     def _prepare(self):
-        pass
+        self.rmsd = None
 
     def _conclude(self):
         self.rmsd = np.hstack(self._results)
