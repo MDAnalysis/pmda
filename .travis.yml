@@ -15,8 +15,10 @@ env:
     - PYTHON_VERSION=2.7
     - MAIN_CMD="pytest pmda --pep8"
     - SETUP_CMD=""
-    - CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib pytest-pep8"
-    - CONDA_CHANNELS='conda-forge'
+    # Don't need to install mdanalysis test since it is included in the development package
+    - CONDA_DEPENDENCIES="mdanalysis dask joblib pytest-pep8 mock"
+    # use kain88-de channel for development build of MDAnalysis
+    - CONDA_CHANNELS='conda-forge kain88-de '
     - CONDA_CHANNEL_PRIORITY=True
     - NUMPY_VERSION=stable
     - BUILD_CMD='python setup.py develop'
@@ -27,7 +29,7 @@ env:
     - GIT_CI_USER: TravisCI
     - GIT_CI_EMAIL: TravisCI@mdanalysis.org
     - MDA_DOCDIR: ${TRAVIS_BUILD_DIR}/build/sphinx/html
-    
+
 
   matrix:
     - NAME='standard'
