@@ -29,7 +29,9 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
+              'sphinx.ext.intersphinx',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -214,4 +216,11 @@ texinfo_documents = [
 ]
 
 
+# Configuration for intersphinx: refer to the Python standard library
+# and other packages used by MDAnalysis
+intersphinx_mapping = {'https://docs.python.org/': None,
+                       'https://docs.scipy.org/doc/numpy/': None,
+                       'https://docs.scipy.org/doc/scipy/reference/': None,
+                       'https://www.mdanalysis.org/docs/': None,
+                       }
 
