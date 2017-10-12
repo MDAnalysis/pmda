@@ -1,0 +1,21 @@
+.. -*- coding: utf-8 -*-
+
+================
+ Authors of PMDA
+================
+
+The pmda project is maintained by the MDAnalysis Core Developer Team
+(@MDAnalysis/coredevs on https://github.com/MDAnalysis).
+
+All contributing authors are listed in this file below. The repository history
+at https://github.com/MDAnalysis/pmda and the CHANGELOG show individual code
+contributions.
+
+
+Chronological list of authors
+-----------------------------
+
+ 2017
+  - Max Linke
+  - Oliver Beckstein
+  - Mahzad Khoslessan
