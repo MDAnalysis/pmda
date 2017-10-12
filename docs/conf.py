@@ -29,9 +29,12 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon',
-              'sphinx.ext.intersphinx',
-]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
+              'sphinx.ext.mathjax', 'sphinx.ext.viewcode',
+              'sphinx.ext.napoleon', 'sphinx.ext.todo',
+              'alabaster']
+
+mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -113,12 +116,13 @@ html_theme_options = {
     'github_banner': True,
     'extra_nav_links': {
         "MDAnalysis": "https://www.mdanalysis.org",
-        "dask": "https://dask.pydata.org",
+        "Dask": "https://dask.pydata.org",
+        "mpi4py": "https://mpi4py.readthedocs.io",
     },
-    'show_related': False,
+    'show_related': True,
     'fixed_sidebar': False,
     'sidebar_includehidden': True,
-    'sidebar_collapse': False,
+    'sidebar_collapse': True,
     # style
     'link': color['orange'],
     'link_hover': color['orange'],
@@ -145,8 +149,8 @@ html_theme_options = {
 #html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-html_logo = "_static/logos/pmda-logo.png"
+# of the sidebar. -- use theme (only enable if NOT using html_sidebars)
+##html_logo = "_static/logos/pmda-logo.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -157,6 +161,22 @@ html_favicon = "_static/logos/mdanalysis-logo.ico"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# Custom sidebar templates, maps document names to template names.
+# alabaster sidebars
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
+
+# If true, an OpenSearch description file will be output, and all pages will
+# contain a <link> tag referring to it.  The value of this option must be the
+# base URL from which the finished HTML is served.
+html_use_opensearch = 'https://www.mdanalysis.org/pmda'
 
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -219,8 +239,10 @@ texinfo_documents = [
 # Configuration for intersphinx: refer to the Python standard library
 # and other packages used by MDAnalysis
 intersphinx_mapping = {'https://docs.python.org/': None,
-                       'https://docs.scipy.org/doc/numpy/': None,
-                       'https://docs.scipy.org/doc/scipy/reference/': None,
+#                       'https://docs.scipy.org/doc/numpy/': None,
+#                       'https://docs.scipy.org/doc/scipy/reference/': None,
                        'https://www.mdanalysis.org/docs/': None,
+                       'https://dask.pydata.org/en/latest/': None,
+#                       'https://mpi4py.readthedocs.io/en/stable/': None,
                        }
 

@@ -75,7 +75,7 @@ class ParallelAnalysisBase(object):
         ----------
         Universe : mda.Universe
             A Universe
-        atomgroups : array of mda.AtomGroup
+        atomgroups : array of AtomGroup
             atomgroups that are iterated in parallel
         """
         self._trajectory = universe.trajectory
