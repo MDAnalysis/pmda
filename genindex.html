@@ -22,6 +22,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.1 documentation"
+          href="_static/opensearch.xml"/>
     <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -53,7 +57,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#pmda.parallel.ParallelAnalysisBase.dask_helper">dask_helper() (pmda.parallel.ParallelAnalysisBase method)</a>
+
+      <ul>
+        <li><a href="api/rms.html#pmda.rms.RMSD.dask_helper">(pmda.rms.RMSD method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -63,13 +71,25 @@
       <li><a href="api.html#pmda.parallel.ParallelAnalysisBase">ParallelAnalysisBase (class in pmda.parallel)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rms.html#module-pmda.rms">pmda.rms (module)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#pmda.parallel.ParallelAnalysisBase.run">run() (pmda.parallel.ParallelAnalysisBase method)</a>
+      <li><a href="api/rms.html#pmda.rms.RMSD">RMSD (class in pmda.rms)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#pmda.parallel.ParallelAnalysisBase.run">run() (pmda.parallel.ParallelAnalysisBase method)</a>
+
+      <ul>
+        <li><a href="api/rms.html#pmda.rms.RMSD.run">(pmda.rms.RMSD method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -80,18 +100,51 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/pmda-logo.png" alt="Logo"/>
-            </a></p>
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
 
-   <div class="relations">
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+</ul>
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   </ul></li>
 </ul>
 </div>
-
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -110,7 +163,7 @@
       &copy;2017, Max Linke, Mahzad Khoslessan, Richard J Gowers, Oliver Beckstein.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>

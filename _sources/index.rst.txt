@@ -6,12 +6,19 @@
 	     
 .. include:: ../README.rst
 
-Contents
-========
+.. Hide the contents from the front page because they are already in
+.. the side bar in the Alabaster sphinx style; requires Alabaster
+.. config sidebar_includehidden=True (default)
+
+.. Contents
+.. ========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
+   :numbered:
+   :hidden:      
 
-   api
+   userguide
+   api   
    references
 
