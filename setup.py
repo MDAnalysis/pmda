@@ -13,4 +13,5 @@ setup(
     ],
     tests_require=[
         'pytest',
+        'MDAnalysisTests>=0.16',  # keep
     ], )
