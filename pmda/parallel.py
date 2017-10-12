@@ -115,6 +115,9 @@ class ParallelAnalysisBase(object):
             stop frame of analysis
         step : int, optional
             number of frames to skip between each analysed frame
+        get : scheduler, optional
+            dask or distributed scheduler; by default, the dask
+            default is used
         """
         if n_jobs == -1:
             n_jobs = cpu_count()
