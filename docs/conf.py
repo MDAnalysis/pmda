@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pytng documentation build configuration file, created by
-# sphinx-quickstart on Tue May 23 16:00:46 2017.
+# PMDA documentation build configuration file
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -45,9 +44,10 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pytng'
-copyright = u'2017, Max Linke, Richard J Gowers'
-author = u'Max Linke, Richard J Gowers'
+project = u'PMDA'
+author = u'Max Linke, Mahzad Khoslessan, Richard J Gowers, Oliver Beckstein'
+copyright = u'2017, ' + author
+
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -101,17 +101,17 @@ color = {'orange': '#FF9200',
          'black': '#000000',}
 
 html_theme_options = {
-    'logo' : "logos/mdanalysis-logo-200x150.png",
+    'logo' : "logos/pmda-logo.png",
     'logo_name': True,
     'logo_text_align': "left",
-    'description': "Reading TNG trajectories with Python",
+    'description': "Parallel Molecular Dynamics Analysis",
     'github_user': "MDAnalysis",
-    'github_repo': "pytng",
+    'github_repo': "pmda",
     'github_button': False,
     'github_banner': True,
     'extra_nav_links': {
-        "MDAnalysis": "http://mdanalysis.org",
-        "Gromacs": "http://www.gromacs.org",
+        "MDAnalysis": "https://www.mdanalysis.org",
+        "dask": "https://dask.pydata.org",
     },
     'show_related': False,
     'fixed_sidebar': False,
@@ -143,7 +143,7 @@ html_theme_options = {
 #html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
-# of the sidebar. --- use theme
+# of the sidebar.
 html_logo = "_static/logos/pmda-logo.png"
 
 # The name of an image file (within the static path) to use as favicon of the
@@ -157,11 +157,10 @@ html_favicon = "_static/logos/mdanalysis-logo.ico"
 html_static_path = ['_static']
 
 
-
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'pytngdoc'
+htmlhelp_basename = 'pmdadoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -188,7 +187,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'pytng.tex', u'pytng Documentation',
+    (master_doc, 'pmda.tex', u'pmda Documentation',
      u'Max Linke, Richard J Gowers', 'manual'),
 ]
 
@@ -198,7 +197,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'pytng', u'pytng Documentation',
+    (master_doc, 'pmda', u'pmda Documentation',
      [author], 1)
 ]
 
@@ -209,8 +208,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'pytng', u'pytng Documentation',
-     author, 'pytng', 'Read molecular simulation data from TNG files.',
+    (master_doc, 'pmda', u'pmda Documentation',
+     author, 'pmda', 'Parallel Molecular Dynamics Analysis',
      'Miscellaneous'),
 ]
 
