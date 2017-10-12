@@ -44,9 +44,12 @@ default, all the available cores on the local machine (laptop or
 workstation) are used with the ``n_jobs=-1`` keyword but any number
 can be set, e.g., ``n_jobs=4`` to split the trajectory into 4 blocks.
 
-.. note:: Supplying a `dask.distributed`_ scheduler is not
-	  implemented yet. This will make it possible to run analysis
-	  in a distributed fashion on HPC or ad-hoc clusters.
+One can also supply a `dask.distributed`_ scheduler in the ``get``
+keyword argument. This makes it possible to run analysis in a
+distributed fashion on HPC or ad-hoc clusters.
+
+- TODO: example for launching distributed
+- TODO: show ``run(..., get=scheduler)``  
 
 .. _Dask: https://dask.pydata.org
 .. _`dask.distributed`:  https://distributed.readthedocs.io/

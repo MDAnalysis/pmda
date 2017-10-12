@@ -161,6 +161,9 @@
 <span class="sd">            stop frame of analysis</span>
 <span class="sd">        step : int, optional</span>
 <span class="sd">            number of frames to skip between each analysed frame</span>
+<span class="sd">        get : scheduler, optional</span>
+<span class="sd">            dask or distributed scheduler; by default, the dask</span>
+<span class="sd">            default is used</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>

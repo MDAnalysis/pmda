@@ -80,12 +80,13 @@ time series in the attribute <code class="xref py py-attr docutils literal"><spa
 default, all the available cores on the local machine (laptop or
 workstation) are used with the <code class="docutils literal"><span class="pre">n_jobs=-1</span></code> keyword but any number
 can be set, e.g., <code class="docutils literal"><span class="pre">n_jobs=4</span></code> to split the trajectory into 4 blocks.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Supplying a <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> scheduler is not
-implemented yet. This will make it possible to run analysis
-in a distributed fashion on HPC or ad-hoc clusters.</p>
-</div>
+<p>One can also supply a <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> scheduler in the <code class="docutils literal"><span class="pre">get</span></code>
+keyword argument. This makes it possible to run analysis in a
+distributed fashion on HPC or ad-hoc clusters.</p>
+<ul class="simple">
+<li>TODO: example for launching distributed</li>
+<li>TODO: show <code class="docutils literal"><span class="pre">run(...,</span> <span class="pre">get=scheduler)</span></code></li>
+</ul>
 </div>
 <div class="section" id="example-writing-new-parallel-analysis">
 <span id="example-new-parallel-analysis"></span><h2>1.2. Example: Writing new parallel analysis<a class="headerlink" href="#example-writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h2>
