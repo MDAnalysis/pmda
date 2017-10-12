@@ -16,4 +16,4 @@ def test_timeit():
     with timeit() as timer:
         time.sleep(1)
 
-    assert_almost_equal(timer.elapsed, 1, decimal=3)
+    assert_almost_equal(timer.elapsed, 1, decimal=2)
