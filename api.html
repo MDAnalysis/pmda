@@ -1,0 +1,159 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>API for the Parallel Analysis &#8212; PMDA 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="References" href="references.html" />
+    <link rel="prev" title="PMDA - Parallel Molecular Dynamics Analysis" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-for-the-parallel-analysis">
+<h1>API for the Parallel Analysis<a class="headerlink" href="#api-for-the-parallel-analysis" title="Permalink to this headline">¶</a></h1>
+<p><code class="xref py py-mod docutils literal"><span class="pre">pmda</span></code> implements a simple map-reduce scheme for parallel
+trajectory analysis <a class="reference internal" href="references.html#khoslessan2017" id="id1">[Khoslessan2017]</a> for MDAnalysis <a class="reference internal" href="references.html#gowers2016" id="id2">[Gowers2016]</a>
+<a class="reference internal" href="references.html#michaud-agrawal2011" id="id3">[Michaud-Agrawal2011]</a>. Building new parallel analysis classes is easy
+with the <a class="reference internal" href="#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> base class if you
+can formulate the problem as a calculation over one
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.16)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> for a single frame.</p>
+<dl class="class">
+<dt id="pmda.parallel.ParallelAnalysisBase">
+<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em>universe</em>, <em>atomgroups</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for defining parallel multi frame analysis</p>
+<p>The class it is designed as a template for creating multiframe analyses.
+This class will automatically take care of setting up the trajectory
+reader for iterating, and it offers to show a progress meter.</p>
+<dl class="method">
+<dt id="pmda.parallel.ParallelAnalysisBase.dask_helper">
+<code class="descname">dask_helper</code><span class="sig-paren">(</span><em>start</em>, <em>stop</em>, <em>step</em>, <em>indices</em>, <em>top</em>, <em>traj</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.dask_helper" title="Permalink to this definition">¶</a></dt>
+<dd><p>helper function to actually setup dask graph</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pmda.parallel.ParallelAnalysisBase.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>n_jobs=1</em>, <em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>get=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the calculation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
+<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="example-writing-new-parallel-analysis">
+<h2>Example: Writing new parallel analysis<a class="headerlink" href="#example-writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h2>
+<p>TODO (eg rmsd)</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/pmda-logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API for the Parallel Analysis</a><ul>
+<li><a class="reference internal" href="#example-writing-new-parallel-analysis">Example: Writing new parallel analysis</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">PMDA - Parallel Molecular Dynamics Analysis</a></li>
+      <li>Next: <a href="references.html" title="next chapter">References</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Max Linke, Mahzad Khoslessan, Richard J Gowers, Oliver Beckstein.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
