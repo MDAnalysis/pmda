@@ -78,26 +78,24 @@ of <cite>mobile</cite> change with each frame in the trajectory.</li>
 version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.16)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
 </div>
 <dl class="method">
-<dt id="pmda.rms.RMSD.dask_helper">
-<code class="descname">dask_helper</code><span class="sig-paren">(</span><em>start</em>, <em>stop</em>, <em>step</em>, <em>indices</em>, <em>top</em>, <em>traj</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.dask_helper" title="Permalink to this definition">¶</a></dt>
-<dd><p>helper function to actually setup dask graph</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="pmda.rms.RMSD.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>n_jobs=1</em>, <em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>get=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores</li>
 <li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
 <li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
-<li><strong>get</strong> (<em>scheduler</em><em>, </em><em>optional</em>) – dask or distributed scheduler; by default, the dask
-default is used</li>
+<li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
+to spread work to a distributed scheduler</li>
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+This argument will be ignored when the distributed scheduler is
+used</li>
+<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
+to n_jobs or number of available workers in scheduler.</li>
 </ul>
 </td>
 </tr>

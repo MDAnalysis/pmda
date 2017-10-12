@@ -64,6 +64,7 @@
 <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span>
 
 <span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="k">import</span> <span class="n">distributed</span><span class="p">,</span> <span class="n">multiprocessing</span>
 <span class="kn">from</span> <span class="nn">dask.delayed</span> <span class="k">import</span> <span class="n">delayed</span>
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -75,11 +76,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    store various timeing results of obtained during a parallel analysis run</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">io</span><span class="p">,</span> <span class="n">compute</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">io</span><span class="p">,</span> <span class="n">compute</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">universe</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_io</span> <span class="o">=</span> <span class="n">io</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute</span> <span class="o">=</span> <span class="n">compute</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total</span> <span class="o">=</span> <span class="n">total</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cumulate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">io</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">compute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_universe</span> <span class="o">=</span> <span class="n">universe</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">io</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -105,13 +108,55 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cumulate</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">universe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;time to create a universe for each block&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_universe</span>
+
 
 <div class="viewcode-block" id="ParallelAnalysisBase"><a class="viewcode-back" href="../../api.html#pmda.parallel.ParallelAnalysisBase">[docs]</a><span class="k">class</span> <span class="nc">ParallelAnalysisBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for defining parallel multi frame analysis</span>
 
 <span class="sd">    The class it is designed as a template for creating multiframe analyses.</span>
 <span class="sd">    This class will automatically take care of setting up the trajectory</span>
-<span class="sd">    reader for iterating, and it offers to show a progress meter.</span>
+<span class="sd">    reader for iterating in parallel.</span>
+
+<span class="sd">    To define a new Analysis, `ParallelAnalysisBase` needs to be subclassed</span>
+<span class="sd">    `_single_frame` and `_conclude`must be defined. It is also possible to</span>
+<span class="sd">    define `_prepare` for pre-processing. See the example below.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       class NewAnalysis(ParallelAnalysisBase):</span>
+<span class="sd">           def __init__(self, atomgroup, parameter):</span>
+<span class="sd">               self._ag = atomgroup</span>
+<span class="sd">               super(NewAnalysis, self).__init__(atomgroup.universe,</span>
+<span class="sd">                                                 self._ag)</span>
+
+<span class="sd">           def _single_frame(self, ts, agroups):</span>
+<span class="sd">               # REQUIRED</span>
+<span class="sd">               # called for every frame. ``ts`` contains the current time step</span>
+<span class="sd">               # and ``agroups`` a tuple of atomgroups that are updated to the</span>
+<span class="sd">               # current frame. Return result of `some_function` for a single</span>
+<span class="sd">               # frame</span>
+<span class="sd">               return some_function(agroups[0], self._parameter)</span>
+
+<span class="sd">           def _conclude(self):</span>
+<span class="sd">               # REQUIRED</span>
+<span class="sd">               # Called once iteration on the trajectory is finished. Results</span>
+<span class="sd">               # for each frame are stored in ``self._results`` in a per block</span>
+<span class="sd">               # basis. Here those results should be moved and reshaped into a</span>
+<span class="sd">               # sensible new variable.</span>
+<span class="sd">               self.results = np.hstack(self._results)</span>
+<span class="sd">               # Apply normalisation and averaging to results here if wanted.</span>
+<span class="sd">               self.results /= np.sum(self.results)</span>
+
+<span class="sd">    Afterwards the new analysis can be run like this.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       na = NewAnalysis(u.select_atoms(&#39;name CA&#39;), 35).run()</span>
+<span class="sd">       print(na.result)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -145,62 +190,95 @@
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;must return computed values&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;must return computed values as a list. You can only read from member</span>
+<span class="sd">        variables stored in ``self``. Changing them during a run will result in</span>
+<span class="sd">        undefined behavior.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ParallelAnalysisBase.run"><a class="viewcode-back" href="../../api.html#pmda.parallel.ParallelAnalysisBase.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">get</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ParallelAnalysisBase.run"><a class="viewcode-back" href="../../api.html#pmda.parallel.ParallelAnalysisBase.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">n_blocks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the calculation</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        n_jobs : int, optional</span>
-<span class="sd">            number of jobs to start, if `-1` use number of logical cpu cores</span>
 <span class="sd">        start : int, optional</span>
 <span class="sd">            start frame of analysis</span>
 <span class="sd">        stop : int, optional</span>
 <span class="sd">            stop frame of analysis</span>
 <span class="sd">        step : int, optional</span>
 <span class="sd">            number of frames to skip between each analysed frame</span>
-<span class="sd">        get : scheduler, optional</span>
-<span class="sd">            dask or distributed scheduler; by default, the dask</span>
-<span class="sd">            default is used</span>
+<span class="sd">        scheduler : dask scheduler, optional</span>
+<span class="sd">            Use dask scheduler, defaults to multiprocessing. This can be used</span>
+<span class="sd">            to spread work to a distributed scheduler</span>
+<span class="sd">        n_jobs : int, optional</span>
+<span class="sd">            number of jobs to start, if `-1` use number of logical cpu cores.</span>
+<span class="sd">            This argument will be ignored when the distributed scheduler is</span>
+<span class="sd">            used</span>
+<span class="sd">        n_blocks : int, optional</span>
+<span class="sd">            number of blocks to divide trajectory into. If ``None`` set equal</span>
+<span class="sd">            to n_jobs or number of available workers in scheduler.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="n">multiprocessing</span>
+
         <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">n_blocks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="n">multiprocessing</span><span class="p">:</span>
+                <span class="n">n_blocks</span> <span class="o">=</span> <span class="n">n_jobs</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
+                <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scheduler</span><span class="o">.</span><span class="n">ncores</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Couldn&#39;t guess ideal number of blocks from scheduler.&quot;</span>
+                    <span class="s2">&quot;Please provide `n_blocks` in call to method.&quot;</span><span class="p">)</span>
+
+        <span class="n">scheduler_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;get&#39;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="n">multiprocessing</span><span class="p">:</span>
+            <span class="n">scheduler_kwargs</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_jobs</span>
 
         <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="o">.</span><span class="n">check_slice_indices</span><span class="p">(</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
         <span class="n">n_frames</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
-
-        <span class="n">n_blocks</span> <span class="o">=</span> <span class="n">n_jobs</span>
         <span class="n">bsize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_frames</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)))</span>
 
         <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">total</span><span class="p">:</span>
             <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">):</span>
                 <span class="n">task</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">dask_helper</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span>
-                        <span class="n">b</span> <span class="o">*</span> <span class="n">bsize</span> <span class="o">+</span> <span class="n">start</span><span class="p">,</span>
-                        <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bsize</span> <span class="o">*</span> <span class="n">step</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_dask_helper</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span>
+                        <span class="n">b</span> <span class="o">*</span> <span class="n">bsize</span> <span class="o">*</span> <span class="n">step</span> <span class="o">+</span> <span class="n">start</span><span class="p">,</span>
+                        <span class="nb">min</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bsize</span> <span class="o">*</span> <span class="n">step</span> <span class="o">+</span> <span class="n">start</span><span class="p">),</span>
                         <span class="n">step</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_top</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_traj</span><span class="p">,</span> <span class="p">)</span>
                 <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
             <span class="n">blocks</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">get</span><span class="o">=</span><span class="n">get</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">scheduler_kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">timing</span> <span class="o">=</span> <span class="n">Timing</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">total</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">total</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="ParallelAnalysisBase.dask_helper"><a class="viewcode-back" href="../../api.html#pmda.parallel.ParallelAnalysisBase.dask_helper">[docs]</a>    <span class="k">def</span> <span class="nf">dask_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_dask_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;helper function to actually setup dask graph&quot;&quot;&quot;</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
-        <span class="n">agroups</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_universe</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
+            <span class="n">agroups</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
 
         <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">times_io</span> <span class="o">=</span> <span class="p">[]</span>
@@ -213,7 +291,8 @@
             <span class="n">times_io</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_io</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
             <span class="n">times_compute</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_compute</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times_io</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times_compute</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times_io</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">times_compute</span><span class="p">),</span> <span class="n">b_universe</span><span class="o">.</span><span class="n">elapsed</span></div>
 </pre></div>
 
           </div>

@@ -63,28 +63,59 @@ formulate the problem as a calculation over one
 <dd><p>Base class for defining parallel multi frame analysis</p>
 <p>The class it is designed as a template for creating multiframe analyses.
 This class will automatically take care of setting up the trajectory
-reader for iterating, and it offers to show a progress meter.</p>
-<dl class="method">
-<dt id="pmda.parallel.ParallelAnalysisBase.dask_helper">
-<code class="descname">dask_helper</code><span class="sig-paren">(</span><em>start</em>, <em>stop</em>, <em>step</em>, <em>indices</em>, <em>top</em>, <em>traj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pmda/parallel.html#ParallelAnalysisBase.dask_helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.dask_helper" title="Permalink to this definition">¶</a></dt>
-<dd><p>helper function to actually setup dask graph</p>
-</dd></dl>
+reader for iterating in parallel.</p>
+<p>To define a new Analysis, <cite>ParallelAnalysisBase</cite> needs to be subclassed
+<cite>_single_frame</cite> and <cite>_conclude`must be defined. It is also possible to
+define `_prepare</cite> for pre-processing. See the example below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NewAnalysis</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atomgroup</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ag</span> <span class="o">=</span> <span class="n">atomgroup</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NewAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">atomgroup</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">_ag</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">agroups</span><span class="p">):</span>
+        <span class="c1"># REQUIRED</span>
+        <span class="c1"># called for every frame. ``ts`` contains the current time step</span>
+        <span class="c1"># and ``agroups`` a tuple of atomgroups that are updated to the</span>
+        <span class="c1"># current frame. Return result of `some_function` for a single</span>
+        <span class="c1"># frame</span>
+        <span class="k">return</span> <span class="n">some_function</span><span class="p">(</span><span class="n">agroups</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># REQUIRED</span>
+        <span class="c1"># Called once iteration on the trajectory is finished. Results</span>
+        <span class="c1"># for each frame are stored in ``self._results`` in a per block</span>
+        <span class="c1"># basis. Here those results should be moved and reshaped into a</span>
+        <span class="c1"># sensible new variable.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
+        <span class="c1"># Apply normalisation and averaging to results here if wanted.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Afterwards the new analysis can be run like this.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">na</span> <span class="o">=</span> <span class="n">NewAnalysis</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s1">&#39;name CA&#39;</span><span class="p">),</span> <span class="mi">35</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">na</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="pmda.parallel.ParallelAnalysisBase.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>n_jobs=1</em>, <em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>get=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores</li>
 <li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
 <li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
-<li><strong>get</strong> (<em>scheduler</em><em>, </em><em>optional</em>) – dask or distributed scheduler; by default, the dask
-default is used</li>
+<li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
+to spread work to a distributed scheduler</li>
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+This argument will be ignored when the distributed scheduler is
+used</li>
+<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
+to n_jobs or number of available workers in scheduler.</li>
 </ul>
 </td>
 </tr>
