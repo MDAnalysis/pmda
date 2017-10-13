@@ -189,7 +189,6 @@ enable=abstract-class-instantiated,
        old-octal-literal,
        old-raise-syntax,
        parameter-unpacking,
-       pointless-statement,
        pointless-string-statement,
        print-statement,
        property-on-old-class,
@@ -270,6 +269,7 @@ enable=abstract-class-instantiated,
        # attribute-defined-outside-init,
        # import-error,
        # invalid-name,
+       # pointless-statement,
 
 
 [REPORTS]
