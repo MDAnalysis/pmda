@@ -206,6 +206,7 @@ class ParallelAnalysisBase(object):
         bsize = int(np.ceil(n_frames / float(n_blocks)))
 
         with timeit() as total:
+            self._prepare()
             blocks = []
             for b in range(n_blocks):
                 task = delayed(

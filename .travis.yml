@@ -1,4 +1,5 @@
 language: generic
+sudo: false
 
 # Only build for develop and master (and PRs)
 branches:
@@ -13,15 +14,16 @@ env:
     - secure: "ifPjMMIP4eV58IF3//zrPpN8hYPrcT9Sfq953yX3Wu3ObQ0r3y7qHCMBwRLqf14SYDSf4siYPm+GTkKW9Gb4jIZzmOJPFOgSJJx6MjtaS+kbzG3uNGpjqOVz9RfGzXlZM1cNkuPZjofq2pBOIIqrE7psWUJiOfDtAkTa+BGMl6Oc8pBCVtVQt0XT1xkg1nejjNNuRvuKnLCyx40SMReDU68ai4Q0PFmIkbf6duMd8zWfR9ITZJYQETRmZn85KiyW0Ax6W9dQgK0O6n3ucId3QIQ5Iim3MyLzp/d/KeLBnO/i3spTvGrlyPGQLKk78nVjZRVaqKaubJpAXWgCGHOF51LRVvdFc73TTvivu0GPiY0FlyKOsY+MHE13+RJHsLXa9aueO0NUw4/2WjwtCkV2LYHJRszc8VbyD6b8mgJwc6lchaptmNknn9TvlCTNzI3GS7QVuhZJzNGkCvH86IMdMf9NyxeNBEW0HyAbST8LTArbqMtBZlU5HwxhI50JcdmKhudZCZs2k/YipWp8PIz3R+gmSHRtwseV7paM0Np12Q9+xvIYNKto9+frGlPDChP4wTdSpJBN7fY5bcwHrN6v/AFPIHXSIne+8UvKrjlNa8ZFaCMWC8Yc+GBwjCe+dhbV4+UtuDoC1ABgyY3haFXMu8mtWslzbwozzw0W30OFYWg="    
     # Set default python version to avoid repetition later
     - PYTHON_VERSION=3.6
-    - MAIN_CMD="pytest pmda --pep8"
-    - SETUP_CMD=""
+    - MAIN_CMD="pytest"
+    - SETUP_CMD="pmda --pep8 -v --cov pmda"
     # Don't need to install mdanalysis test since it is included in the development package
-    - CONDA_DEPENDENCIES="mdanalysis dask joblib pytest-pep8 mock"
+    - CONDA_DEPENDENCIES="mdanalysis dask joblib pytest-pep8 mock codecov"
     # use kain88-de channel for development build of MDAnalysis
     - CONDA_CHANNELS='conda-forge kain88-de '
     - CONDA_CHANNEL_PRIORITY=True
     - NUMPY_VERSION=stable
     - BUILD_CMD='python setup.py develop'
+    - CODECOV=false
     # for automatic doc building & deployment
     - BUILD_DOCS=false
     - GH_DOC_BRANCH: master
@@ -32,10 +34,10 @@ env:
 
 
   matrix:
-    - PYTHON=3.6
+    - PYTHON=3.6 CODECOV=true
     - PYTHON=3.5
     - PYTHON=2.7
-    - NAME='lint' MAIN_CMD='pylint pmda' BUILD_CMD=''
+    - NAME='lint' MAIN_CMD='pylint pmda' BUILD_CMD='' SETUP_CMD=''
 
 matrix:
   fast_finish: true
@@ -56,6 +58,10 @@ script:
   - eval $MAIN_CMD $SETUP_CMD
 
 after_success:
+  - |
+    if [[ $CODECOV == 'true' ]]; then \
+      codecov; \
+    fi
   - if [[ ${TRAVIS_PULL_REQUEST} == "false" ]] && [[ ${BUILD_DOCS} == "true" ]] && [[ ${TRAVIS_BRANCH} == ${GH_DOC_BRANCH} ]]; then
             bash ${TRAVIS_BUILD_DIR}/ci/deploy_docs.sh;
     fi
