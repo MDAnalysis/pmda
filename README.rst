@@ -2,7 +2,8 @@
   PMDA - Parallel Molecular Dynamics Analysis
 ==============================================
 
-|build|
+|build| |cov|
+
 
 Ready to use analysis and buildings blocks to write parallel analysis algorithms
 using MDAnalysis_ with dask_. For example to running a rmsd analysis on all
@@ -57,3 +58,7 @@ __ issuetracker_
 .. |build| image:: https://travis-ci.org/MDAnalysis/pmda.svg?branch=master
     :alt: Build Status
     :target: https://travis-ci.org/MDAnalysis/pmda
+
+.. |cov| image:: https://codecov.io/gh/MDAnalysis/pmda/branch/master/graph/badge.svg
+   :alt: Coverage
+   :target: https://codecov.io/gh/MDAnalysis/pmda
