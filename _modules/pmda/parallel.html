@@ -252,6 +252,7 @@
         <span class="n">bsize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_frames</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)))</span>
 
         <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">total</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
             <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">):</span>
                 <span class="n">task</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span>
