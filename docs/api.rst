@@ -35,5 +35,4 @@ Pre-defined parallel analysis tasks
    :maxdepth: 1
 
    api/rms
-
-   
+   api/contacts
