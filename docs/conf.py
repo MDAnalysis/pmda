@@ -53,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PMDA'
-author = u'Max Linke, Mahzad Khoslessan, Richard J Gowers, Oliver Beckstein'
+author = u'Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein'
 copyright = u'2017, ' + author
 
 
