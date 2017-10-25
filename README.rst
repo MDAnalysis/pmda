@@ -4,10 +4,16 @@
 
 |build| |cov|
 
-
 Ready to use analysis and buildings blocks to write parallel analysis algorithms
-using MDAnalysis_ with dask_. For example to running a rmsd analysis on all
-available cores.
+using MDAnalysis_ with dask_.
+
+.. warning::
+   This project is **alpha software** and not API stable. It will and
+   should rapidly evolve to test different approaches to implementing
+   parallel analysis in a seamless and intuitive fashion.
+
+
+For example to running a rmsd analysis on all available cores:
 
 .. code:: python
 
@@ -25,7 +31,7 @@ available cores.
 By default pmda is using the multiprocessing scheduler of dask_. This is
 sufficient if you want to run your simulation on a single machine. If your
 analysis takes a very long time (>30 min) you can also spread it to several
-nodes using the distributed scheduler. To do this can pass a `scheduler` keyword
+nodes using the distributed_ scheduler. To do this can pass a `scheduler` keyword
 argument to the `run` method.
 
 To write your own parallel algorithms you can subclass the
@@ -54,6 +60,7 @@ __ issuetracker_
 
 .. _MDAnalysis: https://www.mdanalysis.org
 .. _dask: https://dask.pydata.org/en/latest/
+.. _distributed: https://distributed.readthedocs.io/
 
 .. |build| image:: https://travis-ci.org/MDAnalysis/pmda.svg?branch=master
     :alt: Build Status

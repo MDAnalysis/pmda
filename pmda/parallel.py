@@ -75,9 +75,14 @@ class ParallelAnalysisBase(object):
     This class will automatically take care of setting up the trajectory
     reader for iterating in parallel.
 
-    To define a new Analysis, `ParallelAnalysisBase` needs to be subclassed
-    `_single_frame` and `_conclude`must be defined. It is also possible to
-    define `_prepare` for pre-processing. See the example below.
+    To define a new Analysis,
+    :class:`~pmda.parallel.ParallelAnalysisBase` needs to be
+    subclassed and
+    :meth:`~pmda.parallel.ParallelAnalysisBase._single_frame` and
+    :meth:`~pmda.parallel.ParallelAnalysisBase._conclude` must be
+    defined. It is also possible to define
+    :meth:`~~pmda.parallel.ParallelAnalysisBase._prepare` for
+    pre-processing. See the example below.
 
     .. code-block:: python
 
@@ -115,13 +120,22 @@ class ParallelAnalysisBase(object):
     """
 
     def __init__(self, universe, atomgroups):
-        """
-        Parameters
+        """Parameters
         ----------
-        Universe : mda.Universe
-            A Universe
-        atomgroups : array of AtomGroup
+        Universe : :class:`~MDAnalysis.core.groups.Universe`
+            a :class:`MDAnalysis.core.groups.Universe` (the
+            `atomgroups` must belong to this Universe)
+
+        atomgroups : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
             atomgroups that are iterated in parallel
+
+        Attributes
+        ----------
+        _results : list
+            The raw data from each process are stored as a list of
+            lists, with each sublist containing the return values from
+            :meth:`pmda.parallel.ParallelAnalysisBase._single_frame`.
+
         """
         self._trajectory = universe.trajectory
         self._top = universe.filename
@@ -133,8 +147,8 @@ class ParallelAnalysisBase(object):
 
         Called at the end of the run() method to finish everything up.
 
-        In general this method should unpack `self._results` to sensible
-        variables
+        In general this method should unpack :attr:`self._results` to
+        sensible variables.
 
         """
         pass
@@ -144,9 +158,32 @@ class ParallelAnalysisBase(object):
         pass
 
     def _single_frame(self, ts, atomgroups):
-        """must return computed values as a list. You can only read from member
-        variables stored in ``self``. Changing them during a run will result in
-        undefined behavior.
+        """Perform computation on a single trajectory frame.
+
+        Must return computed values as a list. You can only **read**
+        from member variables stored in ``self``. Changing them during
+        a run will result in undefined behavior. `ts` and any of the
+        atomgroups can be changed (but changes will be overwritten
+        when the next time step is read).
+
+        Parameters
+        ----------
+        ts : :class:`~MDAnalysis.coordinates.base.Timestep`
+            The current coordinate frame (time step) in the
+            trajectory.
+        atomgroups : tuple
+            Tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
+            instances that are updated to the current frame.
+
+        Returns
+        -------
+        values : anything
+            The output from the computation over a single frame must
+            be returned. The `value` will be added to a list for each
+            block and the list of blocks is stored as :attr:`_results`
+            before :meth:`_conclude` is run. In order to simplify
+            processing, the `values` should be "simple" shallow data
+            structures such as arrays or lists of numbers.
 
         """
         raise NotImplementedError

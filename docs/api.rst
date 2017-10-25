@@ -22,7 +22,7 @@ formulate the problem as a calculation over one
 
 .. autoclass:: pmda.parallel.ParallelAnalysisBase
   :members:
-
+  :private-members:
        
 
 .. _pre-defined-analysis-tasks:

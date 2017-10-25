@@ -36,6 +36,9 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx',
 
 mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
+# https://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
+autoclass_content = 'both'
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -117,6 +120,7 @@ html_theme_options = {
     'extra_nav_links': {
         "MDAnalysis": "https://www.mdanalysis.org",
         "Dask": "https://dask.pydata.org",
+        "distributed": "https://distributed.readthedocs.io/",
         "mpi4py": "https://mpi4py.readthedocs.io",
     },
     'show_related': True,
