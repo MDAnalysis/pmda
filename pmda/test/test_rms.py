@@ -36,7 +36,7 @@ class TestRMSD(object):
         universe.trajectory.rewind()
         RMSD = rms.RMSD(ca, ca).run(step=49)
         assert_almost_equal(RMSD.rmsd, correct_values, 4,
-                            err_msg="error: rmsd profile should match" +
+                            err_msg="error: rmsd profile should match " +
                             "test values")
 
     def test_rmsd_single_frame(self, universe, correct_values_frame_5):
@@ -44,5 +44,5 @@ class TestRMSD(object):
         universe.trajectory.rewind()
         RMSD = rms.RMSD(ca, ca).run(start=5, stop=6)
         assert_almost_equal(RMSD.rmsd, correct_values_frame_5, 4,
-                            err_msg="error: rmsd profile should match" +
+                            err_msg="error: rmsd profile should match " +
                             "test values")
