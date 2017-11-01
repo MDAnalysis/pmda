@@ -57,9 +57,7 @@ class AnalysisFromFunction(ParallelAnalysisBase):
     """
 
     def __init__(self, function, universe, *args, **kwargs):
-        """
-
-        Parameters
+        """Parameters
         ----------
         function : callable
             function to evaluate at each frame. The first arguments are assumed
@@ -73,8 +71,9 @@ class AnalysisFromFunction(ParallelAnalysisBase):
            arguments for ``function``
         **kwargs : dict
            keyword arguments for ``function``. keyword arguments with name
-           'universe' or 'atomgroups' will be ignored! Mobile atomgroups to analyze
-           can not be passed as keyword arguments currently.
+           'universe' or 'atomgroups' will be ignored! Mobile atomgroups to
+           analyze can not be passed as keyword arguments currently.
+
         """
 
         self.function = function
