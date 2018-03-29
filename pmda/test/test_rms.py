@@ -25,11 +25,11 @@ class TestRMSD(object):
 
     @pytest.fixture()
     def correct_values(self):
-        return [[0, 0, 0], [49, 49, 4.68953]]
+        return [[0, 1.0, 0], [49, 50.0, 4.68953]]
 
     @pytest.fixture()
     def correct_values_frame_5(self):
-        return [[5, 5, 0.91544906]]
+        return [[5, 6.0, 0.91544906]]
 
     def test_rmsd(self, universe, correct_values):
         ca = universe.select_atoms("name CA")
