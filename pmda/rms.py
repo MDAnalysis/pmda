@@ -37,6 +37,12 @@ class RMSD(ParallelAnalysisBase):
     :func:`MDAnalysis.analysis.rms.rmsd` (with ``superposition=True``
     by default).
 
+    Attributes
+    ----------
+    rmsd : array
+         Result as a Nx3 array where each row contains
+         `[frame, time (ps), RMSD (Å)]`.
+
 
     Parameters
     ----------
@@ -70,5 +76,6 @@ class RMSD(ParallelAnalysisBase):
         self.rmsd = np.hstack(self._results)
 
     def _single_frame(self, ts, atomgroups):
-        return rms.rmsd(atomgroups[0].positions, self._ref_pos, 
-                        superposition=self.superposition)
+        return (ts.frame, ts.time,
+                rms.rmsd(atomgroups[0].positions, self._ref_pos, 
+                        superposition=self.superposition))
