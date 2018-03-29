@@ -48,16 +48,16 @@
   <span class="target" id="module-pmda.rms"></span><div class="section" id="rmsd-analysis-tools">
 <h1>2.2.1. RMSD analysis tools<a class="headerlink" href="#rmsd-analysis-tools" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.16)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.17)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
 <dl class="class">
 <dt id="pmda.rms.RMSD">
 <em class="property">class </em><code class="descclassname">pmda.rms.</code><code class="descname">RMSD</code><span class="sig-paren">(</span><em>mobile</em>, <em>ref</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms.html#RMSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.RMSD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parallel RMSD analysis.</p>
 <p>Optimally superimpose the coordinates in the
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.16)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
 each frame in the trajectory of <cite>mobile</cite> and calculate the time
 series of the RMSD. The single frame calculation is performed with
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.rmsd" title="(in MDAnalysis v0.16)"><code class="xref py py-func docutils literal"><span class="pre">MDAnalysis.analysis.rms.rmsd()</span></code></a>.</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.rmsd" title="(in MDAnalysis v0.17)"><code class="xref py py-func docutils literal"><span class="pre">MDAnalysis.analysis.rms.rmsd()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -75,7 +75,7 @@ of <cite>mobile</cite> change with each frame in the trajectory.</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">At the moment, this class has far fewer features than the serial
-version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.16)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
+version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
 </div>
 <dl class="method">
 <dt id="pmda.rms.RMSD.run">
@@ -86,15 +86,15 @@ version <a class="reference external" href="https://www.mdanalysis.org/docs/docu
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
-<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
+<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
 <li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
 to spread work to a distributed scheduler</li>
-<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</li>
-<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
+<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
 to n_jobs or number of available workers in scheduler.</li>
 </ul>
 </td>
@@ -156,6 +156,8 @@ to n_jobs or number of available workers in scheduler.</li>
     
     <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
     
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
     <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
     
 </ul>
@@ -188,7 +190,7 @@ to n_jobs or number of available workers in scheduler.</li>
       &copy;2017, Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

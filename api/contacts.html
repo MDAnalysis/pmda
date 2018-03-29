@@ -201,7 +201,7 @@ of a trajectory <a class="reference internal" href="#franklin2007" id="id3">[Fra
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>atomgroup</strong> (<em>mda.core.groups.AtomGroup</em>) – atomgroup to analyze</li>
-<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – distance at which contact is formed</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – distance at which contact is formed</li>
 </ul>
 </td>
 </tr>
@@ -246,6 +246,24 @@ argument <cite>method</cite>.</p>
 <dd><p><em>list</em> – list containing <em>Q</em> for all refgroup pairs and analyzed frames</p>
 </dd></dl>
 
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mobiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting groups that change over time</li>
+<li><strong>refs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting atomgroups in their reference conformation. This
+can also be a list of tuples containing different atom groups</li>
+<li><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em><em> (</em><em>4.5 Angstroms</em><em>)</em>) – radius within which contacts exist in refgroup</li>
+<li><strong>method</strong> (<em>string | callable</em><em> (</em><em>optional</em><em>)</em>) – Can either be one of <code class="docutils literal"><span class="pre">['hard_cut'</span> <span class="pre">,</span> <span class="pre">'soft_cut']</span></code> or a callable
+with call signature <code class="docutils literal"><span class="pre">func(r,</span> <span class="pre">r0,</span> <span class="pre">**kwargs)</span></code> (the “Contacts API”).</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – dictionary of additional kwargs passed to <cite>method</cite>. Check
+respective functions for reasonable values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -305,6 +323,8 @@ argument <cite>method</cite>.</p>
     
     <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
     
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
     <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
     
 </ul>
@@ -337,7 +357,7 @@ argument <cite>method</cite>.</p>
       &copy;2017, Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
