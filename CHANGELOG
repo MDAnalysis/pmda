@@ -19,7 +19,7 @@ mm/dd/18 kain88-de, orbeckst
 
 Enhancements
 	* add base class for parallel analysis
-	* add parallel rmsd class
+	* add parallel rmsd class (with superposition)
 
 Deprecations
 
