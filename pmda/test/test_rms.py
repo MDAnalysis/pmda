@@ -31,7 +31,13 @@ class TestRMSD(object):
     def correct_values_frame_5(self):
         return [[5, 6.0, 0.91544906]]
 
-    def test_rmsd(self, universe, correct_values):
+    def test_rmsd(self, universe):
+        ca = universe.select_atoms("name CA")
+        universe.trajectory.rewind()
+        RMSD = rms.RMSD(ca, ca).run(n_jobs=2)
+        assert_array_equal(RMSD.rmsd.shape, (universe.trajectory.n_frames, 3))
+
+    def test_rmsd_step(self, universe, correct_values):
         ca = universe.select_atoms("name CA")
         universe.trajectory.rewind()
         RMSD = rms.RMSD(ca, ca).run(step=49)
