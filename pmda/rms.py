@@ -73,7 +73,7 @@ class RMSD(ParallelAnalysisBase):
         self.rmsd = None
 
     def _conclude(self):
-        self.rmsd = np.hstack(self._results)
+        self.rmsd = np.vstack(self._results)
 
     def _single_frame(self, ts, atomgroups):
         return (ts.frame, ts.time,
