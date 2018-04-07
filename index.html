@@ -48,8 +48,14 @@
 <h1>PMDA - Parallel Molecular Dynamics Analysis<a class="headerlink" href="#pmda-parallel-molecular-dynamics-analysis" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="https://travis-ci.org/MDAnalysis/pmda"><img alt="Build Status" src="https://travis-ci.org/MDAnalysis/pmda.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/MDAnalysis/pmda"><img alt="Coverage" src="https://codecov.io/gh/MDAnalysis/pmda/branch/master/graph/badge.svg" /></a></p>
 <p>Ready to use analysis and buildings blocks to write parallel analysis algorithms
-using <a class="reference external" href="https://www.mdanalysis.org">MDAnalysis</a> with <a class="reference external" href="https://dask.pydata.org/en/latest/">dask</a>. For example to running a rmsd analysis on all
-available cores.</p>
+using <a class="reference external" href="https://www.mdanalysis.org">MDAnalysis</a> with <a class="reference external" href="https://dask.pydata.org/en/latest/">dask</a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This project is <strong>alpha software</strong> and not API stable. It will and
+should rapidly evolve to test different approaches to implementing
+parallel analysis in a seamless and intuitive fashion.</p>
+</div>
+<p>For example to running a rmsd analysis on all available cores:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">pmda</span> <span class="k">import</span> <span class="n">rms</span>
 
@@ -64,7 +70,7 @@ available cores.</p>
 <p>By default pmda is using the multiprocessing scheduler of <a class="reference external" href="https://dask.pydata.org/en/latest/">dask</a>. This is
 sufficient if you want to run your simulation on a single machine. If your
 analysis takes a very long time (&gt;30 min) you can also spread it to several
-nodes using the distributed scheduler. To do this can pass a <cite>scheduler</cite> keyword
+nodes using the <a class="reference external" href="https://distributed.readthedocs.io/">distributed</a> scheduler. To do this can pass a <cite>scheduler</cite> keyword
 argument to the <cite>run</cite> method.</p>
 <p>To write your own parallel algorithms you can subclass the
 <cite>ParallelAnalysisBase</cite> class.</p>
@@ -125,6 +131,8 @@ python setup.py install
     <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
     
     <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
     
     <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
     
