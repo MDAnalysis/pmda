@@ -72,10 +72,22 @@ def test_sub_frames(analysis, n_jobs):
     np.testing.assert_almost_equal(analysis.res, [10, 20, 30, 40])
 
 
+@pytest.fixture(scope="session")
+def client(tmpdir_factory):
+    with tmpdir_factory.mktemp("dask_cluster").as_cwd():
+        lc = distributed.LocalCluster(n_workers=2, processes=True)
+        client = distributed.Client(lc)
+
+        yield client
+
+        client.close()
+        lc.close()
+
+
 @pytest.fixture(scope='session', params=('distributed', 'multiprocessing'))
-def scheduler(request):
+def scheduler(request, client):
     if request.param == 'distributed':
-        return distributed.Client()
+        return client
     else:
         return multiprocessing
 
