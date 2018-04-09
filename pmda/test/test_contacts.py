@@ -91,8 +91,8 @@ class TestContacts(object):
 
     def test_villin_folded(self):
         # one folded, one unfolded
-        f = mda.Universe(contacts_villin_folded)
-        u = mda.Universe(contacts_villin_unfolded)
+        f = mda.Universe(contacts_villin_folded, dt=1.0)
+        u = mda.Universe(contacts_villin_unfolded, dt=1.0)
         sel = "protein and not name H*"
         grF = f.select_atoms(sel)
         grU = u.select_atoms(sel)
@@ -105,8 +105,8 @@ class TestContacts(object):
     def test_villin_unfolded(self):
 
         # both folded
-        f = mda.Universe(contacts_villin_folded)
-        u = mda.Universe(contacts_villin_folded)
+        f = mda.Universe(contacts_villin_folded, dt=1.0)
+        u = mda.Universe(contacts_villin_folded, dt=1.0)
         sel = "protein and not name H*"
 
         grF = f.select_atoms(sel)
