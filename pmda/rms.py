@@ -77,5 +77,5 @@ class RMSD(ParallelAnalysisBase):
 
     def _single_frame(self, ts, atomgroups):
         return (ts.frame, ts.time,
-                rms.rmsd(atomgroups[0].positions, self._ref_pos, 
-                        superposition=self.superposition))
+                rms.rmsd(atomgroups[0].positions, self._ref_pos,
+                         superposition=self.superposition))
