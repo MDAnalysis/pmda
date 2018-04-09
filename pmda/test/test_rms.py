@@ -20,7 +20,7 @@ from pmda import rms
 
 # remove when MDAnalysis 0.18.0 is available
 xfail_mda_issue1819 = pytest.mark.xfail(
-    LooseVersion(MDAnalysis.__version__) <= LooseVersion("0.17.0"),
+    LooseVersion(MDAnalysis.__version__) < LooseVersion("0.18.0"),
     reason="Fails because of MDAnalysis issue #1819")
 
 
