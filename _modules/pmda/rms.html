@@ -80,7 +80,14 @@
 <span class="sd">    :class:`~MDAnalysis.core.groups.AtomGroup` `mobile` onto `ref` for</span>
 <span class="sd">    each frame in the trajectory of `mobile` and calculate the time</span>
 <span class="sd">    series of the RMSD. The single frame calculation is performed with</span>
-<span class="sd">    :func:`MDAnalysis.analysis.rms.rmsd`.</span>
+<span class="sd">    :func:`MDAnalysis.analysis.rms.rmsd` (with ``superposition=True``</span>
+<span class="sd">    by default).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rmsd : array</span>
+<span class="sd">         Result as a Nx3 array where each row contains</span>
+<span class="sd">         `[frame, time (ps), RMSD (Å)]`.</span>
 
 
 <span class="sd">    Parameters</span>
@@ -91,6 +98,9 @@
 <span class="sd">         of `mobile` change with each frame in the trajectory.</span>
 <span class="sd">    ref : AtomGroup</span>
 <span class="sd">         fixed reference coordinates</span>
+<span class="sd">    superposition : bool, optional</span>
+<span class="sd">         ``True`` perform a RMSD-superposition, ``False`` only</span>
+<span class="sd">         calculates the RMSD. The default is ``True``.</span>
 
 
 <span class="sd">    Note</span>
@@ -99,19 +109,22 @@
 <span class="sd">    version :class:`MDAnalysis.analysis.rms.RMSD`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mobile</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mobile</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">superposition</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">universe</span> <span class="o">=</span> <span class="n">mobile</span><span class="o">.</span><span class="n">universe</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RMSD</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="p">(</span><span class="n">mobile</span><span class="p">,</span> <span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_pos</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">superposition</span> <span class="o">=</span> <span class="n">superposition</span>
 
     <span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">rms</span><span class="o">.</span><span class="n">rmsd</span><span class="p">(</span><span class="n">atomgroups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_pos</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">ts</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                <span class="n">rms</span><span class="o">.</span><span class="n">rmsd</span><span class="p">(</span><span class="n">atomgroups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ref_pos</span><span class="p">,</span>
+                         <span class="n">superposition</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">superposition</span><span class="p">))</span></div>
 </pre></div>
 
           </div>
