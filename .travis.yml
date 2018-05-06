@@ -20,6 +20,7 @@ env:
     - CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib pytest-pep8 mock codecov"
     - CONDA_CHANNELS='conda-forge'
     - CONDA_CHANNEL_PRIORITY=True
+    - PIP_DEPENDENCIES="sphinx-sitemap"
     - NUMPY_VERSION=stable
     - BUILD_CMD='python setup.py develop'
     - CODECOV=false
