@@ -56,7 +56,7 @@ user should be familiar with <a class="reference external" href="https://www.mda
 <p>Building new parallel analysis classes is easy with the
 <a class="reference internal" href="#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> base class if you can
 formulate the problem as a calculation over one
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> for a single frame.</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> for a single frame.</p>
 <dl class="class">
 <dt id="pmda.parallel.ParallelAnalysisBase">
 <em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em>universe</em>, <em>atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pmda/parallel.html#ParallelAnalysisBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
@@ -109,7 +109,7 @@ pre-processing. See the example below.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>Universe</strong> (<code class="xref py py-class docutils literal"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroups</cite> must belong to this Universe)</li>
-<li><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</li>
+<li><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</li>
 </ul>
 </td>
 </tr>
@@ -158,9 +158,9 @@ when the next time step is read).</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ts</strong> (<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/coordinates/base.html#MDAnalysis.coordinates.base.Timestep" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">Timestep</span></code></a>) – The current coordinate frame (time step) in the
+<li><strong>ts</strong> (<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/coordinates/base.html#MDAnalysis.coordinates.base.Timestep" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">Timestep</span></code></a>) – The current coordinate frame (time step) in the
 trajectory.</li>
-<li><strong>atomgroups</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – Tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>
+<li><strong>atomgroups</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – Tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>
 instances that are updated to the current frame.</li>
 </ul>
 </td>

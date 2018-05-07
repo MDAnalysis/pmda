@@ -61,7 +61,7 @@ your own parallel class</span></a>.</p>
 <h2>1.1. Using the <code class="xref py py-mod docutils literal"><span class="pre">pmda</span></code> analysis classes<a class="headerlink" href="#using-the-pmda-analysis-classes" title="Permalink to this headline">¶</a></h2>
 <p>In order to use the parallel RMSD calculator <a class="reference internal" href="api/rms.html#pmda.rms.RMSD" title="pmda.rms.RMSD"><code class="xref py py-class docutils literal"><span class="pre">pmda.rms.RMSD</span></code></a>,
 import the module, set up two
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
 class and directly use its <a class="reference internal" href="api/rms.html#pmda.rms.RMSD.run" title="pmda.rms.RMSD.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">pmda</span> <span class="k">import</span> <span class="n">rms</span>
@@ -95,12 +95,12 @@ write new analysis functions that automatically parallelize.</p>
 <ol class="arabic simple">
 <li>Define the <em>single frame</em> analysis function, i.e., how to compute
 the observable for a single time step from a given
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>.</li>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>.</li>
 <li>Derive a class from <a class="reference internal" href="api.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a>
 that uses the single frame function.</li>
 </ol>
 <p>As an example, we show how one can parallelize the RMSF function (from
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
 <ul class="simple">
 <li>TODO</li>
 <li>more TODO</li>

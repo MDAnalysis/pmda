@@ -48,16 +48,16 @@
   <span class="target" id="module-pmda.rms"></span><div class="section" id="rmsd-analysis-tools">
 <h1>2.2.1. RMSD analysis tools<a class="headerlink" href="#rmsd-analysis-tools" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.17)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.18)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
 <dl class="class">
 <dt id="pmda.rms.RMSD">
 <em class="property">class </em><code class="descclassname">pmda.rms.</code><code class="descname">RMSD</code><span class="sig-paren">(</span><em>mobile</em>, <em>ref</em>, <em>superposition=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms.html#RMSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.RMSD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parallel RMSD analysis.</p>
 <p>Optimally superimpose the coordinates in the
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
 each frame in the trajectory of <cite>mobile</cite> and calculate the time
 series of the RMSD. The single frame calculation is performed with
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.rmsd" title="(in MDAnalysis v0.17)"><code class="xref py py-func docutils literal"><span class="pre">MDAnalysis.analysis.rms.rmsd()</span></code></a> (with <code class="docutils literal"><span class="pre">superposition=True</span></code>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.rmsd" title="(in MDAnalysis v0.18)"><code class="xref py py-func docutils literal"><span class="pre">MDAnalysis.analysis.rms.rmsd()</span></code></a> (with <code class="docutils literal"><span class="pre">superposition=True</span></code>
 by default).</p>
 <dl class="attribute">
 <dt id="pmda.rms.RMSD.rmsd">
@@ -85,7 +85,7 @@ calculates the RMSD. The default is <code class="docutils literal"><span class="
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">At the moment, this class has far fewer features than the serial
-version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.17)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
+version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
 </div>
 <dl class="method">
 <dt id="pmda.rms.RMSD.run">
