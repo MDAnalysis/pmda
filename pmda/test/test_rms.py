@@ -11,17 +11,11 @@ from __future__ import absolute_import, division, print_function
 import pytest
 from numpy.testing import (assert_almost_equal, assert_array_equal,
                            assert_array_almost_equal)
-from distutils.version import LooseVersion
 
 import MDAnalysis
 from MDAnalysisTests.datafiles import (PSF, DCD)
 
 from pmda import rms
-
-# remove when MDAnalysis 0.18.0 is available
-xfail_mda_issue1819 = pytest.mark.xfail(
-    LooseVersion(MDAnalysis.__version__) < LooseVersion("0.18.0"),
-    reason="Fails because of MDAnalysis issue #1819")
 
 
 class TestRMSD(object):
@@ -43,7 +37,6 @@ class TestRMSD(object):
         RMSD = rms.RMSD(ca, ca).run(n_jobs=2)
         assert_array_equal(RMSD.rmsd.shape, (universe.trajectory.n_frames, 3))
 
-    @xfail_mda_issue1819
     def test_rmsd_step(self, universe, correct_values):
         ca = universe.select_atoms("name CA")
         universe.trajectory.rewind()
@@ -52,7 +45,6 @@ class TestRMSD(object):
                             err_msg="error: rmsd profile should match " +
                             "test values")
 
-    @xfail_mda_issue1819
     def test_rmsd_single_frame(self, universe, correct_values_frame_5):
         ca = universe.select_atoms("name CA")
         universe.trajectory.rewind()
