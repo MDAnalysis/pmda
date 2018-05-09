@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.1 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.1.2. Parallel Analysis helper — pmda.custom" href="custom.html" />
+    <link rel="prev" title="2. API for pmda" href="../api.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-pmda.parallel"></span><div class="section" id="parallel-analysis-building-blocks-pmda-parallel">
+<h1>2.1.1. Parallel Analysis building blocks — <a class="reference internal" href="#module-pmda.parallel" title="pmda.parallel"><code class="xref py py-mod docutils literal"><span class="pre">pmda.parallel</span></code></a><a class="headerlink" href="#parallel-analysis-building-blocks-pmda-parallel" title="Permalink to this headline">¶</a></h1>
+<p>A collection of useful building blocks for creating Analysis
+classes.</p>
+<dl class="class">
+<dt id="pmda.parallel.ParallelAnalysisBase">
+<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em>universe</em>, <em>atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for defining parallel multi frame analysis</p>
+<p>The class it is designed as a template for creating multiframe analyses.
+This class will automatically take care of setting up the trajectory
+reader for iterating in parallel.</p>
+<p>To define a new Analysis,
+<a class="reference internal" href="#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a> needs to be
+subclassed and
+<code class="xref py py-meth docutils literal"><span class="pre">_single_frame()</span></code> and
+<code class="xref py py-meth docutils literal"><span class="pre">_conclude()</span></code> must be
+defined. It is also possible to define
+<code class="xref py py-meth docutils literal"><span class="pre">_prepare()</span></code> for
+pre-processing. See the example below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NewAnalysis</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atomgroup</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ag</span> <span class="o">=</span> <span class="n">atomgroup</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NewAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">atomgroup</span><span class="o">.</span><span class="n">universe</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">_ag</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">agroups</span><span class="p">):</span>
+        <span class="c1"># REQUIRED</span>
+        <span class="c1"># called for every frame. ``ts`` contains the current time step</span>
+        <span class="c1"># and ``agroups`` a tuple of atomgroups that are updated to the</span>
+        <span class="c1"># current frame. Return result of `some_function` for a single</span>
+        <span class="c1"># frame</span>
+        <span class="k">return</span> <span class="n">some_function</span><span class="p">(</span><span class="n">agroups</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># REQUIRED</span>
+        <span class="c1"># Called once iteration on the trajectory is finished. Results</span>
+        <span class="c1"># for each frame are stored in ``self._results`` in a per block</span>
+        <span class="c1"># basis. Here those results should be moved and reshaped into a</span>
+        <span class="c1"># sensible new variable.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
+        <span class="c1"># Apply normalisation and averaging to results here if wanted.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Afterwards the new analysis can be run like this.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">na</span> <span class="o">=</span> <span class="n">NewAnalysis</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s1">&#39;name CA&#39;</span><span class="p">),</span> <span class="mi">35</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">na</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Universe</strong> (<code class="xref py py-class docutils literal"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
+<cite>atomgroups</cite> must belong to this Universe)</li>
+<li><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pmda.parallel.ParallelAnalysisBase._results">
+<code class="descname">_results</code><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase._results" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – The raw data from each process are stored as a list of
+lists, with each sublist containing the return values from
+<code class="xref py py-meth docutils literal"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pmda.parallel.ParallelAnalysisBase.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the calculation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
+<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
+<li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
+to spread work to a distributed scheduler</li>
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+This argument will be ignored when the distributed scheduler is
+used</li>
+<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
+to n_jobs or number of available workers in scheduler.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pmda.parallel.Timing">
+<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">Timing</code><span class="sig-paren">(</span><em>io</em>, <em>compute</em>, <em>total</em>, <em>universe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
+<dd><p>store various timeing results of obtained during a parallel analysis run</p>
+<dl class="attribute">
+<dt id="pmda.parallel.Timing.compute">
+<code class="descname">compute</code><a class="headerlink" href="#pmda.parallel.Timing.compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>compute time per frame</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pmda.parallel.Timing.cumulate_time">
+<code class="descname">cumulate_time</code><a class="headerlink" href="#pmda.parallel.Timing.cumulate_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>cumulative time of io and compute for each frame. This isn’t equal to
+<cite>self.total / n_jobs</cite> because <cite>self.total</cite> also includes the scheduler
+overhead</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pmda.parallel.Timing.io">
+<code class="descname">io</code><a class="headerlink" href="#pmda.parallel.Timing.io" title="Permalink to this definition">¶</a></dt>
+<dd><p>io time per frame</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pmda.parallel.Timing.total">
+<code class="descname">total</code><a class="headerlink" href="#pmda.parallel.Timing.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>wall time</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pmda.parallel.Timing.universe">
+<code class="descname">universe</code><a class="headerlink" href="#pmda.parallel.Timing.universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>time to create a universe for each block</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.1.1. Parallel Analysis building blocks — <code class="docutils literal"><span class="pre">pmda.parallel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom.html">2.1.2. Parallel Analysis helper — <code class="docutils literal"><span class="pre">pmda.custom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+    <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a><ul>
+      <li>Previous: <a href="../api.html" title="previous chapter">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
+      <li>Next: <a href="custom.html" title="next chapter">2.1.2. Parallel Analysis helper — <code class="docutils literal"><span class="pre">pmda.custom</span></code></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/parallel.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

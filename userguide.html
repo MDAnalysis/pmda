@@ -90,13 +90,13 @@ distributed fashion on HPC or ad-hoc clusters.</p>
 </div>
 <div class="section" id="example-writing-new-parallel-analysis">
 <span id="example-new-parallel-analysis"></span><h2>1.2. Example: Writing new parallel analysis<a class="headerlink" href="#example-writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h2>
-<p>With the help of <a class="reference internal" href="api.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> one can
+<p>With the help of <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> one can
 write new analysis functions that automatically parallelize.</p>
 <ol class="arabic simple">
 <li>Define the <em>single frame</em> analysis function, i.e., how to compute
 the observable for a single time step from a given
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>.</li>
-<li>Derive a class from <a class="reference internal" href="api.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a>
+<li>Derive a class from <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a>
 that uses the single frame function.</li>
 </ol>
 <p>As an example, we show how one can parallelize the RMSF function (from

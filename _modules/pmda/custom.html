@@ -1,0 +1,290 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pmda.custom &#8212; PMDA 0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.1 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pmda.custom</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
+<span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
+<span class="c1">#</span>
+<span class="c1"># PMDA</span>
+<span class="c1"># Copyright (c) 2017 The MDAnalysis Development Team and contributors</span>
+<span class="c1"># (see the file AUTHORS for the full list of names)</span>
+<span class="c1">#</span>
+<span class="c1"># Released under the GNU Public Licence, v2 or any higher version</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Parallel Analysis helper --- :mod:`pmda.custom`</span>
+<span class="sd">===============================================</span>
+
+<span class="sd">This module contains the class `AnalysisFromFunction` and the decorator</span>
+<span class="sd">`analysis_class`. Both can be used to generate custom analysis classes that can</span>
+<span class="sd">be run in parallel from functions that take one or more atom groups from the</span>
+<span class="sd">same universe and return a value.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">MDAnalysis.core.groups</span> <span class="k">import</span> <span class="n">AtomGroup</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.core.universe</span> <span class="k">import</span> <span class="n">Universe</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.coordinates.base</span> <span class="k">import</span> <span class="n">ProtoReader</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+
+
+<div class="viewcode-block" id="AnalysisFromFunction"><a class="viewcode-back" href="../../api/custom.html#pmda.custom.AnalysisFromFunction">[docs]</a><span class="k">class</span> <span class="nc">AnalysisFromFunction</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an analysis from a function working on AtomGroups</span>
+
+<span class="sd">    The function that is used</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : ndarray</span>
+<span class="sd">        results of calculation are stored after call to ``run``</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; # Create a new function to analyze a single frame</span>
+<span class="sd">    &gt;&gt;&gt; def rotation_matrix(mobile, ref):</span>
+<span class="sd">    &gt;&gt;&gt;     return mda.analysis.align.rotation_matrix(mobile, ref)[0]</span>
+<span class="sd">    &gt;&gt;&gt; # now run an analysis using the standalone function</span>
+<span class="sd">    &gt;&gt;&gt; rot = AnalysisFromFunction(rotation_matrix,</span>
+<span class="sd">                                   trajectory, mobile, ref).run()</span>
+<span class="sd">    &gt;&gt;&gt; print(rot.results)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError : if ``function`` has the same kwargs as ``BaseAnalysis``</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    analysis_class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">universe</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        function : callable</span>
+<span class="sd">            function to evaluate at each frame. The first arguments are assumed</span>
+<span class="sd">            to be &#39;mobile&#39; Atomgroups if they belong to the same universe. All</span>
+<span class="sd">            other Atomgroups are assumed to be reference. Here &#39;mobile&#39; means</span>
+<span class="sd">            they will be iterated over.</span>
+<span class="sd">        Universe : :class:`~MDAnalysis.core.groups.Universe`</span>
+<span class="sd">            a :class:`MDAnalysis.core.groups.Universe` (the</span>
+<span class="sd">            `atomgroups` must belong to this Universe)</span>
+<span class="sd">        *args : list</span>
+<span class="sd">           arguments for ``function``</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">           keyword arguments for ``function``. keyword arguments with name</span>
+<span class="sd">           &#39;universe&#39; or &#39;atomgroups&#39; will be ignored! Mobile atomgroups to</span>
+<span class="sd">           analyze can not be passed as keyword arguments currently.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
+
+        <span class="c1"># collect all atomgroups with the same trajectory object as universe</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span>
+        <span class="n">arg_ags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">other_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span>
+                          <span class="n">AtomGroup</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span> <span class="o">==</span> <span class="n">trajectory</span><span class="p">:</span>
+                <span class="n">arg_ags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">other_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">AnalysisFromFunction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">arg_ags</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+    <span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">atomgroups</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_args</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="analysis_class"><a class="viewcode-back" href="../../api/custom.html#pmda.custom.analysis_class">[docs]</a><span class="k">def</span> <span class="nf">analysis_class</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transform a function operating on a single frame to an analysis class</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    function : callable</span>
+<span class="sd">        The function that can analyze a single or more atomgroups. It is always</span>
+<span class="sd">        assumed that the mobile atomgroups (which will be iterated over) come</span>
+<span class="sd">        first. All atomgroups that come directly after the first that are part</span>
+<span class="sd">        of the same universe will iterated over</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A new AnalysisClass with function as analysis</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    For an usage in a library we recommend the following style:</span>
+
+<span class="sd">    &gt;&gt;&gt; def rotation_matrix(mobile, ref):</span>
+<span class="sd">    &gt;&gt;&gt;     return mda.analysis.align.rotation_matrix(mobile, ref)[0]</span>
+<span class="sd">    &gt;&gt;&gt; RotationMatrix = analysis_class(rotation_matrix)</span>
+
+<span class="sd">    It can also be used as a decorator:</span>
+
+<span class="sd">    &gt;&gt;&gt; @analysis_class</span>
+<span class="sd">    &gt;&gt;&gt; def RotationMatrix(mobile, ref):</span>
+<span class="sd">    &gt;&gt;&gt;     return mda.analysis.align.rotation_matrix(mobile, ref)[0]</span>
+
+<span class="sd">    &gt;&gt;&gt; rot = RotationMatrix(u.trajectory, mobile, ref, step=2).run()</span>
+<span class="sd">    &gt;&gt;&gt; print(rot.results)</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    AnalysisFromFunction</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">WrapperClass</span><span class="p">(</span><span class="n">AnalysisFromFunction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Custom Analysis Function&quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">ProtoReader</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">trajectory</span><span class="p">,</span> <span class="n">Universe</span><span class="p">)):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">trajectory</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;First argument needs to be an MDAnalysis reader object.&quot;</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">WrapperClass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">WrapperClass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+    <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

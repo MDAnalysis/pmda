@@ -1,0 +1,3 @@
+.. automodule:: pmda.parallel
+   :members:
+
