@@ -4,6 +4,9 @@
 
 |build| |cov|
 
+:Release: |release|
+:Date: |today|
+
 Ready to use analysis and buildings blocks to write parallel analysis algorithms
 using MDAnalysis_ with dask_.
 
