@@ -7,6 +7,12 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+import pmda
+
+
+def test_version():
+    version = pmda.__version__
+    parts = version.split('.')
+
+    assert version
+    assert len(parts) == 3
