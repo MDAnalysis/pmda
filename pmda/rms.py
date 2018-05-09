@@ -7,8 +7,8 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 """
-RMSD analysis tools
-===================
+RMSD analysis tools --- :mod:`pmda.rms`
+=======================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.rms`.

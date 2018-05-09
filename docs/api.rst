@@ -18,7 +18,7 @@ Building blocks
 Building new parallel analysis classes is easy with the
 :class:`pmda.custom.AnalysisFromFunction` base class if you can formulate the
 problem as a calculation over one :class:`~MDAnalysis.core.groups.AtomGroup` for
-a single frame. If need more flexibility you can use the
+a single frame. If your need more flexibility you can use the
 :class:`pmda.parallel.ParallelAnalysisBase`.
 
 .. toctree::
@@ -32,7 +32,9 @@ a single frame. If need more flexibility you can use the
 Pre-defined parallel analysis tasks
 ===================================
 
-:mod:`pmda` also has various predefined analysis tasks to use.
+:mod:`pmda` also has various predefined analysis tasks to use. They
+also function as examples for how to implement your own functions with
+:class:`pmda.parallel.ParallelAnalysisBase`.
 
 .. toctree::
    :maxdepth: 1

@@ -1,1 +1,3 @@
-.. automodule:: pmda.custom
+.. automodule:: pmda.parallel
+   :members:
+
