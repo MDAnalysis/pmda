@@ -1,0 +1,2 @@
+.. automodule:: pmda.custom
+   :members:
