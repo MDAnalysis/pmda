@@ -44,6 +44,25 @@ def test_AnalysisFromFunction():
         assert_equal(results, ana.results)
 
 
+def custom_function_2(mobile, ref, ref2):
+    return mobile.centroid() - ref.centroid() + 2 * ref2.centroid()
+
+
+def test_AnalysisFromFunction_otherAgs():
+    u = mda.Universe(PSF, DCD)
+    u2 = mda.Universe(PSF, DCD)
+    u3 = mda.Universe(PSF, DCD)
+    step = 2
+    ana = custom.AnalysisFromFunction(custom_function_2, u, u.atoms, u2.atoms,
+                                      u3.atoms).run(step=step)
+
+    results = []
+    for ts in u.trajectory[::step]:
+        results.append(custom_function_2(u.atoms, u2.atoms, u3.atoms))
+    results = np.asarray(results)
+    assert_equal(results, ana.results)
+
+
 def test_analysis_class():
     ana_class = custom.analysis_class(custom_function)
     assert issubclass(ana_class, custom.AnalysisFromFunction)

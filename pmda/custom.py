@@ -96,9 +96,8 @@ class AnalysisFromFunction(ParallelAnalysisBase):
         self.results = []
 
     def _single_frame(self, ts, atomgroups):
-        if len(self.other_args) != 0:
-            atomgroups.extend(*self.other_args)
-        return self.function(*atomgroups, **self.kwargs)
+        args = atomgroups + self.other_args
+        return self.function(*args, **self.kwargs)
 
     def _conclude(self):
         self.results = np.hstack(self._results)
