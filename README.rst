@@ -2,7 +2,7 @@
   PMDA - Parallel Molecular Dynamics Analysis
 ==============================================
 
-|build| |cov|
+|build| |cov| |zenodo|
 
 :Release: |release|
 :Date: |today|
@@ -61,6 +61,17 @@ For help using this library, please drop by the `Github Issue tracker`__
 
 __ issuetracker_
 
+
+Citation
+========
+
+If you use ``pmda`` in published work please cite [Linke2018]_.
+
+.. [Linke2018] Max Linke and Oliver Beckstein. (2018, May 9). MDAnalysis/pmda: 0.1.0
+               release candidate 1 (Version
+	       0.1.0rc1). Zenodo. http://doi.org/10.5281/zenodo.1244324
+	       
+
 .. _MDAnalysis: https://www.mdanalysis.org
 .. _dask: https://dask.pydata.org/en/latest/
 .. _distributed: https://distributed.readthedocs.io/
@@ -72,3 +83,7 @@ __ issuetracker_
 .. |cov| image:: https://codecov.io/gh/MDAnalysis/pmda/branch/master/graph/badge.svg
    :alt: Coverage
    :target: https://codecov.io/gh/MDAnalysis/pmda
+
+.. |zenodo| image:: https://zenodo.org/badge/106346721.svg
+   :alt: DOI
+   :target: https://zenodo.org/badge/latestdoi/106346721
