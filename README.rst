@@ -16,7 +16,7 @@ using MDAnalysis_ with dask_.
    parallel analysis in a seamless and intuitive fashion.
 
 
-For example to running a rmsd analysis on all available cores:
+For example, run a rmsd analysis on all available cores:
 
 .. code:: python
 
@@ -31,18 +31,43 @@ For example to running a rmsd analysis on all available cores:
    print(rmsd_ana.rmsd)
 
 
-By default pmda is using the multiprocessing scheduler of dask_. This is
-sufficient if you want to run your simulation on a single machine. If your
-analysis takes a very long time (>30 min) you can also spread it to several
-nodes using the distributed_ scheduler. To do this can pass a `scheduler` keyword
-argument to the `run` method.
+By default PMDA use the multiprocessing scheduler of dask_. This is sufficient
+if you want to run your simulation on a single machine. If your analysis takes
+a very long time (>30 min) you can also spread it to several nodes using the
+distributed_ scheduler. To do this you can pass a ``scheduler`` keyword
+argument to the ``run`` method.
 
 To write your own parallel algorithms you can subclass the
-`ParallelAnalysisBase` class.
+:class:`~pmda.parallel.ParallelAnalysisBase` class.
 
 
+License and source code
+=======================
+
+PMDA is released under the `GNU General Public License, version 2`_ (see the
+files AUTHORS and LICENSE for details).
+
+Source code is available in the public GitHub repository
+https://github.com/MDAnalysis/pmda/.
+
+       
 Installation
 ============
+
+Install a release with ``pip``
+------------------------------
+
+The latest release is available from https://pypi.org/project/pmda/
+and can be installed with pip_
+
+.. code-block:: sh
+
+   pip install --upgrade pmda
+		
+
+   
+Development version from source
+-------------------------------
 
 To install the latest development version from source, run
 
@@ -52,29 +77,51 @@ To install the latest development version from source, run
   cd pmda
   python setup.py install
 
+ 
 Getting help
 ============
 
-For help using this library, please drop by the `Github Issue tracker`__
+*Help* is also available through the *MDAnalysis mailing list*
 
-.. _issuetracker: https://github.com/MDAnalysis/pmda/issues
+     https://groups.google.com/group/mdnalysis-discussion
 
-__ issuetracker_
+Please report *bugs and feature requests* for PMDA through the `Issue
+Tracker`_.
+
+
+
+Contributing
+============
+
+PMDA welcomes new contributions. Please drop by the `MDAnalysis developer
+mailing list`_ to discuss and ask questions.
+
+To contribute code, submit a *pull request* against the master branch in the
+`PMDA repository`_.
 
 
 Citation
 ========
 
-If you use ``pmda`` in published work please cite [Linke2018]_.
+If you use PMDA in published work please cite [Linke2018]_.
 
 .. [Linke2018] Max Linke and Oliver Beckstein. (2018, May 9). MDAnalysis/pmda: 0.1.0
                release candidate 1 (Version
 	       0.1.0rc1). Zenodo. http://doi.org/10.5281/zenodo.1244324
 	       
 
+
+	       
 .. _MDAnalysis: https://www.mdanalysis.org
 .. _dask: https://dask.pydata.org/en/latest/
 .. _distributed: https://distributed.readthedocs.io/
+.. _`Issue tracker`: https://github.com/MDAnalysis/pmda/issues
+.. _`PMDA repository`: https://github.com/MDAnalysis/pmda/
+.. _pip: https://pip.pypa.io/en/stable/
+.. _`GNU General Public License, version 2`:
+   https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+.. _`MDAnalysis developer mailing list`:
+   https://groups.google.com/group/mdnalysis-devel
 
 .. |build| image:: https://travis-ci.org/MDAnalysis/pmda.svg?branch=master
     :alt: Build Status
