@@ -15,4 +15,4 @@ def test_version():
     parts = version.split('.')
 
     assert version
-    assert len(parts) == 3
+    assert len(parts) >= 3
