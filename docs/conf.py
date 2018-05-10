@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PMDA'
-author = u'Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein'
+author = u'Max Linke, Oliver Beckstein'
 copyright = u'2018, ' + author
 
 
@@ -125,7 +125,7 @@ html_theme_options = {
         "MDAnalysis": "https://www.mdanalysis.org",
         "Dask": "https://dask.pydata.org",
         "distributed": "https://distributed.readthedocs.io/",
-        "mpi4py": "https://mpi4py.readthedocs.io",
+#        "mpi4py": "https://mpi4py.readthedocs.io",
     },
     'show_related': True,
     'fixed_sidebar': False,
@@ -218,7 +218,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'pmda.tex', u'pmda Documentation',
-     u'Max Linke, Richard J Gowers', 'manual'),
+     author, 'manual'),
 ]
 
 

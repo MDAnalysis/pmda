@@ -5,7 +5,7 @@
 ============
 
 :mod:`pmda` implements a simple map-reduce scheme for parallel
-trajectory analysis [Khoslessan2017]_ for MDAnalysis [Gowers2016]_
+trajectory analysis [Khoshlessan2017]_ for MDAnalysis [Gowers2016]_
 [Michaud-Agrawal2011]_. The trajectory is partitioned into blocks and
 analysis is performed separately and in parallel on each block
 ("map"). The results from each block are gathered and combined

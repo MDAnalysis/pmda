@@ -25,12 +25,12 @@
      dynamics simulations`:
      http://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html
 
-.. [Khoslessan2017] M. Khoshlessan, I. Paraskevakos, S. Jha,
-                    and O. Beckstein. Parallel analysis in MDAnalysis
-                    using the Dask parallel computing library. In Katy
-                    Huff, David Lippa, Dillon Niederhut, and M. Pacer,
-                    editors, Proceedings of the 16th Python in Science
-                    Conference, pages 64–72, Austin,
-		    TX, 2017. SciPy. doi:`10.25080/shinma-7f4c6e7-00a`_
+.. [Khoshlessan2017] M. Khoshlessan, I. Paraskevakos, S. Jha,
+                     and O. Beckstein. Parallel analysis in MDAnalysis
+                     using the Dask parallel computing library. In Katy
+                     Huff, David Lippa, Dillon Niederhut, and M. Pacer,
+                     editors, Proceedings of the 16th Python in Science
+                     Conference, pages 64–72, Austin,
+	             TX, 2017. SciPy. doi:`10.25080/shinma-7f4c6e7-00a`_
 
 .. _`10.25080/shinma-7f4c6e7-00a`: https://doi.org/10.25080/shinma-7f4c6e7-00a		    
