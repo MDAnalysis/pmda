@@ -5,7 +5,7 @@
 =====================
 
 The :mod:`pmda` package implements a simple map-reduce scheme for
-parallel trajectory analysis [Khoslessan2017]_ and extends MDAnalysis
+parallel trajectory analysis [Khoshlessan2017]_ and extends MDAnalysis
 [Gowers2016]_ [Michaud-Agrawal2011]_. In order to make use of it, a
 user should be familiar with MDAnalysis_.
 

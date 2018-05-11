@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <ShortName>PMDA</ShortName>
-  <Description>Search PMDA 0.1.0rc1+2.g12f32ad documentation</Description>
+  <Description>Search PMDA 0.1.0rc1+7.g2c4d2fe documentation</Description>
   <InputEncoding>utf-8</InputEncoding>
   <Url type="text/html" method="get"
        template="https://www.mdanalysis.org/pmda/search.html?q={searchTerms}&amp;check_keywords=yes&amp;area=default"/>
-  <LongName>PMDA 0.1.0rc1+2.g12f32ad documentation</LongName>
+  <LongName>PMDA 0.1.0rc1+7.g2c4d2fe documentation</LongName>
   
 </OpenSearchDescription>

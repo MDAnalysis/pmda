@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>1. User Guide &#8212; PMDA 0.1.0rc1+2.g12f32ad documentation</title>
+    <title>1. User Guide &#8212; PMDA 0.1.0rc1+7.g2c4d2fe documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0rc1+2.g12f32ad',
+        VERSION:     '0.1.0rc1+7.g2c4d2fe',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.0rc1+2.g12f32ad documentation"
+          title="Search within PMDA 0.1.0rc1+7.g2c4d2fe documentation"
           href="_static/opensearch.xml"/>
     <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
@@ -48,7 +48,7 @@
   <div class="section" id="user-guide">
 <h1>1. User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
 <p><code class="xref py py-mod docutils literal"><span class="pre">pmda</span></code> implements a simple map-reduce scheme for parallel
-trajectory analysis <a class="reference internal" href="references.html#khoslessan2017" id="id1">[Khoslessan2017]</a> for MDAnalysis <a class="reference internal" href="references.html#gowers2016" id="id2">[Gowers2016]</a>
+trajectory analysis <a class="reference internal" href="references.html#khoshlessan2017" id="id1">[Khoshlessan2017]</a> for MDAnalysis <a class="reference internal" href="references.html#gowers2016" id="id2">[Gowers2016]</a>
 <a class="reference internal" href="references.html#michaud-agrawal2011" id="id3">[Michaud-Agrawal2011]</a>. The trajectory is partitioned into blocks and
 analysis is performed separately and in parallel on each block
 (“map”). The results from each block are gathered and combined
@@ -59,6 +59,46 @@ right away. However, often it can be almost as easy to <a class="reference inter
 your own parallel class</span></a>.</p>
 <div class="section" id="using-the-pmda-analysis-classes">
 <h2>1.1. Using the <code class="xref py py-mod docutils literal"><span class="pre">pmda</span></code> analysis classes<a class="headerlink" href="#using-the-pmda-analysis-classes" title="Permalink to this headline">¶</a></h2>
+<p>Pre-defined analysis classes follow a common pattern. They require one
+or more MDAnalysis <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>
+instances as input (which one obtains from a MDAnalysis
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a>, typically by performing a
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/selections.html">selection</a>). They also typically require a number of parameters that
+are provided as keyword arguments:</p>
+<dl class="class">
+<dt id="ParallelAnalysisClass">
+<em class="property">class </em><code class="descname">ParallelAnalysisClass</code><span class="sig-paren">(</span><em>atomgroup</em>, <span class="optional">[</span><em>atomgroup</em>, <span class="optional">[</span><em>...</em>, <span class="optional">]</span><span class="optional">]</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#ParallelAnalysisClass" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>set up the parallel analysis</div></blockquote>
+<dl class="method">
+<dt id="ParallelAnalysisClass.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>n_jobs=-1</em>, <em>scheduler=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ParallelAnalysisClass.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>perform parallel analysis; see <a class="reference internal" href="#parallelization"><span class="std std-ref">Parallelization</span></a>
+for explanation of the arguments</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ParallelAnalysisClass.results">
+<code class="descname">results</code><a class="headerlink" href="#ParallelAnalysisClass.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>stores the results (name and content depends on the
+analysis that is being performed)</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The instance of the parallel analysis class contains a
+<a class="reference internal" href="#ParallelAnalysisClass.run" title="ParallelAnalysisClass.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method. Calling
+<a class="reference internal" href="#ParallelAnalysisClass.run" title="ParallelAnalysisClass.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> <em>performs</em> the parallel
+analysis. Using keyword arguments, one can set the level of
+<a class="reference internal" href="#parallelization"><span class="std std-ref">parallelization</span></a>.</p>
+<p>After the run has been completed, results are stored in an attribute
+of the class, such as <a class="reference internal" href="#ParallelAnalysisClass.results" title="ParallelAnalysisClass.results"><code class="xref py py-attr docutils literal"><span class="pre">results</span></code></a>. The
+actual name of the attribute is defined by the specific analysis
+class. The format and content is also dependent on the analysis; for
+example, the RMSD analysis class <a class="reference internal" href="api/rms.html#pmda.rms.RMSD" title="pmda.rms.RMSD"><code class="xref py py-class docutils literal"><span class="pre">pmda.rms.RMSD</span></code></a> produces a
+numpy array of the RMSD time series.</p>
+<div class="section" id="example-parallel-rmsd">
+<span id="id4"></span><h3>1.1.1. Example: Parallel RMSD<a class="headerlink" href="#example-parallel-rmsd" title="Permalink to this headline">¶</a></h3>
 <p>In order to use the parallel RMSD calculator <a class="reference internal" href="api/rms.html#pmda.rms.RMSD" title="pmda.rms.RMSD"><code class="xref py py-class docutils literal"><span class="pre">pmda.rms.RMSD</span></code></a>,
 import the module, set up two
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
@@ -76,20 +116,52 @@ class and directly use its <a class="reference internal" href="api/rms.html#pmda
 </div>
 <p>The resulting <code class="docutils literal"><span class="pre">rmsd_ana</span></code> instance contains the array of the RMSD
 time series in the attribute <a class="reference internal" href="api/rms.html#pmda.rms.RMSD.rmsd" title="pmda.rms.RMSD.rmsd"><code class="xref py py-attr docutils literal"><span class="pre">rmsd</span></code></a>.</p>
+</div>
+</div>
+<div class="section" id="parallelization">
+<span id="id5"></span><h2>1.2. Parallelization<a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h2>
 <p>Under the hood, <a class="reference external" href="https://dask.pydata.org">Dask</a> is used for the parallelization. By
 default, all the available cores on the local machine (laptop or
 workstation) are used with the <code class="docutils literal"><span class="pre">n_jobs=-1</span></code> keyword but any number
 can be set, e.g., <code class="docutils literal"><span class="pre">n_jobs=4</span></code> to split the trajectory into 4 blocks.</p>
-<p>One can also supply a <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> scheduler in the <code class="docutils literal"><span class="pre">get</span></code>
-keyword argument. This makes it possible to run analysis in a
-distributed fashion on HPC or ad-hoc clusters.</p>
-<ul class="simple">
-<li>TODO: example for launching distributed</li>
-<li>TODO: show <code class="docutils literal"><span class="pre">run(...,</span> <span class="pre">get=scheduler)</span></code></li>
-</ul>
+<p>One can also supply a <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> scheduler in the
+<code class="docutils literal"><span class="pre">scheduler</span></code> keyword argument of the
+<a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method. This makes it
+possible to run analysis in a distributed fashion on HPC or ad-hoc
+clusters (see <a class="reference external" href="https://distributed.readthedocs.io/en/latest/setup.html">setting up a dask.distributed network</a>).</p>
+<div class="section" id="example-using-dask-distributed">
+<h3>1.2.1. Example: Using <code class="docutils literal"><span class="pre">dask.distributed</span></code><a class="headerlink" href="#example-using-dask-distributed" title="Permalink to this headline">¶</a></h3>
+<p>You can try out <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> with a <a class="reference external" href="https://distributed.readthedocs.io/en/latest/local-cluster.html">local cluster</a>, which
+sets up a scheduler and workers on the local machine.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
+<span class="n">lc</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="example-writing-new-parallel-analysis">
-<span id="example-new-parallel-analysis"></span><h2>1.2. Example: Writing new parallel analysis<a class="headerlink" href="#example-writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">client</span></code> can be passed to the <code class="docutils literal"><span class="pre">scheduler</span></code> argument of the
+<a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method; we continue to
+use the <a class="reference internal" href="#example-parallel-rmsd"><span class="std std-ref">RMSD example</span></a>):</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Because the local cluster contains 8 workers, the RMSD trajectory
+analysis will be parallelized over 8 trajectory segments.</p>
+<p>In order to run on a larger cluster with multiple nodes (see <a class="reference external" href="https://distributed.readthedocs.io/en/latest/setup.html">setting
+up a dask.distributed network</a>) one needs to know how to connect to
+the running scheduler (e.g., address and port number or shared state
+file). Assuming that the scheduler is running on 192.168.0.1:8786, one
+would initialize the <a class="reference external" href="https://distributed.readthedocs.io/en/latest/client.html">distributed.Client</a> and pass it to the parallel
+analysis <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;192.168.0.1:8786&#39;</span><span class="p">)</span>
+<span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this way one can spread an analysis task over many different nodes.</p>
+</div>
+</div>
+<div class="section" id="writing-new-parallel-analysis">
+<span id="example-new-parallel-analysis"></span><h2>1.3. Writing new parallel analysis<a class="headerlink" href="#writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h2>
 <p>With the help of <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> one can
 write new analysis functions that automatically parallelize.</p>
 <ol class="arabic simple">
@@ -138,8 +210,15 @@ that uses the single frame function.</li>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. User Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#using-the-pmda-analysis-classes">1.1. Using the <code class="docutils literal"><span class="pre">pmda</span></code> analysis classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-writing-new-parallel-analysis">1.2. Example: Writing new parallel analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-pmda-analysis-classes">1.1. Using the <code class="docutils literal"><span class="pre">pmda</span></code> analysis classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-parallel-rmsd">1.1.1. Example: Parallel RMSD</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parallelization">1.2. Parallelization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-using-dask-distributed">1.2.1. Example: Using <code class="docutils literal"><span class="pre">dask.distributed</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-new-parallel-analysis">1.3. Writing new parallel analysis</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
@@ -155,8 +234,6 @@ that uses the single frame function.</li>
     <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
     
     <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
-    
-    <li class="toctree-l1"><a href="https://mpi4py.readthedocs.io">mpi4py</a></li>
     
 </ul>
 <div class="relations">
@@ -183,7 +260,7 @@ that uses the single frame function.</li>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, Max Linke, Mahzad Khoshlessan, Richard J Gowers, Oliver Beckstein.
+      &copy;2018, Max Linke, Oliver Beckstein.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
