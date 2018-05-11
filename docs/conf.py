@@ -247,10 +247,8 @@ texinfo_documents = [
 # Configuration for intersphinx: refer to the Python standard library
 # and other packages used by MDAnalysis
 intersphinx_mapping = {'https://docs.python.org/': None,
-#                       'https://docs.scipy.org/doc/numpy/': None,
-#                       'https://docs.scipy.org/doc/scipy/reference/': None,
                        'https://www.mdanalysis.org/docs/': None,
                        'https://dask.pydata.org/en/latest/': None,
-#                       'https://mpi4py.readthedocs.io/en/stable/': None,
+                       'https://distributed.readthedocs.io/en/latest/': None,
                        }
 
