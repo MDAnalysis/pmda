@@ -2,7 +2,7 @@
   PMDA - Parallel Molecular Dynamics Analysis
 ==============================================
 
-|build| |cov| |zenodo|
+|build| |cov| |PRwelcome| |zenodo|
 
 :Release: |release|
 :Date: |today|
@@ -134,3 +134,7 @@ If you use PMDA in published work please cite [Linke2018]_.
 .. |zenodo| image:: https://zenodo.org/badge/106346721.svg
    :alt: DOI
    :target: https://zenodo.org/badge/latestdoi/106346721
+
+.. |PRwelcome| image:: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+   :alt: PRs welcome
+   :target: http://makeapullrequest.com
