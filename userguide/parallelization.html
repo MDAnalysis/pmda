@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>1.2. Parallelization &#8212; PMDA 0.1.0rc1+9.ge786778 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0rc1+9.ge786778',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.1.0rc1+9.ge786778 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.3. Writing new parallel analysis" href="new_classes.html" />
+    <link rel="prev" title="1.1. Using the pmda analysis classes" href="pmda_classes.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="parallelization">
+<span id="id1"></span><h1>1.2. Parallelization<a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h1>
+<p>Under the hood, <a class="reference external" href="https://dask.pydata.org">Dask</a> is used for the parallelization.</p>
+<div class="section" id="single-machine">
+<h2>1.2.1. Single machine<a class="headerlink" href="#single-machine" title="Permalink to this headline">¶</a></h2>
+<p>By default, all the available cores on the local machine (laptop or
+workstation) are used with the <code class="docutils literal"><span class="pre">n_jobs=-1</span></code> keyword but any number
+can be set, e.g., <code class="docutils literal"><span class="pre">n_jobs=4</span></code> to split the trajectory into 4 blocks.</p>
+<p>Internally, this uses the multiprocessing <a class="reference external" href="https://dask.pydata.org/en/latest/scheduler-overview.html">scheduler</a> of dask. If you
+want to make use of more advanced scheduler features or scale your
+analysis to multiple nodes, e.g., in an HPC (high performance
+computing) environment, then use the <code class="xref py py-mod docutils literal"><span class="pre">distributed</span></code> scheduler, as
+described next.</p>
+</div>
+<div class="section" id="dask-distributed">
+<h2>1.2.2. <code class="docutils literal"><span class="pre">dask.distributed</span></code><a class="headerlink" href="#dask-distributed" title="Permalink to this headline">¶</a></h2>
+<p>One can supply a <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> scheduler in the <code class="docutils literal"><span class="pre">scheduler</span></code>
+keyword argument of the
+<a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method. This makes it
+possible to run analysis in a distributed fashion on HPC or ad-hoc
+clusters (see <a class="reference external" href="https://distributed.readthedocs.io/en/latest/setup.html">setting up a dask.distributed network</a>).</p>
+<div class="section" id="local-cluster-single-machine">
+<h3>1.2.2.1. Local cluster (single machine)<a class="headerlink" href="#local-cluster-single-machine" title="Permalink to this headline">¶</a></h3>
+<p>You can try out <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> with a <a class="reference external" href="https://distributed.readthedocs.io/en/latest/local-cluster.html">local cluster</a>, which
+sets up a scheduler and workers on the local machine.</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
+<span class="n">lc</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">client</span></code> can be passed to the <code class="docutils literal"><span class="pre">scheduler</span></code> argument of the
+<a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method; we continue to
+use the <a class="reference internal" href="pmda_classes.html#example-parallel-rmsd"><span class="std std-ref">RMSD example</span></a>):</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Because the local cluster contains 8 workers, the RMSD trajectory
+analysis will be parallelized over 8 trajectory segments.</p>
+</div>
+<div class="section" id="cluster">
+<h3>1.2.2.2. Cluster<a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h3>
+<p>In order to run on a larger cluster with multiple nodes (see <a class="reference external" href="https://distributed.readthedocs.io/en/latest/setup.html">setting
+up a dask.distributed network</a>) one needs to know how to connect to
+the running scheduler (e.g., address and port number or shared state
+file). Assuming that the scheduler is running on 192.168.0.1:8786, one
+would initialize the <a class="reference external" href="https://distributed.readthedocs.io/en/latest/client.html">distributed.Client</a> and pass it to the parallel
+analysis <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method:</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;192.168.0.1:8786&#39;</span><span class="p">)</span>
+<span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this way one can spread an analysis task over many different nodes.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../userguide.html">1. User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pmda_classes.html">1.1. Using the <code class="docutils literal"><span class="pre">pmda</span></code> analysis classes</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.2. Parallelization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#single-machine">1.2.1. Single machine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dask-distributed">1.2.2. <code class="docutils literal"><span class="pre">dask.distributed</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#local-cluster-single-machine">1.2.2.1. Local cluster (single machine)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cluster">1.2.2.2. Cluster</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="new_classes.html">1.3. Writing new parallel analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../userguide.html">1. User Guide</a><ul>
+      <li>Previous: <a href="pmda_classes.html" title="previous chapter">1.1. Using the <code class="docutils literal"><span class="pre">pmda</span></code> analysis classes</a></li>
+      <li>Next: <a href="new_classes.html" title="next chapter">1.3. Writing new parallel analysis</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Oliver Beckstein.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/userguide/parallelization.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
