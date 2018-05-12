@@ -105,11 +105,8 @@ Citation
 
 If you use PMDA in published work please cite [Linke2018]_.
 
-.. [Linke2018] Max Linke and Oliver Beckstein. (2018, May 9). MDAnalysis/pmda: 0.1.0
-               release candidate 1 (Version
-	       0.1.0rc1). Zenodo. http://doi.org/10.5281/zenodo.1244324
-	       
-
+.. [Linke2018] Max Linke, & Oliver Beckstein. (2018, May 11). MDAnalysis/pmda:
+               0.1.0 (Version 0.1.0). Zenodo. http://doi.org/10.5281/zenodo.1245759
 
 	       
 .. _MDAnalysis: https://www.mdanalysis.org
