@@ -4,9 +4,6 @@
 
 |build| |cov| |PRwelcome| |zenodo|
 
-:Release: |release|
-:Date: |today|
-
 Ready to use analysis and buildings blocks to write parallel analysis algorithms
 using MDAnalysis_ with dask_.
 
@@ -38,7 +35,7 @@ distributed_ scheduler. To do this you can pass a ``scheduler`` keyword
 argument to the ``run`` method.
 
 To write your own parallel algorithms you can subclass the
-:class:`~pmda.parallel.ParallelAnalysisBase` class.
+``pmda.parallel.ParallelAnalysisBase`` class.
 
 
 License and source code
