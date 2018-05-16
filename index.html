@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.1.0+1.g33ab02a documentation</title>
+    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.1.0+2.gc480f34 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0+1.g33ab02a',
+        VERSION:     '0.1.0+2.gc480f34',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.0+1.g33ab02a documentation"
+          title="Search within PMDA 0.1.0+2.gc480f34 documentation"
           href="_static/opensearch.xml"/>
     <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
@@ -51,9 +51,9 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.0+1.g33ab02a</td>
+<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.0+2.gc480f34</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">May 12, 2018</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">May 16, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -81,9 +81,11 @@ parallel analysis in a seamless and intuitive fashion.</p>
 if you want to run your simulation on a single machine. If your analysis takes
 a very long time (&gt;30 min) you can also spread it to several nodes using the
 <a class="reference external" href="https://distributed.readthedocs.io/">distributed</a> scheduler. To do this you can pass a <code class="docutils literal"><span class="pre">scheduler</span></code> keyword
-argument to the <code class="docutils literal"><span class="pre">run</span></code> method.</p>
+argument to the <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method (see
+<a class="reference internal" href="userguide/parallelization.html#parallelization"><span class="std std-ref">Parallelization</span></a> for more details).</p>
 <p>To write your own parallel algorithms you can subclass the
-<a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a> class.</p>
+<a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a> class (see
+<a class="reference internal" href="userguide/new_classes.html#example-new-parallel-analysis"><span class="std std-ref">Writing new parallel analysis</span></a> for more details).</p>
 <div class="section" id="license-and-source-code">
 <h2>License and source code<a class="headerlink" href="#license-and-source-code" title="Permalink to this headline">¶</a></h2>
 <p>PMDA is released under the <a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GNU General Public License, version 2</a> (see the
