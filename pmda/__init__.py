@@ -25,6 +25,7 @@ space. Import what you need::
    import pmda.contacts
 
 """
+from __future__ import absolute_import
 
 from ._version import get_versions
 __version__ = get_versions()['version']

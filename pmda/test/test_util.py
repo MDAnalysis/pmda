@@ -6,6 +6,8 @@
 # (see the file AUTHORS for the full list of names)
 #
 # Released under the GNU Public Licence, v2 or any higher version
+from __future__ import absolute_import
+
 import time
 from numpy.testing import assert_almost_equal
 

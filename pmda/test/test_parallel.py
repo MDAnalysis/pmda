@@ -6,6 +6,7 @@
 # (see the file AUTHORS for the full list of names)
 #
 # Released under the GNU Public Licence, v2 or any higher version
+from __future__ import absolute_import
 
 import numpy as np
 import pytest
