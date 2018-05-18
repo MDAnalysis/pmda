@@ -22,6 +22,7 @@ setup(
     long_description_content_type='text/x-rst',
     url='https://github.com/MDAnalysis/pmda/',
     author='Max Linke',
+    author_email='max.linke88@gmail.com',
     license="GPLv2",
     download_url="https://github.com/MDAnalysis/pmda/releases",
     keywords="science parallel",
