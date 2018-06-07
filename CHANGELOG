@@ -13,13 +13,22 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
+06/07/18 orbeckst
+
+  * 0.1.1
+
+Fixes
+  * The 0.1.0 release was not pip-installable and did not ship code (d'oh);
+    this release is pip-installable (Issue #42)
+ 
+
 05/11/18 kain88-de, orbeckst
 
   * 0.1.0
 
 Enhancements
-	* add base class for parallel analysis
-	* add parallel rmsd class (with superposition)
+  * add base class for parallel analysis
+  * add parallel rmsd class (with superposition)
   * add parallel contacts class
   * add parallal AnalysisFromFunction class
 

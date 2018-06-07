@@ -7,7 +7,7 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import versioneer
 
 with open('README.rst', 'r') as f:
@@ -46,6 +46,7 @@ setup(
         'Issue Tracker': 'https://github.com/MDAnalysis/pmda/issues/',
         'Mailing list': 'https://groups.google.com/group/mdnalysis-discussion',
     },
+    packages=find_packages(),
     install_requires=[
         'MDAnalysis>=0.18',
         'dask',
