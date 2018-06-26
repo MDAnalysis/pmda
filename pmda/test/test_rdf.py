@@ -25,6 +25,9 @@ import pytest
 
 import MDAnalysis as mda
 from pmda.rdf import InterRDF
+from MDAnalysis.analysis import rdf
+
+from numpy.testing import assert_almost_equal
 
 from MDAnalysisTests.datafiles import two_water_gro
 
@@ -36,8 +39,6 @@ def u():
 
 @pytest.fixture(scope='module')
 def sels(u):
-    for at, (x, y) in zip(u.atoms, zip([1] * 3 + [2] * 3, [2, 1, 3] * 2)):
-        at.position = x, y, 0.0
     s1 = u.select_atoms('name OW')
     s2 = u.select_atoms('name HW1 HW2')
     return s1, s2
@@ -89,3 +90,11 @@ def test_exclusion(sels):
     s1, s2 = sels
     rdf = InterRDF(s1, s2, exclusion_block=(1, 2)).run()
     assert rdf.count.sum() == 4
+
+def test_same_result(sels):
+    # should see same results from analysis.rdf and pmda.rdf
+    s1, s2 = sels
+    nrdf = rdf.InterRDF(s1, s2).run()
+    prdf = InterRDF(s1, s2).run()
+    assert_almost_equal(nrdf.rdf, prdf.rdf)
+    assert_almost_equal(nrdf.count, prdf.count)
