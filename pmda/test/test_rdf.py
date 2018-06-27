@@ -91,6 +91,7 @@ def test_exclusion(sels):
     rdf = InterRDF(s1, s2, exclusion_block=(1, 2)).run()
     assert rdf.count.sum() == 4
 
+
 def test_same_result(sels):
     # should see same results from analysis.rdf and pmda.rdf
     s1, s2 = sels

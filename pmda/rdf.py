@@ -33,6 +33,7 @@ from MDAnalysis.lib.util import blocks_of
 
 from .parallel import ParallelAnalysisBase
 
+
 class InterRDF(ParallelAnalysisBase):
     """Intermolecular pair distribution function
 
@@ -76,7 +77,7 @@ class InterRDF(ParallelAnalysisBase):
     within the same molecule.  For example, if there are 7 of each
     atom in each molecule, the exclusion mask `(7, 7)` can be used.
 
-    .. versionadded:: 0.13.0
+    .. versionadded:: 0.2.0
 
     """
     def __init__(self, g1, g2,
