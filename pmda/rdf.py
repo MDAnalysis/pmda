@@ -33,6 +33,7 @@ from MDAnalysis.lib.util import blocks_of
 
 from .parallel import ParallelAnalysisBase
 
+
 class InterRDF(ParallelAnalysisBase):
     """Intermolecular pair distribution function
 
@@ -76,9 +77,12 @@ class InterRDF(ParallelAnalysisBase):
     within the same molecule.  For example, if there are 7 of each
     atom in each molecule, the exclusion mask `(7, 7)` can be used.
 
-    .. versionadded:: 0.13.0
+    .. versionadded:: 0.2.0
 
     """
+    # pylint: disable=redefined-builtin
+    # continue to use 'range' as long as MDAnalysis uses it so that
+    # the user interface remains consistent
     def __init__(self, g1, g2,
                  nbins=75, range=(0.0, 15.0), exclusion_block=None):
         u = g1.universe
@@ -97,8 +101,7 @@ class InterRDF(ParallelAnalysisBase):
         self.edges = edges
         self.bins = 0.5 * (edges[:-1] + edges[1:])
 
-        # Allocate a results array which we will reuse
-        self.result = np.zeros((len(g1), len(g2)), dtype=np.float64)
+    # pylint: enable=redefined-builtin
 
     def _prepare(self):
         # Empty histogram to store the RDF
