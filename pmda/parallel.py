@@ -31,12 +31,14 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, universe):
+    def __init__(self, io, compute, total, universe, prepare, conclude):
         self._io = io
         self._compute = compute
         self._total = total
         self._cumulate = np.sum(io) + np.sum(compute)
         self._universe = universe
+        self._prepare = prepare
+        self._conclude = conclude
 
     @property
     def io(self):
@@ -66,6 +68,16 @@ class Timing(object):
     def universe(self):
         """time to create a universe for each block"""
         return self._universe
+
+    @property
+    def prepare(self):
+        """time to conclude"""
+        return self._prepare
+
+    @property
+    def conclude(self):
+        """time to conclude"""
+        return self._conclude
 
 
 class ParallelAnalysisBase(object):
@@ -243,7 +255,9 @@ class ParallelAnalysisBase(object):
         bsize = int(np.ceil(n_frames / float(n_blocks)))
 
         with timeit() as total:
-            self._prepare()
+            with timeit() as prepare:
+                self._prepare()
+            time_prepare = prepare.elapsed
             blocks = []
             for b in range(n_blocks):
                 task = delayed(
@@ -258,12 +272,13 @@ class ParallelAnalysisBase(object):
             blocks = delayed(blocks)
             res = blocks.compute(**scheduler_kwargs)
             self._results = np.asarray([el[0] for el in res])
-            self._conclude()
+            with timeit() as conclude:
+                self._conclude()
 
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]))
+            np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
     def _dask_helper(self, start, stop, step, indices, top, traj):
