@@ -29,18 +29,18 @@ from MDAnalysis.analysis import rdf
 
 from numpy.testing import assert_almost_equal
 
-from MDAnalysisTests.datafiles import two_water_gro
+from MDAnalysisTests.datafiles import GRO_MEMPROT, XTC_MEMPROT
 
 
 @pytest.fixture(scope='module')
 def u():
-    return mda.Universe(two_water_gro)
+    return mda.Universe(GRO_MEMPROT, XTC_MEMPROT)
 
 
 @pytest.fixture(scope='module')
 def sels(u):
-    s1 = u.select_atoms('name OW')
-    s2 = u.select_atoms('name HW1 HW2')
+    s1 = u.select_atoms('name OD1 and resname ASP')
+    s2 = u.select_atoms('name OD2 and resname ASP')
     return s1, s2
 
 
@@ -63,18 +63,18 @@ def test_range(u):
 
 
 def test_count_sum(sels):
-    # OW vs HW
-    # should see 8 comparisons in count
+    # OD1 vs OD2
+    # should see 577 comparisons in count
     s1, s2 = sels
     rdf = InterRDF(s1, s2).run()
-    assert rdf.count.sum() == 8
+    assert rdf.count.sum() == 577
 
 
 def test_count(sels):
-    # should see two distances with 4 counts each
+    # should see two distances with 7 counts each
     s1, s2 = sels
     rdf = InterRDF(s1, s2).run()
-    assert len(rdf.count[rdf.count == 3]) == 1
+    assert len(rdf.count[rdf.count == 3]) == 7
 
 
 def test_double_run(sels):
@@ -82,14 +82,7 @@ def test_double_run(sels):
     s1, s2 = sels
     rdf = InterRDF(s1, s2).run()
     rdf.run()
-    assert len(rdf.count[rdf.count == 3]) == 1
-
-
-def test_exclusion(sels):
-    # should see two distances with 4 counts each
-    s1, s2 = sels
-    rdf = InterRDF(s1, s2, exclusion_block=(1, 2)).run()
-    assert rdf.count.sum() == 4
+    assert len(rdf.count[rdf.count == 3]) == 7
 
 
 def test_same_result(sels):
@@ -100,3 +93,13 @@ def test_same_result(sels):
     assert_almost_equal(nrdf.rdf, prdf.rdf)
     assert_almost_equal(nrdf.count, prdf.count)
 
+
+@pytest.mark.parametrize('exclusion_block, value', [
+            (None, 577),
+            ((1, 1), 397)])
+def test_exclusion(sels, exclusion_block, value):
+    # should see 397 comparisons in count when given exclusion_block
+    # should see 577 comparisons in count when exclusion_block is none
+    s1, s2 = sels
+    rdf = InterRDF(s1, s2, exclusion_block=exclusion_block).run()
+    assert rdf.count.sum() == value
