@@ -13,6 +13,14 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
+xx/xx/18 VOD555
+
+  * 0.2.0
+
+Enhancements
+  * add parallel particle-particle RDF calculation module pmda.rdf (Issue #41)
+
+
 06/07/18 orbeckst
 
   * 0.1.1
@@ -20,7 +28,7 @@ The rules for this file:
 Fixes
   * The 0.1.0 release was not pip-installable and did not ship code (d'oh);
     this release is pip-installable (Issue #42)
- 
+
 
 05/11/18 kain88-de, orbeckst
 

@@ -80,6 +80,9 @@ class InterRDF(ParallelAnalysisBase):
     .. versionadded:: 0.2.0
 
     """
+    # pylint: disable=redefined-builtin
+    # continue to use 'range' as long as MDAnalysis uses it so that
+    # the user interface remains consistent
     def __init__(self, g1, g2,
                  nbins=75, range=(0.0, 15.0), exclusion_block=None):
         u = g1.universe
@@ -98,8 +101,7 @@ class InterRDF(ParallelAnalysisBase):
         self.edges = edges
         self.bins = 0.5 * (edges[:-1] + edges[1:])
 
-        # Allocate a results array which we will reuse
-        self.result = np.zeros((len(g1), len(g2)), dtype=np.float64)
+    # pylint: enable=redefined-builtin
 
     def _prepare(self):
         # Empty histogram to store the RDF
