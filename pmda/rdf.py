@@ -117,12 +117,13 @@ class InterRDF(ParallelAnalysisBase):
                            box=u.dimensions)
         # If provided exclusions, create a mask of _result which
         # lets us take these out
+        self._exclusion_mask = None
         if self._exclusion_block is not None:
             self._exclusion_mask = blocks_of(d,
                                              *self._exclusion_block)
             self._maxrange = self.rdf_settings['range'][1] + 1.0
-        else:
-            self._exclusion_mask = None
+        #else:
+        #    self._exclusion_mask = None
         # Maybe exclude same molecule distances
         if self._exclusion_mask is not None:
             self._exclusion_mask[:] = self._maxrange
