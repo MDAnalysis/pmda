@@ -24,13 +24,18 @@ def test_timeing():
     compute = np.arange(5) + 1
     total = 5
     universe = np.arange(2)
-    timing = parallel.Timing(io, compute, total, universe)
+    prepare = 3
+    conclude = 6
+
+    timing = parallel.Timing(io, compute, total, universe, prepare, conclude)
 
     np.testing.assert_equal(timing.io, io)
     np.testing.assert_equal(timing.compute, compute)
     np.testing.assert_equal(timing.total, total)
     np.testing.assert_equal(timing.universe, universe)
     np.testing.assert_equal(timing.cumulate_time, np.sum(io) + np.sum(compute))
+    np.testing.assert_equal(timing.prepare, prepare)
+    np.testing.assert_equal(timing.conclude, conclude)
 
 
 class NoneAnalysis(parallel.ParallelAnalysisBase):

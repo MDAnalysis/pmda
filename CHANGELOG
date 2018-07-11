@@ -13,6 +13,14 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
+xx/xx/18 VOD555
+
+  * 0.2.0
+
+Enhancements
+  * add add timing for _conclude and _prepare (Issue #49)
+  
+  
 06/07/18 orbeckst
 
   * 0.1.1
