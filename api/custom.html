@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.1.2. Parallel Analysis helper — pmda.custom &#8212; PMDA 0.1.0+6.g9feb43c documentation</title>
+    <title>2.1.2. Parallel Analysis helper — pmda.custom &#8212; PMDA 0.1.1+4.g723d021 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.0+6.g9feb43c',
+        VERSION:     '0.1.1+4.g723d021',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.0+6.g9feb43c documentation"
+          title="Search within PMDA 0.1.1+4.g723d021 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -43,6 +43,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <span class="target" id="module-pmda.custom"></span><div class="section" id="parallel-analysis-helper-pmda-custom">
@@ -89,14 +91,14 @@ same universe and return a value.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – function to evaluate at each frame. The first arguments are assumed
+<li><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – function to evaluate at each frame. The first arguments are assumed
 to be ‘mobile’ Atomgroups if they belong to the same universe. All
 other Atomgroups are assumed to be reference. Here ‘mobile’ means
 they will be iterated over.</li>
 <li><strong>Universe</strong> (<code class="xref py py-class docutils literal"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroups</cite> must belong to this Universe)</li>
-<li><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) – arguments for <code class="docutils literal"><span class="pre">function</span></code></li>
-<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – keyword arguments for <code class="docutils literal"><span class="pre">function</span></code>. keyword arguments with name
+<li><strong>*args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – arguments for <code class="docutils literal"><span class="pre">function</span></code></li>
+<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – keyword arguments for <code class="docutils literal"><span class="pre">function</span></code>. keyword arguments with name
 ‘universe’ or ‘atomgroups’ will be ignored! Mobile atomgroups to
 analyze can not be passed as keyword arguments currently.</li>
 </ul>
@@ -114,7 +116,7 @@ analyze can not be passed as keyword arguments currently.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) – The function that can analyze a single or more atomgroups. It is always
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – The function that can analyze a single or more atomgroups. It is always
 assumed that the mobile atomgroups (which will be iterated over) come
 first. All atomgroups that come directly after the first that are part
 of the same universe will iterated over</td>
@@ -152,6 +154,7 @@ of the same universe will iterated over</td>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -232,7 +235,7 @@ of the same universe will iterated over</td>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/api/custom.rst.txt"
