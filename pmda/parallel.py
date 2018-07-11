@@ -71,7 +71,7 @@ class Timing(object):
 
     @property
     def prepare(self):
-        """time to conclude"""
+        """time to prepare"""
         return self._prepare
 
     @property
