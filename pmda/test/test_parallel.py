@@ -111,3 +111,22 @@ def test_nblocks(analysis, n_blocks):
 def test_guess_nblocks(analysis):
     analysis.run(n_jobs=-1)
     assert len(analysis._results) == joblib.cpu_count()
+
+
+def test_attrlock():
+    u = mda.Universe(PSF, DCD)
+    pab = parallel.ParallelAnalysisBase(u, (u.atoms,))
+
+    # Should initially be allowed to set attributes
+    pab.thing1 = 24
+    assert pab.thing1 == 24
+    # Apply lock
+    with pab.readonly_attributes():
+        # Reading should still work
+        assert pab.thing1 == 24
+        # Setting should fail
+        with pytest.raises(AttributeError):
+            pab.thing2 = 100
+    # Outside of lock context setting should again work
+    pab.thing2 = 100
+    assert pab.thing2 == 100

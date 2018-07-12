@@ -15,6 +15,7 @@ classes.
 
 """
 from __future__ import absolute_import, division
+from contextlib import contextmanager
 from six.moves import range
 
 import MDAnalysis as mda
@@ -154,6 +155,32 @@ class ParallelAnalysisBase(object):
         self._traj = universe.trajectory.filename
         self._indices = [ag.indices for ag in atomgroups]
 
+    @contextmanager
+    def readonly_attributes(self):
+        """Set the attributes of this class to be read only
+
+        Useful to avoid the class being modified when passing it around.
+
+        To be used as a context manager::
+
+          with analysis.readonly_attributes():
+              some_function(analysis)
+
+        """
+        self._attr_lock = True
+        yield
+        self._attr_lock = False
+
+    def __setattr__(self, key, val):
+        # guards to stop people assigning to self when they shouldn't
+        # if locked, the only attribute you can modify is _attr_lock
+        # if self._attr_lock isn't set, default to unlocked
+        if key == '_attr_lock' or not getattr(self, '_attr_lock', False):
+            super(ParallelAnalysisBase, self).__setattr__(key, val)
+        else:
+            # raise HalError("I'm sorry Dave, I'm afraid I can't do that")
+            raise AttributeError("Can't set attribute at this time")
+
     def _conclude(self):
         """Finalise the results you've gathered.
 
@@ -259,18 +286,19 @@ class ParallelAnalysisBase(object):
                 self._prepare()
             time_prepare = prepare.elapsed
             blocks = []
-            for b in range(n_blocks):
-                task = delayed(
-                    self._dask_helper, pure=False)(
-                        b * bsize * step + start,
-                        min(stop, (b + 1) * bsize * step + start),
-                        step,
-                        self._indices,
-                        self._top,
-                        self._traj, )
-                blocks.append(task)
-            blocks = delayed(blocks)
-            res = blocks.compute(**scheduler_kwargs)
+            with self.readonly_attributes():
+                for b in range(n_blocks):
+                    task = delayed(
+                        self._dask_helper, pure=False)(
+                            b * bsize * step + start,
+                            min(stop, (b + 1) * bsize * step + start),
+                            step,
+                            self._indices,
+                            self._top,
+                            self._traj, )
+                    blocks.append(task)
+                blocks = delayed(blocks)
+                res = blocks.compute(**scheduler_kwargs)
             self._results = np.asarray([el[0] for el in res])
             with timeit() as conclude:
                 self._conclude()
