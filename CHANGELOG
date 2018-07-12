@@ -13,13 +13,14 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-xx/xx/18 VOD555
+xx/xx/18 VOD555, richardjgowers
 
   * 0.2.0
 
 Enhancements
   * add add timing for _conclude and _prepare (Issue #49)
   * add parallel particle-particle RDF calculation module pmda.rdf (Issue #41)
+  * add readonly_attributes context manager to ParallelAnalysisBase
 
 
 06/07/18 orbeckst
