@@ -8,19 +8,20 @@
 # Released under the GNU Public Licence, v2 or any higher version
 """
 Radial Distribution Functions --- :mod:`pmda.rdf`
-================================================================
+=================================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.rdf`.
 
-Classes:
--------
-
-.. autoclass:: InterRDF
-
 See Also
 --------
 MDAnalysis.analysis.rdf
+
+
+Classes
+-------
+.. autoclass:: InterRDF
+
 
 """
 
