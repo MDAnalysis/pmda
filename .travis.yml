@@ -16,11 +16,16 @@ env:
     - PYTHON_VERSION=3.6
     - MAIN_CMD="pytest"
     - SETUP_CMD="pmda --pep8 -v --cov pmda"
-    # Don't need to install mdanalysis test since it is included in the development package
-    - CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib pytest-pep8 mock codecov"
+    # mdanalysis develop from source (see below), which needs
+    # minimal CONDA_MDANALYSIS_DEPENDENCIES
+    #- CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib pytest-pep8 mock codecov cython hypothesis sphinx"
+    - CONDA_MDANALYSIS_DEPENDENCIES="cython mmtf-python six biopython networkx scipy griddataformats gsd hypothesis"
+    - CONDA_DEPENDENCIES="${CONDA_MDANALYSIS_DEPENDENCIES} dask joblib pytest-pep8 mock codecov"
     - CONDA_CHANNELS='conda-forge'
     - CONDA_CHANNEL_PRIORITY=True
-    - PIP_DEPENDENCIES="sphinx-sitemap"
+    # install development version of MDAnalysis (needed until the test
+    # files for analysis.rdf are available in release 0.19.0)
+    - PIP_DEPENDENCIES="git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysis&subdirectory=package git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysistests&subdirectory=testsuite"
     - NUMPY_VERSION=stable
     - BUILD_CMD='python setup.py develop'
     - CODECOV=false
@@ -35,8 +40,8 @@ env:
 
   matrix:
     - PYTHON=3.6 CODECOV=true
-    - PYTHON=3.5
-    - PYTHON=2.7
+    - PYTHON=3.5 CODECOV=true
+    - PYTHON=2.7 CODECOV=true
     - NAME='lint' MAIN_CMD='pylint pmda' BUILD_CMD='' SETUP_CMD=''
 
 matrix:
@@ -46,9 +51,10 @@ matrix:
            MAIN_CMD="python setup.py"
            SETUP_CMD="build_sphinx"
            BUILD_DOCS=true
+           PIP_DEPENDENCIES="${PIP_DEPENDENCIES} sphinx-sitemap"
 
 install:
-  - git clone git://github.com/astropy/ci-helpers.git
+  - git clone --depth 1 git://github.com/astropy/ci-helpers.git
   - source ci-helpers/travis/setup_conda.sh
   - echo $BUILD_CMD
   - $BUILD_CMD

@@ -19,8 +19,9 @@ xx/xx/18 VOD555
 
 Enhancements
   * add add timing for _conclude and _prepare (Issue #49)
-  
-  
+  * add parallel particle-particle RDF calculation module pmda.rdf (Issue #41)
+
+
 06/07/18 orbeckst
 
   * 0.1.1
@@ -28,7 +29,7 @@ Enhancements
 Fixes
   * The 0.1.0 release was not pip-installable and did not ship code (d'oh);
     this release is pip-installable (Issue #42)
- 
+
 
 05/11/18 kain88-de, orbeckst
 
