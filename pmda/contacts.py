@@ -179,6 +179,7 @@ Classes
 
 .. autoclass:: Contacts
    :members:
+   :inherited-members:
 
 """
 from __future__ import absolute_import, division
