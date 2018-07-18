@@ -41,3 +41,4 @@ also function as examples for how to implement your own functions with
 
    api/rms
    api/contacts
+   api/rdf
