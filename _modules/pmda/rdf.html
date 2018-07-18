@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pmda.rdf &#8212; PMDA 0.1.1+16.gaaacca5 documentation</title>
+    <title>pmda.rdf &#8212; PMDA 0.1.1+18.g9f87fc2 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1+16.gaaacca5',
+        VERSION:     '0.1.1+18.g9f87fc2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+16.gaaacca5 documentation"
+          title="Search within PMDA 0.1.1+18.g9f87fc2 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -69,7 +69,8 @@
 <span class="sd">Classes</span>
 <span class="sd">-------</span>
 <span class="sd">.. autoclass:: InterRDF</span>
-
+<span class="sd">   :members:</span>
+<span class="sd">   :inherited-members:</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -86,14 +87,22 @@
 <div class="viewcode-block" id="InterRDF"><a class="viewcode-back" href="../../api/rdf.html#pmda.rdf.InterRDF">[docs]</a><span class="k">class</span> <span class="nc">InterRDF</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Intermolecular pair distribution function</span>
 
-<span class="sd">    InterRDF(g1, g2, nbins=75, range=(0.0, 15.0))</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bins : array</span>
+<span class="sd">         The distance :math:`r` at which the distribution</span>
+<span class="sd">         function :math:`g(r)` is determined; these are calculated as</span>
+<span class="sd">         the centers of the bins that were used for histogramming.</span>
+<span class="sd">    rdf : array</span>
+<span class="sd">         The value of the pair distribution function :math:`g(r)` at</span>
+<span class="sd">         :math:`r`.</span>
 
-<span class="sd">    Arguments</span>
-<span class="sd">    ---------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    g1 : AtomGroup</span>
-<span class="sd">      First AtomGroup</span>
+<span class="sd">          First AtomGroup</span>
 <span class="sd">    g2 : AtomGroup</span>
-<span class="sd">      Second AtomGroup</span>
+<span class="sd">          Second AtomGroup</span>
 <span class="sd">    nbins : int (optional)</span>
 <span class="sd">          Number of bins in the histogram [75]</span>
 <span class="sd">    range : tuple or list (optional)</span>
@@ -101,13 +110,6 @@
 <span class="sd">    exclusion_block : tuple (optional)</span>
 <span class="sd">          A tuple representing the tile to exclude from the distance</span>
 <span class="sd">          array. [None]</span>
-<span class="sd">    start : int (optional)</span>
-<span class="sd">          The frame to start at (default is first)</span>
-<span class="sd">    stop : int (optional)</span>
-<span class="sd">          The frame to end at (default is last)</span>
-<span class="sd">    step : int (optional)</span>
-<span class="sd">          The step size through the trajectory in frames (default is</span>
-<span class="sd">          every frame)</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -125,6 +127,11 @@
 <span class="sd">    The `exclusion_block` keyword allows the masking of pairs from</span>
 <span class="sd">    within the same molecule.  For example, if there are 7 of each</span>
 <span class="sd">    atom in each molecule, the exclusion mask `(7, 7)` can be used.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MDAnalysis.analysis.rdf.InterRDF</span>
+
 
 <span class="sd">    .. versionadded:: 0.2.0</span>
 

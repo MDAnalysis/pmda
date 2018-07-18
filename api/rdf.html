@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.2.3. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.1.1+16.gaaacca5 documentation</title>
+    <title>2.2.3. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.1.1+18.g9f87fc2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+16.gaaacca5',
+        VERSION:     '0.1.1+18.g9f87fc2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+16.gaaacca5 documentation"
+          title="Search within PMDA 0.1.1+18.g9f87fc2 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -61,7 +61,21 @@
 <dt id="pmda.rdf.InterRDF">
 <em class="property">class </em><code class="descclassname">pmda.rdf.</code><code class="descname">InterRDF</code><span class="sig-paren">(</span><em>g1</em>, <em>g2</em>, <em>nbins=75</em>, <em>range=(0.0</em>, <em>15.0)</em>, <em>exclusion_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rdf.html#InterRDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rdf.InterRDF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Intermolecular pair distribution function</p>
-<p>InterRDF(g1, g2, nbins=75, range=(0.0, 15.0))</p>
+<dl class="attribute">
+<dt id="pmda.rdf.InterRDF.bins">
+<code class="descname">bins</code><a class="headerlink" href="#pmda.rdf.InterRDF.bins" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array</em> – The distance <span class="math">\(r\)</span> at which the distribution
+function <span class="math">\(g(r)\)</span> is determined; these are calculated as
+the centers of the bins that were used for histogramming.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pmda.rdf.InterRDF.rdf">
+<code class="descname">rdf</code><a class="headerlink" href="#pmda.rdf.InterRDF.rdf" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array</em> – The value of the pair distribution function <span class="math">\(g(r)\)</span> at
+<span class="math">\(r\)</span>.</p>
+</dd></dl>
+
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -73,10 +87,6 @@
 <li><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</li>
 <li><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
 array. [None]</li>
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – The frame to start at (default is first)</li>
-<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – The frame to end at (default is last)</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – The step size through the trajectory in frames (default is
-every frame)</li>
 </ul>
 </td>
 </tr>
@@ -84,12 +94,12 @@ every frame)</li>
 </table>
 <p class="rubric">Example</p>
 <p>First create the <a class="reference internal" href="#pmda.rdf.InterRDF" title="pmda.rdf.InterRDF"><code class="xref py py-class docutils literal"><span class="pre">InterRDF</span></code></a> object, by supplying two
-AtomGroups then use the <code class="xref py py-meth docutils literal"><span class="pre">run()</span></code> method</p>
+AtomGroups then use the <a class="reference internal" href="#pmda.rdf.InterRDF.run" title="pmda.rdf.InterRDF.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rdf</span> <span class="o">=</span> <span class="n">InterRDF</span><span class="p">(</span><span class="n">ag1</span><span class="p">,</span> <span class="n">ag2</span><span class="p">)</span>
 <span class="n">rdf</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Results are available through the <code class="xref py py-attr docutils literal"><span class="pre">bins</span></code> and <code class="xref py py-attr docutils literal"><span class="pre">rdf</span></code>
+<p>Results are available through the <a class="reference internal" href="#pmda.rdf.InterRDF.bins" title="pmda.rdf.InterRDF.bins"><code class="xref py py-attr docutils literal"><span class="pre">bins</span></code></a> and <a class="reference internal" href="#pmda.rdf.InterRDF.rdf" title="pmda.rdf.InterRDF.rdf"><code class="xref py py-attr docutils literal"><span class="pre">rdf</span></code></a>
 attributes:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rdf</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span> <span class="n">rdf</span><span class="o">.</span><span class="n">rdf</span><span class="p">)</span>
 </pre></div>
@@ -97,9 +107,39 @@ attributes:</p>
 <p>The <cite>exclusion_block</cite> keyword allows the masking of pairs from
 within the same molecule.  For example, if there are 7 of each
 atom in each molecule, the exclusion mask <cite>(7, 7)</cite> can be used.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#MDAnalysis.analysis.rdf.InterRDF" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rdf.InterRDF</span></code></a></p>
+</div>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 0.2.0.</span></p>
 </div>
+<dl class="method">
+<dt id="pmda.rdf.InterRDF.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rdf.InterRDF.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the calculation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
+<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
+<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
+<li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
+to spread work to a distributed scheduler</li>
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+This argument will be ignored when the distributed scheduler is
+used</li>
+<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
+to n_jobs or number of available workers in scheduler.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>

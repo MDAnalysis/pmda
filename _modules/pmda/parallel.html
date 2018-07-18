@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pmda.parallel &#8212; PMDA 0.1.1+16.gaaacca5 documentation</title>
+    <title>pmda.parallel &#8212; PMDA 0.1.1+18.g9f87fc2 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1+16.gaaacca5',
+        VERSION:     '0.1.1+18.g9f87fc2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+16.gaaacca5 documentation"
+          title="Search within PMDA 0.1.1+18.g9f87fc2 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -74,7 +74,7 @@
 <span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">timeit</span>
 
 
-<div class="viewcode-block" id="Timing"><a class="viewcode-back" href="../../api/parallel.html#pmda.parallel.Timing">[docs]</a><span class="k">class</span> <span class="nc">Timing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Timing"><a class="viewcode-back" href="../../api/parallel.html#pmda.contacts.Timing">[docs]</a><span class="k">class</span> <span class="nc">Timing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    store various timeing results of obtained during a parallel analysis run</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -128,7 +128,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span></div>
 
 
-<div class="viewcode-block" id="ParallelAnalysisBase"><a class="viewcode-back" href="../../api/parallel.html#pmda.parallel.ParallelAnalysisBase">[docs]</a><span class="k">class</span> <span class="nc">ParallelAnalysisBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ParallelAnalysisBase"><a class="viewcode-back" href="../../api/parallel.html#pmda.contacts.ParallelAnalysisBase">[docs]</a><span class="k">class</span> <span class="nc">ParallelAnalysisBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for defining parallel multi frame analysis</span>
 
 <span class="sd">    The class it is designed as a template for creating multiframe analyses.</span>
@@ -248,7 +248,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ParallelAnalysisBase.run"><a class="viewcode-back" href="../../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="ParallelAnalysisBase.run"><a class="viewcode-back" href="../../api/parallel.html#pmda.contacts.ParallelAnalysisBase.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
