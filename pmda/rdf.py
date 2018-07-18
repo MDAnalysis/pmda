@@ -21,7 +21,8 @@ MDAnalysis.analysis.rdf
 Classes
 -------
 .. autoclass:: InterRDF
-
+   :members:
+   :inherited-members:
 
 """
 
@@ -38,14 +39,22 @@ from .parallel import ParallelAnalysisBase
 class InterRDF(ParallelAnalysisBase):
     """Intermolecular pair distribution function
 
-    InterRDF(g1, g2, nbins=75, range=(0.0, 15.0))
+    Attributes
+    ----------
+    bins : array
+         The distance :math:`r` at which the distribution
+         function :math:`g(r)` is determined; these are calculated as
+         the centers of the bins that were used for histogramming.
+    rdf : array
+         The value of the pair distribution function :math:`g(r)` at
+         :math:`r`.
 
-    Arguments
-    ---------
+    Parameters
+    ----------
     g1 : AtomGroup
-      First AtomGroup
+          First AtomGroup
     g2 : AtomGroup
-      Second AtomGroup
+          Second AtomGroup
     nbins : int (optional)
           Number of bins in the histogram [75]
     range : tuple or list (optional)
@@ -53,13 +62,6 @@ class InterRDF(ParallelAnalysisBase):
     exclusion_block : tuple (optional)
           A tuple representing the tile to exclude from the distance
           array. [None]
-    start : int (optional)
-          The frame to start at (default is first)
-    stop : int (optional)
-          The frame to end at (default is last)
-    step : int (optional)
-          The step size through the trajectory in frames (default is
-          every frame)
 
     Example
     -------
@@ -77,6 +79,11 @@ class InterRDF(ParallelAnalysisBase):
     The `exclusion_block` keyword allows the masking of pairs from
     within the same molecule.  For example, if there are 7 of each
     atom in each molecule, the exclusion mask `(7, 7)` can be used.
+
+    See Also
+    --------
+    MDAnalysis.analysis.rdf.InterRDF
+
 
     .. versionadded:: 0.2.0
 
