@@ -283,10 +283,10 @@ class Contacts(ParallelAnalysisBase):
 
         if len(y) == 1:
             y = y[0]
-        return y
+        return {'timeseries': y}
 
     def _conclude(self):
-        self.timeseries = np.hstack(self._results)
+        self.timeseries = np.hstack(self._results['timeseries'])
 
 
 def q1q2(atomgroup, radius=4.5):

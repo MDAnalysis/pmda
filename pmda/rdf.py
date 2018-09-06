@@ -8,21 +8,19 @@
 # Released under the GNU Public Licence, v2 or any higher version
 """
 Radial Distribution Functions --- :mod:`pmda.rdf`
-=================================================
+================================================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.rdf`.
 
+Classes:
+-------
+
+.. autoclass:: InterRDF
+
 See Also
 --------
 MDAnalysis.analysis.rdf
-
-
-Classes
--------
-.. autoclass:: InterRDF
-   :members:
-   :inherited-members:
 
 """
 
@@ -30,8 +28,10 @@ from __future__ import absolute_import, division
 
 import numpy as np
 
+from MDAnalysis.lib import distances
 from MDAnalysis.lib.distances import distance_array
 from MDAnalysis.lib.util import blocks_of
+
 
 from .parallel import ParallelAnalysisBase
 
@@ -39,22 +39,14 @@ from .parallel import ParallelAnalysisBase
 class InterRDF(ParallelAnalysisBase):
     """Intermolecular pair distribution function
 
-    Attributes
-    ----------
-    bins : array
-         The distance :math:`r` at which the distribution
-         function :math:`g(r)` is determined; these are calculated as
-         the centers of the bins that were used for histogramming.
-    rdf : array
-         The value of the pair distribution function :math:`g(r)` at
-         :math:`r`.
+    InterRDF(g1, g2, nbins=75, range=(0.0, 15.0))
 
-    Parameters
-    ----------
+    Arguments
+    ---------
     g1 : AtomGroup
-          First AtomGroup
+      First AtomGroup
     g2 : AtomGroup
-          Second AtomGroup
+      Second AtomGroup
     nbins : int (optional)
           Number of bins in the histogram [75]
     range : tuple or list (optional)
@@ -62,6 +54,13 @@ class InterRDF(ParallelAnalysisBase):
     exclusion_block : tuple (optional)
           A tuple representing the tile to exclude from the distance
           array. [None]
+    start : int (optional)
+          The frame to start at (default is first)
+    stop : int (optional)
+          The frame to end at (default is last)
+    step : int (optional)
+          The step size through the trajectory in frames (default is
+          every frame)
 
     Example
     -------
@@ -79,11 +78,6 @@ class InterRDF(ParallelAnalysisBase):
     The `exclusion_block` keyword allows the masking of pairs from
     within the same molecule.  For example, if there are 7 of each
     atom in each molecule, the exclusion mask `(7, 7)` can be used.
-
-    See Also
-    --------
-    MDAnalysis.analysis.rdf.InterRDF
-
 
     .. versionadded:: 0.2.0
 
@@ -117,32 +111,33 @@ class InterRDF(ParallelAnalysisBase):
 
         # Need to know average volume
         self.volume = 0.0
+        self._maxrange = self.rdf_settings['range'][1]
 
     def _single_frame(self, ts, atomgroups):
         g1, g2 = atomgroups
         u = g1.universe
-        d = distance_array(g1.positions, g2.positions,
+        dist = distance_array(g1.positions, g2.positions,
                            box=u.dimensions)
         # If provided exclusions, create a mask of _result which
         # lets us take these out
         exclusion_mask = None
         if self._exclusion_block is not None:
-            exclusion_mask = blocks_of(d, *self._exclusion_block)
+            exclusion_mask = blocks_of(dist, *self._exclusion_block)
             maxrange = self.rdf_settings['range'][1] + 1.0
         # Maybe exclude same molecule distances
         if exclusion_mask is not None:
             exclusion_mask[:] = maxrange
+
         count = []
-        count = np.histogram(d, **self.rdf_settings)[0]
+        count = np.histogram(dist, **self.rdf_settings)[0]
         volume = u.trajectory.ts.volume
 
-        return {'count': count, 'volume': volume}
+        return {'accumulator': np.array([count, np.array(volume, dtype = np.float64)])}
 
     def _conclude(self, ):
-        for block in self._results:
-            for data in block:
-                self.count += data['count']
-                self.volume += data['volume']
+        for data in self._results['accumulator']:
+            self.count += data[0]
+            self.volume += data[1]
 
         # Number of each selection
         N = self.nA * self.nB
