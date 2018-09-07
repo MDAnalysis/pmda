@@ -299,14 +299,14 @@ class ParallelAnalysisBase(object):
                     blocks.append(task)
                 blocks = delayed(blocks)
                 res = blocks.compute(**scheduler_kwargs)
-            self._results = {'timeseries': np.asarray([el[0] for el in res]), 'accumulator': np.asarray([el[1] for el in res])}
+            self._results = np.asarray([el[0] for el in res])
             with timeit() as conclude:
                 self._conclude()
 
         self.timing = Timing(
-            np.hstack([el[2] for el in res]),
-            np.hstack([el[3] for el in res]), total.elapsed,
-            np.array([el[4] for el in res]), time_prepare, conclude.elapsed)
+            np.hstack([el[1] for el in res]),
+            np.hstack([el[2] for el in res]), total.elapsed,
+            np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
     def _dask_helper(self, start, stop, step, indices, top, traj):
@@ -315,24 +315,21 @@ class ParallelAnalysisBase(object):
             u = mda.Universe(top, traj)
             agroups = [u.atoms[idx] for idx in indices]
 
-        t_ser = []
-        accum = []
+        res = []
         times_io = []
         times_compute = []
         for i in range(start, stop, step):
             with timeit() as b_io:
                 ts = u.trajectory[i]
             with timeit() as b_compute:
-                res_sf = self._single_frame(ts, agroups)
-                if 'accumulator' in res_sf:
-                    if accum == []:
-                        accum = res_sf['accumulator']
-                    else:
-                        accum += res_sf['accumulator']
-                if 'timeseries' in res_sf:
-                    t_ser.append(res_sf['timeseries']) 
+                res = self._reduce(res, self._single_frame(ts, agroups))
             times_io.append(b_io.elapsed)
             times_compute.append(b_compute.elapsed)
 
-        return np.asarray(t_ser), accum, np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed, 
+        return np.asarray(res), np.asarray(times_io), np.asarray(
+            times_compute), b_universe.elapsed
+
+    def _reduce(self, res, result_single_frame):
+        """ 'append' action for a time series"""
+        res.append(result_single_frame)
+        return res
