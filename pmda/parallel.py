@@ -329,7 +329,8 @@ class ParallelAnalysisBase(object):
         return np.asarray(res), np.asarray(times_io), np.asarray(
             times_compute), b_universe.elapsed
 
-    def _reduce(self, res, result_single_frame):
+    @staticmethod
+    def _reduce(res, result_single_frame):
         """ 'append' action for a time series"""
         res.append(result_single_frame)
         return res

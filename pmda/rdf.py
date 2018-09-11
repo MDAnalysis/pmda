@@ -136,7 +136,7 @@ class InterRDF(ParallelAnalysisBase):
         count = np.histogram(d, **self.rdf_settings)[0]
         volume = u.trajectory.ts.volume
 
-        return np.array([count, np.array(volume, dtype = np.float64)])
+        return np.array([count, np.array(volume, dtype=np.float64)])
 
     def _conclude(self, ):
         self.count = np.sum(self._results[:, 0])
@@ -161,7 +161,8 @@ class InterRDF(ParallelAnalysisBase):
         rdf = self.count / (density * vol * self.nf)
         self.rdf = rdf
 
-    def _reduce(self, res, result_single_frame):
+    @staticmethod
+    def _reduce(res, result_single_frame):
         """ 'add' action for an accumulator"""
         if res == []:
             # Convert res from an empty list to a numpy array

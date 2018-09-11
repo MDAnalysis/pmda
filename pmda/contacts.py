@@ -285,10 +285,6 @@ class Contacts(ParallelAnalysisBase):
             y = y[0]
         return y
 
-    def _reduce(self, res, result_single_frame):
-        res.append(result_single_frame)
-        return res
-
     def _conclude(self):
         self.timeseries = np.hstack(self._results)
 
@@ -337,4 +333,3 @@ def q1q2(atomgroup, radius=4.5):
         radius=radius,
         method=radius_cut_q,
         kwargs={'radius': radius})
-
