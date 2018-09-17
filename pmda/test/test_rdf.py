@@ -100,12 +100,12 @@ def test_reduce(sels):
     s1, s2 = sels
     rdf = InterRDF(s1, s2)
     res = []
-    single_frame = np.array([np.array([1,2]), np.array([3])])
+    single_frame = np.array([np.array([1, 2]), np.array([3])])
     res = rdf._reduce(res, single_frame)
     res = rdf._reduce(res, single_frame)
-    assert_almost_equal(res[0], np.array([2,4]))
+    assert_almost_equal(res[0], np.array([2, 4]))
     assert_almost_equal(res[1], np.array([6]))
-       
+
 
 @pytest.mark.parametrize('exclusion_block, value', [
             (None, 577),
