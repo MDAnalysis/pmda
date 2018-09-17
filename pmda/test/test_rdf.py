@@ -24,6 +24,7 @@ from __future__ import absolute_import
 import pytest
 
 import MDAnalysis as mda
+import numpy as np
 from pmda.rdf import InterRDF
 from MDAnalysis.analysis import rdf
 
@@ -90,9 +91,21 @@ def test_same_result(sels):
     s1, s2 = sels
     nrdf = rdf.InterRDF(s1, s2).run()
     prdf = InterRDF(s1, s2).run()
-    assert_almost_equal(nrdf.rdf, prdf.rdf)
     assert_almost_equal(nrdf.count, prdf.count)
+    assert_almost_equal(nrdf.rdf, prdf.rdf)
 
+
+def test_reduce(sels):
+    # should see numpy.array addtion
+    s1, s2 = sels
+    rdf = InterRDF(s1, s2)
+    res = []
+    single_frame = np.array([np.array([1,2]), np.array([3])])
+    res = rdf._reduce(res, single_frame)
+    res = rdf._reduce(res, single_frame)
+    assert_almost_equal(res[0], np.array([2,4]))
+    assert_almost_equal(res[1], np.array([6]))
+       
 
 @pytest.mark.parametrize('exclusion_block, value', [
             (None, 577),
