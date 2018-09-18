@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pmda.rdf &#8212; PMDA 0.1.1+19.ga5aa576 documentation</title>
+    <title>pmda.rdf &#8212; PMDA 0.1.1+28.g2ff3db2 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1+19.ga5aa576',
+        VERSION:     '0.1.1+28.g2ff3db2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+19.ga5aa576 documentation"
+          title="Search within PMDA 0.1.1+28.g2ff3db2 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -184,14 +184,11 @@
         <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">rdf_settings</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">volume</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">volume</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span> <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="n">volume</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">count</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)])</span>
 
     <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
-        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="c1"># Number of each selection</span>
         <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nA</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nB</span>
 
@@ -210,7 +207,19 @@
         <span class="n">density</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">box_vol</span>
 
         <span class="n">rdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &#39;add&#39; action for an accumulator&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="c1"># Convert res from an empty list to a numpy array</span>
+            <span class="c1"># which has the same shape as the single frame result</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">result_single_frame</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Add two numpy arrays</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">result_single_frame</span>
+        <span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
           </div>

@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.1.1+19.ga5aa576 documentation</title>
+    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.1.1+28.g2ff3db2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+19.ga5aa576',
+        VERSION:     '0.1.1+28.g2ff3db2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+19.ga5aa576 documentation"
+          title="Search within PMDA 0.1.1+28.g2ff3db2 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -58,6 +58,14 @@ classes.</p>
 <p>The class it is designed as a template for creating multiframe analyses.
 This class will automatically take care of setting up the trajectory
 reader for iterating in parallel.</p>
+<p>To parallelize the analysis <code class="docutils literal"><span class="pre">ParallelAnalysisBase</span></code> separates the
+trajectory into work blocks containing multiple frames. The number of
+blocks is equal to the number of available cores or dask workers. This
+minimizes the number of python processes that are started during a
+calculation. Accumulation of frames within a block happens in the
+<cite>self._reduce</cite> function. A consequence when using dask is that adding
+additional workers during a computation will not result in an reduction
+of run-time.</p>
 <p>To define a new Analysis,
 <a class="reference internal" href="#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a> needs to be
 subclassed and
@@ -65,7 +73,8 @@ subclassed and
 <code class="xref py py-meth docutils literal"><span class="pre">_conclude()</span></code> must be
 defined. It is also possible to define
 <code class="xref py py-meth docutils literal"><span class="pre">_prepare()</span></code> for
-pre-processing. See the example below.</p>
+pre-processing and <code class="xref py py-meth docutils literal"><span class="pre">_reduce()</span></code>
+for custom reduce operation on the work blocks. See the example below.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NewAnalysis</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atomgroup</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ag</span> <span class="o">=</span> <span class="n">atomgroup</span>
@@ -88,7 +97,30 @@ pre-processing. See the example below.</p>
         <span class="c1"># sensible new variable.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
         <span class="c1"># Apply normalisation and averaging to results here if wanted.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
+        <span class="c1"># NOT REQUIRED</span>
+        <span class="c1"># Called for every frame. ``res`` contains all the results</span>
+        <span class="c1"># before current time step, and ``result_single_frame`` is the</span>
+        <span class="c1"># result of self._single_frame for the current time step. The</span>
+        <span class="c1"># return value is the updated ``res``. The default is to append</span>
+        <span class="c1"># results to a python list. This approach is sufficient for</span>
+        <span class="c1"># time-series data.</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results_single_frame</span><span class="p">)</span>
+        <span class="c1"># This is not suitable for every analysis. To add results over</span>
+        <span class="c1"># multiple frames this function can be overwritten. The default</span>
+        <span class="c1"># value for ``res`` is an empty list. Here we change the type to</span>
+        <span class="c1"># the return type of `self._single_frame`. Afterwards we can</span>
+        <span class="c1"># safely use addition to accumulate the results.</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">result_single_frame</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">result_single_frame</span>
+        <span class="c1"># If you overwrite this function *always* return the updated</span>
+        <span class="c1"># ``res`` at the end.</span>
+        <span class="k">return</span> <span class="n">res</span>
 </pre></div>
 </div>
 <p>Afterwards the new analysis can be run like this.</p>

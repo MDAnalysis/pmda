@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pmda.parallel &#8212; PMDA 0.1.1+19.ga5aa576 documentation</title>
+    <title>pmda.parallel &#8212; PMDA 0.1.1+28.g2ff3db2 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1+19.ga5aa576',
+        VERSION:     '0.1.1+28.g2ff3db2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+19.ga5aa576 documentation"
+          title="Search within PMDA 0.1.1+28.g2ff3db2 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -136,6 +136,16 @@
 <span class="sd">    This class will automatically take care of setting up the trajectory</span>
 <span class="sd">    reader for iterating in parallel.</span>
 
+<span class="sd">    To parallelize the analysis ``ParallelAnalysisBase`` separates the</span>
+<span class="sd">    trajectory into work blocks containing multiple frames. The number of</span>
+<span class="sd">    blocks is equal to the number of available cores or dask workers. This</span>
+<span class="sd">    minimizes the number of python processes that are started during a</span>
+<span class="sd">    calculation. Accumulation of frames within a block happens in the</span>
+<span class="sd">    `self._reduce` function. A consequence when using dask is that adding</span>
+<span class="sd">    additional workers during a computation will not result in an reduction</span>
+<span class="sd">    of run-time.</span>
+
+
 <span class="sd">    To define a new Analysis,</span>
 <span class="sd">    :class:`~pmda.parallel.ParallelAnalysisBase` needs to be</span>
 <span class="sd">    subclassed and</span>
@@ -143,7 +153,8 @@
 <span class="sd">    :meth:`~pmda.parallel.ParallelAnalysisBase._conclude` must be</span>
 <span class="sd">    defined. It is also possible to define</span>
 <span class="sd">    :meth:`~~pmda.parallel.ParallelAnalysisBase._prepare` for</span>
-<span class="sd">    pre-processing. See the example below.</span>
+<span class="sd">    pre-processing and :meth:`~~pmda.parallel.ParallelAnalysisBase._reduce`</span>
+<span class="sd">    for custom reduce operation on the work blocks. See the example below.</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -169,7 +180,30 @@
 <span class="sd">               # sensible new variable.</span>
 <span class="sd">               self.results = np.hstack(self._results)</span>
 <span class="sd">               # Apply normalisation and averaging to results here if wanted.</span>
-<span class="sd">               self.results /= np.sum(self.results)</span>
+<span class="sd">               self.results /= np.sum(self.results</span>
+
+<span class="sd">           @staticmethod</span>
+<span class="sd">           def _reduce(res, result_single_frame):</span>
+<span class="sd">               # NOT REQUIRED</span>
+<span class="sd">               # Called for every frame. ``res`` contains all the results</span>
+<span class="sd">               # before current time step, and ``result_single_frame`` is the</span>
+<span class="sd">               # result of self._single_frame for the current time step. The</span>
+<span class="sd">               # return value is the updated ``res``. The default is to append</span>
+<span class="sd">               # results to a python list. This approach is sufficient for</span>
+<span class="sd">               # time-series data.</span>
+<span class="sd">               res.append(results_single_frame)</span>
+<span class="sd">               # This is not suitable for every analysis. To add results over</span>
+<span class="sd">               # multiple frames this function can be overwritten. The default</span>
+<span class="sd">               # value for ``res`` is an empty list. Here we change the type to</span>
+<span class="sd">               # the return type of `self._single_frame`. Afterwards we can</span>
+<span class="sd">               # safely use addition to accumulate the results.</span>
+<span class="sd">               if res == []:</span>
+<span class="sd">                   res = result_single_frame</span>
+<span class="sd">               else:</span>
+<span class="sd">                   res += result_single_frame</span>
+<span class="sd">               # If you overwrite this function *always* return the updated</span>
+<span class="sd">               # ``res`` at the end.</span>
+<span class="sd">               return res</span>
 
 <span class="sd">    Afterwards the new analysis can be run like this.</span>
 
@@ -370,12 +404,18 @@
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_io</span><span class="p">:</span>
                 <span class="n">ts</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_compute</span><span class="p">:</span>
-                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_single_frame</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">agroups</span><span class="p">))</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_frame</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">agroups</span><span class="p">))</span>
             <span class="n">times_io</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_io</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
             <span class="n">times_compute</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_compute</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times_io</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-            <span class="n">times_compute</span><span class="p">),</span> <span class="n">b_universe</span><span class="o">.</span><span class="n">elapsed</span></div>
+            <span class="n">times_compute</span><span class="p">),</span> <span class="n">b_universe</span><span class="o">.</span><span class="n">elapsed</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &#39;append&#39; action for a time series&quot;&quot;&quot;</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_single_frame</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
           </div>
