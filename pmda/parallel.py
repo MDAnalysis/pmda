@@ -87,6 +87,15 @@ class ParallelAnalysisBase(object):
     The class it is designed as a template for creating multiframe analyses.
     This class will automatically take care of setting up the trajectory
     reader for iterating in parallel.
+    
+    To parallelize the analysis ``ParallelAnalysisBase`` separates the 
+    trajectory into work blocks containing multiple frames. The number of blocks 
+    is equal to the number of available cores or dask workers. This minimizes 
+    the number of python processes that are started during a calculation. 
+    Accumulation of frames within a block happens in the `self._reduce` function.
+    A consequence when using dask is that adding additional workers during a 
+    computation will not result in an reduction of run-time. 
+
 
     To define a new Analysis,
     :class:`~pmda.parallel.ParallelAnalysisBase` needs to be
@@ -95,7 +104,8 @@ class ParallelAnalysisBase(object):
     :meth:`~pmda.parallel.ParallelAnalysisBase._conclude` must be
     defined. It is also possible to define
     :meth:`~~pmda.parallel.ParallelAnalysisBase._prepare` for
-    pre-processing. See the example below.
+    pre-processing and :meth:`~~pmda.parallel.ParallelAnalysisBase._reduce` 
+    for custom reduce operation on the work blocks. See the example below.
 
     .. code-block:: python
 
@@ -127,25 +137,23 @@ class ParallelAnalysisBase(object):
            def _reduce(res, result_single_frame):
                # NOT REQUIRED
                # Called for every frame. ``res`` contains all the results
-               # before current time step, and ``result_single_frame`` is
-               # the result of self._single_frame for the current time step.
-               # Here the single frame result is `added` to ``res``. Return
-               # the new ``res``.
-               # One can define the way to `add` result for a single frame.
-               # The default is to generate a python list, and append the
-               # result for a single frame to the list. We call this kind of
-               # ``res`` `timeseries`.
-               res.append(result_single_frame)
-               # If one wants ``self._reduce`` to sum up results for each
-               # single frame, there's one example in `rdf.py`. We call it
-               # `accumulator`.
+               # before current time step, and ``result_single_frame`` is the
+               # result of self._single_frame for the current time step. The
+               # return value is the updated ``res``. The default is to append
+               # results to a python list. This approach is sufficient for
+               # time-series data.
+               res.append(results_single_frame)
+               # This is not suitable for every analysis. To add results over
+               # multiple frames this function can be overwritten. The default
+               # value for ``res`` is an empty list. Here we change the type to
+               # the return type of `self._single_frame`. Afterwards we can
+               # safely use addition to accumulate the results.
                if res == []:
-               # Convert res from an empty list to a numpy array which has the
-               # same shape as the single frame result
                    res = result_single_frame
                else:
-               # Add two numpy arrays
                    res += result_single_frame
+               # If you overwrite this function *always* return the updated
+               # ``res`` at the end.
                return res
 
     Afterwards the new analysis can be run like this.
