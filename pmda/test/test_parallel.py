@@ -130,3 +130,13 @@ def test_attrlock():
     # Outside of lock context setting should again work
     pab.thing2 = 100
     assert pab.thing2 == 100
+
+
+def test_reduce():
+    res = []
+    u = mda.Universe(PSF, DCD)
+    ana = NoneAnalysis(u.atoms)
+    res = ana._reduce(res, [1])
+    res = ana._reduce(res, [1])
+    # Should see res become a list with 2 elements.
+    assert res == [[1], [1]]
