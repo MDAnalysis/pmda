@@ -87,14 +87,15 @@ class ParallelAnalysisBase(object):
     The class it is designed as a template for creating multiframe analyses.
     This class will automatically take care of setting up the trajectory
     reader for iterating in parallel.
-    
-    To parallelize the analysis ``ParallelAnalysisBase`` separates the 
-    trajectory into work blocks containing multiple frames. The number of blocks 
-    is equal to the number of available cores or dask workers. This minimizes 
-    the number of python processes that are started during a calculation. 
-    Accumulation of frames within a block happens in the `self._reduce` function.
-    A consequence when using dask is that adding additional workers during a 
-    computation will not result in an reduction of run-time. 
+
+    To parallelize the analysis ``ParallelAnalysisBase`` separates the
+    trajectory into work blocks containing multiple frames. The number of
+    blocks is equal to the number of available cores or dask workers. This
+    minimizes the number of python processes that are started during a
+    calculation. Accumulation of frames within a block happens in the
+    `self._reduce` function. A consequence when using dask is that adding
+    additional workers during a computation will not result in an reduction
+    of run-time.
 
 
     To define a new Analysis,
@@ -104,7 +105,7 @@ class ParallelAnalysisBase(object):
     :meth:`~pmda.parallel.ParallelAnalysisBase._conclude` must be
     defined. It is also possible to define
     :meth:`~~pmda.parallel.ParallelAnalysisBase._prepare` for
-    pre-processing and :meth:`~~pmda.parallel.ParallelAnalysisBase._reduce` 
+    pre-processing and :meth:`~~pmda.parallel.ParallelAnalysisBase._reduce`
     for custom reduce operation on the work blocks. See the example below.
 
     .. code-block:: python
