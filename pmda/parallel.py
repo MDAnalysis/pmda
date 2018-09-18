@@ -121,7 +121,32 @@ class ParallelAnalysisBase(object):
                # sensible new variable.
                self.results = np.hstack(self._results)
                # Apply normalisation and averaging to results here if wanted.
-               self.results /= np.sum(self.results)
+               self.results /= np.sum(self.results
+
+           @staticmethod
+           def _reduce(res, result_single_frame):
+               # NOT REQUIRED
+               # Called for every frame. ``res`` contains all the results
+               # before current time step, and ``result_single_frame`` is
+               # the result of self._single_frame for the current time step.
+               # Here the single frame result is `added` to ``res``. Return
+               # the new ``res``.
+               # One can define the way to `add` result for a single frame.
+               # The default is to generate a python list, and append the
+               # result for a single frame to the list. We call this kind of
+               # ``res`` `timeseries`.
+               res.append(result_single_frame)
+               # If one wants ``self._reduce`` to sum up results for each
+               # single frame, there's one example in `rdf.py`. We call it
+               # `accumulator`.
+               if res == []:
+               # Convert res from an empty list to a numpy array which has the
+               # same shape as the single frame result
+                   res = result_single_frame
+               else:
+               # Add two numpy arrays
+                   res += result_single_frame
+               return res
 
     Afterwards the new analysis can be run like this.
 
