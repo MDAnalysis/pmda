@@ -127,6 +127,7 @@ class InterRDF(ParallelAnalysisBase):
                                                 self._maxrange,
                                                 box=u.dimensions)
         # If provided exclusions, create a mask of _result which
+        # lets us take these out.
         if self._exclusion_block is not None:
             idxA = pairs[:, 0]//self._exclusion_block[0]
             idxB = pairs[:, 1]//self._exclusion_block[1]
