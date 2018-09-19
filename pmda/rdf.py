@@ -31,7 +31,6 @@ from __future__ import absolute_import, division
 import numpy as np
 
 from MDAnalysis.lib import distances
-from MDAnalysis.lib.util import blocks_of
 
 from .parallel import ParallelAnalysisBase
 
@@ -129,7 +128,8 @@ class InterRDF(ParallelAnalysisBase):
                                                 box=u.dimensions)
         # If provided exclusions, create a mask of _result which
         if self._exclusion_block is not None:
-            idxA, idxB = pairs[:, 0]//self._exclusion_block[0], pairs[:, 1]//self._exclusion_block[1]
+            idxA = pairs[:, 0]//self._exclusion_block[0]
+            idxB = pairs[:, 1]//self._exclusion_block[1]
             mask = np.where(idxA != idxB)[0]
             dist = dist[mask]
         count = np.histogram(dist, **self.rdf_settings)[0]
