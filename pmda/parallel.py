@@ -86,7 +86,8 @@ class Timing(object):
         return self._conclude
 
 
-HelperResult = namedtuple("HelperResult", "result, timing_io, timing_compute, timing_universe")
+HelperResult = namedtuple("HelperResult",
+                          "result, timing_io, timing_compute, timing_universe")
 
 
 class ParallelAnalysisBase(object):
