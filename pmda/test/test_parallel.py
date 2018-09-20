@@ -14,7 +14,7 @@ import MDAnalysis as mda
 from MDAnalysisTests.datafiles import DCD, PSF
 import joblib
 
-from dask import distributed, multiprocessing
+from dask import distributed
 
 from pmda import parallel
 

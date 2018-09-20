@@ -19,7 +19,7 @@ from contextlib import contextmanager
 from six.moves import range
 
 import MDAnalysis as mda
-from dask import distributed, multiprocessing
+from dask import distributed
 from dask.delayed import delayed
 from joblib import cpu_count
 import numpy as np
