@@ -15,7 +15,8 @@ classes.
 
 """
 from __future__ import absolute_import, division
-import warnings
+from six.moves import range
+from six.moves import cPickle as pickle
 
 import MDAnalysis as mda
 from collections import namedtuple
@@ -26,6 +27,7 @@ import dask
 import dask.distributed
 from joblib import cpu_count
 import numpy as np
+import warnings
 
 from .util import timeit, make_balanced_slices
 
@@ -193,7 +195,7 @@ class ParallelAnalysisBase(object):
         self._trajectory = universe.trajectory
         self._top = universe.filename
         self._traj = universe.trajectory.filename
-        self._indices = [ag.indices for ag in atomgroups]
+        self._pickles = [pickle.dump(ag) for ag in atomgroups]
 
     @contextmanager
     def readonly_attributes(self):
@@ -354,7 +356,7 @@ class ParallelAnalysisBase(object):
                     task = delayed(
                         self._dask_helper, pure=False)(
                             bslice,
-                            self._indices,
+                            self._pickles,
                             self._top,
                             self._traj, )
                     blocks.append(task)
@@ -374,11 +376,11 @@ class ParallelAnalysisBase(object):
             np.array([el.timing_universe for el in res]), time_prepare, conclude.elapsed)
         return self
 
-    def _dask_helper(self, bslice, indices, top, traj):
+    def _dask_helper(self, bslice, pickles, top, traj):
         """helper function to actually setup dask graph"""
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
-            agroups = [u.atoms[idx] for idx in indices]
+            agroups = [pickle.loads(idx) for idx in pickles]
 
         res = []
         times_io = []
