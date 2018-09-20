@@ -254,7 +254,6 @@ enable=abstract-class-instantiated,
        using-cmp-argument,
        using-constant-test,
        wildcard-import,
-       wrong-import-order,
        xrange-builtin,
        yield-inside-async-function,
        yield-outside-function,
@@ -268,8 +267,9 @@ enable=abstract-class-instantiated,
 # 4. Remove from this list.
        # attribute-defined-outside-init,
        # import-error,
-       # invalid-name,
-       # pointless-statement,
+       # invalid-name, # to many false positives
+       # pointless-statement, # u.trajectory[2] is a false positive here
+       # wrong-import-order, # doesn't except six imports at the file start
 
 
 [REPORTS]
