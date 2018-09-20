@@ -100,7 +100,7 @@ class AnalysisFromFunction(ParallelAnalysisBase):
         return self.function(*args, **self.kwargs)
 
     def _conclude(self):
-        self.results = np.hstack(self._results)
+        self.results = np.vstack(self._results)
 
 
 def analysis_class(function):
