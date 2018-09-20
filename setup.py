@@ -49,7 +49,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'MDAnalysis>=0.18',
-        'dask',
+        'dask>=0.18',
         'six',
         'joblib',  # cpu_count func currently
     ],
