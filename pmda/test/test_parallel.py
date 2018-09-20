@@ -95,7 +95,7 @@ def scheduler(request, client):
     if request.param == 'distributed':
         return client
     else:
-        return multiprocessing
+        return request.param
 
 
 def test_scheduler(analysis, scheduler):
