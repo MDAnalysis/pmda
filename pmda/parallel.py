@@ -195,6 +195,7 @@ class ParallelAnalysisBase(object):
         self._trajectory = universe.trajectory
         self._top = universe.filename
         self._traj = universe.trajectory.filename
+        self._anchor = universe.anchor_name
         self._pickles = [pickle.dumps(ag) for ag in atomgroups]
 
     @contextmanager
@@ -358,7 +359,8 @@ class ParallelAnalysisBase(object):
                             bslice,
                             self._pickles,
                             self._top,
-                            self._traj, )
+                            self._traj,
+                            self._anchor)
                     blocks.append(task)
                 blocks = delayed(blocks)
                 res = blocks.compute(**scheduler_kwargs)
@@ -376,10 +378,11 @@ class ParallelAnalysisBase(object):
             np.array([el.timing_universe for el in res]), time_prepare, conclude.elapsed)
         return self
 
-    def _dask_helper(self, bslice, pickles, top, traj):
+    def _dask_helper(self, bslice, pickles, top, traj, anchor):
         """helper function to actually setup dask graph"""
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
+            u.anchor_name = anchor
             agroups = [pickle.loads(idx) for idx in pickles]
 
         res = []
