@@ -15,12 +15,12 @@ classes.
 
 """
 from __future__ import absolute_import, division
-from contextlib import contextmanager
 import warnings
 
-from six.moves import range
-
 import MDAnalysis as mda
+from collections import namedtuple
+from contextlib import contextmanager
+from dask import distributed, multiprocessing
 from dask.delayed import delayed
 import dask
 import dask.distributed
@@ -82,6 +82,9 @@ class Timing(object):
     def conclude(self):
         """time to conclude"""
         return self._conclude
+
+
+HelperResult = namedtuple("HelperResult", "result, timing_io, timing_compute, timing_universe")
 
 
 class ParallelAnalysisBase(object):
@@ -366,9 +369,9 @@ class ParallelAnalysisBase(object):
                 self._conclude()
 
         self.timing = Timing(
-            np.hstack([el[1] for el in res]),
-            np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
+            np.hstack([el.timing_io for el in res]),
+            np.hstack([el.timing_compute for el in res]), total.elapsed,
+            np.array([el.timing_universe for el in res]), time_prepare, conclude.elapsed)
         return self
 
     def _dask_helper(self, bslice, indices, top, traj):
@@ -392,8 +395,8 @@ class ParallelAnalysisBase(object):
             times_io.append(b_io.elapsed)
             times_compute.append(b_compute.elapsed)
 
-        return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed
+        return HelperResult(np.asarray(res), np.asarray(times_io),
+                            np.asarray(times_compute), b_universe.elapsed)
 
     @staticmethod
     def _reduce(res, result_single_frame):
