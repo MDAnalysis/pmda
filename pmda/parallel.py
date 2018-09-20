@@ -195,7 +195,7 @@ class ParallelAnalysisBase(object):
         self._trajectory = universe.trajectory
         self._top = universe.filename
         self._traj = universe.trajectory.filename
-        self._pickles = [pickle.dump(ag) for ag in atomgroups]
+        self._pickles = [pickle.dumps(ag) for ag in atomgroups]
 
     @contextmanager
     def readonly_attributes(self):
