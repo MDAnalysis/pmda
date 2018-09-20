@@ -164,7 +164,7 @@ class InterRDF(ParallelAnalysisBase):
     @staticmethod
     def _reduce(res, result_single_frame):
         """ 'add' action for an accumulator"""
-        if res == []:
+        if isinstance(res, list) and len(res) == 0:
             # Convert res from an empty list to a numpy array
             # which has the same shape as the single frame result
             res = result_single_frame
