@@ -78,26 +78,6 @@ def test_sub_frames(analysis, n_jobs):
     np.testing.assert_almost_equal(analysis.res, [10, 20, 30, 40])
 
 
-@pytest.fixture(scope="session")
-def client(tmpdir_factory):
-    with tmpdir_factory.mktemp("dask_cluster").as_cwd():
-        lc = distributed.LocalCluster(n_workers=2, processes=True)
-        client = distributed.Client(lc)
-
-        yield client
-
-        client.close()
-        lc.close()
-
-
-@pytest.fixture(scope='session', params=('distributed', 'multiprocessing'))
-def scheduler(request, client):
-    if request.param == 'distributed':
-        return client
-    else:
-        return multiprocessing
-
-
 def test_scheduler(analysis, scheduler):
     analysis.run(scheduler=scheduler)
 
@@ -130,3 +110,13 @@ def test_attrlock():
     # Outside of lock context setting should again work
     pab.thing2 = 100
     assert pab.thing2 == 100
+
+
+def test_reduce():
+    res = []
+    u = mda.Universe(PSF, DCD)
+    ana = NoneAnalysis(u.atoms)
+    res = ana._reduce(res, [1])
+    res = ana._reduce(res, [1])
+    # Should see res become a list with 2 elements.
+    assert res == [[1], [1]]
