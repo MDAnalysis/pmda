@@ -8,32 +8,33 @@
 # Released under the GNU Public Licence, v2 or any higher version
 from __future__ import absolute_import, division
 
-import pytest
 
 import numpy as np
-
-from numpy.testing import assert_equal
-
 import MDAnalysis as mda
-from pmda import custom
-
 from MDAnalysisTests.datafiles import PSF, DCD
 from MDAnalysisTests.util import no_deprecated_call
+import pytest
+from numpy.testing import assert_equal
+
+from pmda import custom
 
 
 def custom_function(mobile):
     return mobile.center_of_geometry()
 
 
-def test_AnalysisFromFunction():
+def test_AnalysisFromFunction(scheduler):
     u = mda.Universe(PSF, DCD)
     step = 2
-    ana1 = custom.AnalysisFromFunction(custom_function, u,
-                                       u.atoms).run(step=step)
-    ana2 = custom.AnalysisFromFunction(custom_function, u,
-                                       u.atoms).run(step=step)
-    ana3 = custom.AnalysisFromFunction(custom_function, u,
-                                       u.atoms).run(step=step)
+    ana1 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
+        step=step, scheduler=scheduler
+    )
+    ana2 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
+        step=step, scheduler=scheduler
+    )
+    ana3 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
+        step=step, scheduler=scheduler
+    )
 
     results = []
     for ts in u.trajectory[::step]:
@@ -53,8 +54,9 @@ def test_AnalysisFromFunction_otherAgs():
     u2 = mda.Universe(PSF, DCD)
     u3 = mda.Universe(PSF, DCD)
     step = 2
-    ana = custom.AnalysisFromFunction(custom_function_2, u, u.atoms, u2.atoms,
-                                      u3.atoms).run(step=step)
+    ana = custom.AnalysisFromFunction(
+        custom_function_2, u, u.atoms, u2.atoms, u3.atoms
+    ).run(step=step)
 
     results = []
     for ts in u.trajectory[::step]:
