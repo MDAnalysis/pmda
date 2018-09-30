@@ -24,9 +24,14 @@ from __future__ import absolute_import
 import numpy as np
 import dask.bag as db
 import networkx as nx
-from sklearn.neighbors import BallTree
 
-from .parallel import ParallelAnalysisBase
+import MDAnalysis as mda
+from sklearn.neighbors import BallTree
+from dask import distributed, multiprocessing
+from joblib import cpu_count
+
+from .parallel import ParallelAnalysisBase, Timing
+from .util import timeit
 
 
 class LeafletFinder(ParallelAnalysisBase):
@@ -48,6 +53,29 @@ class LeafletFinder(ParallelAnalysisBase):
     version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.
 
     """
+
+    def __init__(self, universe, atomgroup):
+        """Parameters
+        ----------
+        Universe : :class:`~MDAnalysis.core.groups.Universe`
+            a :class:`MDAnalysis.core.groups.Universe` (the
+            `atomgroups` must belong to this Universe)
+
+        atomgroups : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
+            atomgroups that are iterated in parallel
+
+        Attributes
+        ----------
+        _results : list
+            The raw data from each process are stored as a list of
+            lists, with each sublist containing the return values from
+            :meth:`pmda.parallel.ParallelAnalysisBase._single_frame`.
+
+        """
+        self._trajectory = universe.trajectory
+        self._top = universe.filename
+        self._traj = universe.trajectory.filename
+        self._atomgroup = atomgroup
 
     def _find_parcc(self,data,cutoff=15.0):
         window,index = data[0]
@@ -93,7 +121,7 @@ class LeafletFinder(ParallelAnalysisBase):
         return comp
 
 
-    def _single_frame(self, atomgroups,scheduler_kwargs,n_blocks,cutoff=15.0):
+    def _single_frame(self, scheduler_kwargs,n_blocks,cutoff=15.0):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
@@ -125,7 +153,7 @@ class LeafletFinder(ParallelAnalysisBase):
         """
 
         # Get positions of the atoms in the atomgroup and find their number.
-        atoms = atomgroups.positions
+        atoms = self._atomgroup.positions
         matrix_size = atoms.shape[0]
         arraged_coord = list()
         part_size = matrix_size/n_blocks
@@ -137,7 +165,7 @@ class LeafletFinder(ParallelAnalysisBase):
         # Distribute the data over the available cores, apply the map function
         # and execute.
         parAtoms = db.from_sequence(arraged_coord,npartitions=len(arraged_coord))
-        parAtomsMap = parAtoms.map_partitions(find_parcc)
+        parAtomsMap = parAtoms.map_partitions(self._find_parcc)
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
         # Gather the results and start the reduction. TODO: think if it can go to
@@ -209,7 +237,6 @@ class LeafletFinder(ParallelAnalysisBase):
 
         
         universe = mda.Universe(self._top, self._traj)
-        atomgroup = u.atoms[self._indices]
         scheduler_kwargs = {'get': scheduler.get}
         if scheduler == multiprocessing:
             scheduler_kwargs['num_workers'] = n_jobs
@@ -221,19 +248,18 @@ class LeafletFinder(ParallelAnalysisBase):
             frames = []
             with self.readonly_attributes():
                 for frame in range(start, stop, step):
-                    leaflet = self._single_frame(atomgroups=atomgroup,
-                                                 scheduler_kwargs=scheduler_kwargs,
+                    leaflet = self._single_frame(scheduler_kwargs=scheduler_kwargs,
                                                  n_blocks=n_blocks,
                                                  cutoff=cutoff)
                     frames.append(leaflet[0:1])
             self._results = frames
             with timeit() as conclude:
                 self._conclude()
-
-        self.timing = Timing(
-            np.hstack([el[1] for el in res]),
-            np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
+        # TODO: Fix timinns
+        #self.timing = Timing(
+        #    np.hstack([el[1] for el in res]),
+        #    np.hstack([el[2] for el in res]), total.elapsed,
+        #    np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
     def _conclude(self):
