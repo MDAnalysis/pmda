@@ -48,8 +48,6 @@ class LeafletFinder(ParallelAnalysisBase):
     version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.
 
     """
-    def _prepare(self):
-
 
     def _find_parcc(self,data,cutoff=15.0):
         window,index = data[0]
@@ -95,7 +93,7 @@ class LeafletFinder(ParallelAnalysisBase):
         return comp
 
 
-    def _single_frame(self, ts, atomgroups,scheduler_kwargs,cutoff=15.0):
+    def _single_frame(self, atomgroups,scheduler_kwargs,n_blocks,cutoff=15.0):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
@@ -106,12 +104,13 @@ class LeafletFinder(ParallelAnalysisBase):
 
         Parameters
         ----------
-        ts : :class:`~MDAnalysis.coordinates.base.Timestep`
-            The current coordinate frame (time step) in the
-            trajectory.
         atomgroups : tuple
             Tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
             instances that are updated to the current frame.
+        scheduler_kwargs : Dask Scheduler parameters.
+        cutoff : float (optional)
+            head group-defining atoms within a distance of `cutoff`
+            Angstroms are deemed to be in the same leaflet [15.0]
 
         Returns
         -------
@@ -125,20 +124,26 @@ class LeafletFinder(ParallelAnalysisBase):
 
         """
 
-        start_time = time()
-        atoms = np.load(args.filename)
-        matrix_size = ts.shape[0]
+        # Get positions of the atoms in the atomgroup and find their number.
+        atoms = atomgroups.positions
+        matrix_size = atoms.shape[0]
         arraged_coord = list()
+        part_size = matrix_size/n_blocks
+        # Partition the data based on a 2-dimensional partitioning
         for i in range(1,matrix_size+1,part_size):
             for j in range(1,matrix_size+1,part_size):
                 arraged_coord.append(([atoms[i-1:i-1+part_size],atoms[j-1:j-1+part_size]],[i,j]))
 
+        # Distribute the data over the available cores, apply the map function
+        # and execute.
         parAtoms = db.from_sequence(arraged_coord,npartitions=len(arraged_coord))
         parAtomsMap = parAtoms.map_partitions(find_parcc)
-        Components = parAtomsMap.compute(get=client.get)
+        Components = parAtomsMap.compute(**scheduler_kwargs)
 
-        edge_list_time = time()
+        # Gather the results and start the reduction. TODO: think if it can go to
+        # the private _reduce method of the based class.
         result = list(Components)
+        # Create the overall connected components of the graph
         while len(result)!=0:
             item1 = result[0]
             result.pop(0)
@@ -151,7 +156,7 @@ class LeafletFinder(ParallelAnalysisBase):
             [Components.pop(j) for j in ind]
             Components.append(item1)
 
-        connComp = time()
+        # Change output for and return.
         indices = [np.sort(list(g)) for g in Components]
         return indices
 
@@ -162,7 +167,8 @@ class LeafletFinder(ParallelAnalysisBase):
             step=None,
             scheduler=None,
             n_jobs=1,
-            n_blocks=None):
+            n_blocks=None,
+            cutoff=15.0):
         """Perform the calculation
 
         Parameters
@@ -201,6 +207,9 @@ class LeafletFinder(ParallelAnalysisBase):
                     "Couldn't guess ideal number of blocks from scheduler."
                     "Please provide `n_blocks` in call to method.")
 
+        
+        universe = mda.Universe(self._top, self._traj)
+        atomgroup = u.atoms[self._indices]
         scheduler_kwargs = {'get': scheduler.get}
         if scheduler == multiprocessing:
             scheduler_kwargs['num_workers'] = n_jobs
@@ -208,30 +217,16 @@ class LeafletFinder(ParallelAnalysisBase):
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
-        
         with timeit() as total:
-            with timeit() as prepare:
-                self._prepare()
-
-        with timeit() as total:
-            with timeit() as prepare:
-                self._prepare()
-            time_prepare = prepare.elapsed
-            blocks = []
+            frames = []
             with self.readonly_attributes():
-                for b in range(n_blocks):
-                    task = delayed(
-                        self._dask_helper, pure=False)(
-                            b * bsize * step + start,
-                            min(stop, (b + 1) * bsize * step + start),
-                            step,
-                            self._indices,
-                            self._top,
-                            self._traj, )
-                    blocks.append(task)
-                blocks = delayed(blocks)
-                res = blocks.compute(**scheduler_kwargs)
-            self._results = np.asarray([el[0] for el in res])
+                for frame in range(start, stop, step):
+                    leaflet = self._single_frame(atomgroups=atomgroup,
+                                                 scheduler_kwargs=scheduler_kwargs,
+                                                 n_blocks=n_blocks,
+                                                 cutoff=cutoff)
+                    frames.append(leaflet[0:1])
+            self._results = frames
             with timeit() as conclude:
                 self._conclude()
 
@@ -240,3 +235,6 @@ class LeafletFinder(ParallelAnalysisBase):
             np.hstack([el[2] for el in res]), total.elapsed,
             np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
+
+    def _conclude(self):
+        self.results = np.hstack(self._results)
