@@ -8,7 +8,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 """
 LeafletFInder Analysis tool --- :mod:`pmda.leaflet`
-=======================================
+==========================================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.leaflet`.
@@ -24,9 +24,9 @@ from __future__ import absolute_import
 import numpy as np
 import dask.bag as db
 import networkx as nx
+from scipy.spatial import cKDTree
 
 import MDAnalysis as mda
-from sklearn.neighbors import BallTree
 from dask import distributed, multiprocessing
 from joblib import cpu_count
 
@@ -39,13 +39,23 @@ class LeafletFinder(ParallelAnalysisBase):
 
     Identify atoms in the same leaflet of a lipid bilayer.
     This class implements and parallelizes the *LeafletFinder* algorithm [Michaud-Agrawal2011]_.
+    The parallelization is done based on: 
+    
+    "Task-parallel Analysis of Molecular Dynamics Trajectories",
+    Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan, George Chantzialexiou, 
+    Thomas E. Cheatham, Oliver Beckstein, Geoffrey C. Fox and Shantenu Jha
+    47th International Conference on Parallel Processing (ICPP 2018)
 
     Attributes
     ----------
 
-
     Parameters
     ----------
+        Universe : :class:`~MDAnalysis.core.groups.Universe`
+            a :class:`MDAnalysis.core.groups.Universe` (the
+            `atomgroup` must belong to this Universe)
+        atomgroup : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
+            atomgroups that are iterated in parallel
 
     Note
     ----
@@ -89,8 +99,8 @@ class LeafletFinder(ParallelAnalysisBase):
         else:
             train = np.vstack([window[0],window[1]])
             test  = np.vstack([window[0],window[1]])
-        tree = BallTree(train, leaf_size=40)
-        edges = tree.query_radius(test, cutoff)
+        tree = cKDTree(train, leaf_size=40)
+        edges = tree.query_ball_point(test, cutoff)
         edge_list=[list(zip(np.repeat(idx, len(dest_list)), \
                 dest_list)) for idx, dest_list in enumerate(edges)]
 
