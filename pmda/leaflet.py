@@ -38,12 +38,14 @@ class LeafletFinder(ParallelAnalysisBase):
     """Parallel Leaflet Finder analysis.
 
     Identify atoms in the same leaflet of a lipid bilayer.
-    This class implements and parallelizes the *LeafletFinder* algorithm [Michaud-Agrawal2011]_.
-    The parallelization is done based on: 
-    
+    This class implements and parallelizes the *LeafletFinder* algorithm
+    [Michaud-Agrawal2011]_.
+    The parallelization is done based on:
+
     "Task-parallel Analysis of Molecular Dynamics Trajectories",
-    Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan, George Chantzialexiou, 
-    Thomas E. Cheatham, Oliver Beckstein, Geoffrey C. Fox and Shantenu Jha
+    Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan, George
+    Chantzialexiou, Thomas E. Cheatham, Oliver Beckstein, Geoffrey C. Fox and
+    Shantenu Jha
     47th International Conference on Parallel Processing (ICPP 2018)
 
     Attributes
@@ -69,26 +71,23 @@ class LeafletFinder(ParallelAnalysisBase):
         ----------
         Universe : :class:`~MDAnalysis.core.groups.Universe`
             a :class:`MDAnalysis.core.groups.Universe` (the
-            `atomgroups` must belong to this Universe)
+            `atomgroup` must belong to this Universe)
 
-        atomgroups : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            atomgroups that are iterated in parallel
+        atomgroup : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
+            atomgroup that are iterated in parallel
 
         Attributes
         ----------
-        _results : list
-            The raw data from each process are stored as a list of
-            lists, with each sublist containing the return values from
-            :meth:`pmda.parallel.ParallelAnalysisBase._single_frame`.
 
         """
+        #super(ParallelAnalysisBase, self).__init__()
         self._trajectory = universe.trajectory
         self._top = universe.filename
         self._traj = universe.trajectory.filename
         self._atomgroup = atomgroup
 
-    def _find_parcc(self,data,cutoff=15.0):
-        window,index = data[0]
+    def _find_parcc(self, data, cutoff=15.0):
+        window, index = data[0]
         num = window[0].shape[0]
         i_index = index[0]
         j_index = index[1]
@@ -97,15 +96,15 @@ class LeafletFinder(ParallelAnalysisBase):
             train = window[0]
             test = window[1]
         else:
-            train = np.vstack([window[0],window[1]])
-            test  = np.vstack([window[0],window[1]])
-        tree = cKDTree(train, leaf_size=40)
+            train = np.vstack([window[0], window[1]])
+            test = np.vstack([window[0], window[1]])
+        tree = cKDTree(train, leafsize=40)
         edges = tree.query_ball_point(test, cutoff)
-        edge_list=[list(zip(np.repeat(idx, len(dest_list)), \
-                dest_list)) for idx, dest_list in enumerate(edges)]
+        edge_list = [list(zip(np.repeat(idx, len(dest_list)), dest_list))
+                     for idx, dest_list in enumerate(edges)]
 
-        edge_list_flat = np.array([list(item) \
-                for sublist in edge_list for item in sublist])
+        edge_list_flat = np.array([list(item) for sublist in edge_list for
+                                   item in sublist])
         if i_index == j_index:
             res = edge_list_flat.transpose()
             res[0] = res[0] + i_index - 1
@@ -113,15 +112,21 @@ class LeafletFinder(ParallelAnalysisBase):
         else:
             removed_elements = list()
             for i in range(edge_list_flat.shape[0]):
-                if (edge_list_flat[i,0]>=0 and edge_list_flat[i,0]<=num-1) and (edge_list_flat[i,1]>=0 and 
-                    edge_list_flat[i,1]<=num-1) or\
-               (edge_list_flat[i,0]>=num and edge_list_flat[i,0]<=2*num-1) and (edge_list_flat[i,1]>=num and edge_list_flat[i,1]<=2*num-1):
-                    removed_elements.append(i)
-            res = np.delete(edge_list_flat,removed_elements,axis=0).transpose()
+                if (edge_list_flat[i, 0] >= 0 and
+                    edge_list_flat[i, 0] <= num - 1) and \
+                    (edge_list_flat[i, 1] >= 0 and
+                     edge_list_flat[i, 1] <= num - 1) or \
+                    (edge_list_flat[i, 0] >= num and
+                     edge_list_flat[i, 0] <= 2 * num - 1) and \
+                    (edge_list_flat[i, 1] >= num and
+                     edge_list_flat[i, 1] <= 2 * num - 1):
+                        removed_elements.append(i)
+            res = np.delete(edge_list_flat, removed_elements,
+                            axis=0).transpose()
             res[0] = res[0] + i_index - 1
-            res[1] = res[1] -num + j_index - 1
+            res[1] = res[1] - num + j_index - 1
 
-        edges=[(res[0,k],res[1,k]) for k in range(0,res.shape[1])]
+        edges = [(res[0, k], res[1, k]) for k in range(0, res.shape[1])]
         graph.add_edges_from(edges)
 
         # partial connected components
@@ -130,8 +135,7 @@ class LeafletFinder(ParallelAnalysisBase):
         comp = [g for g in subgraphs]
         return comp
 
-
-    def _single_frame(self, scheduler_kwargs,n_blocks,cutoff=15.0):
+    def _single_frame(self, scheduler_kwargs, n_blocks, cutoff=15.0):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
@@ -166,29 +170,32 @@ class LeafletFinder(ParallelAnalysisBase):
         atoms = self._atomgroup.positions
         matrix_size = atoms.shape[0]
         arraged_coord = list()
-        part_size = matrix_size/n_blocks
+        part_size = int(matrix_size / n_blocks)
         # Partition the data based on a 2-dimensional partitioning
-        for i in range(1,matrix_size+1,part_size):
-            for j in range(1,matrix_size+1,part_size):
-                arraged_coord.append(([atoms[i-1:i-1+part_size],atoms[j-1:j-1+part_size]],[i,j]))
+        for i in range(1, matrix_size + 1, part_size):
+            for j in range(1, matrix_size + 1, part_size):
+                arraged_coord.append(([atoms[i - 1:i - 1 + part_size],
+                                       atoms[j - 1:j - 1 + part_size]],
+                                      [i, j]))
 
         # Distribute the data over the available cores, apply the map function
         # and execute.
-        parAtoms = db.from_sequence(arraged_coord,npartitions=len(arraged_coord))
+        parAtoms = db.from_sequence(arraged_coord,
+                                    npartitions=len(arraged_coord))
         parAtomsMap = parAtoms.map_partitions(self._find_parcc)
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
-        # Gather the results and start the reduction. TODO: think if it can go to
-        # the private _reduce method of the based class.
+        # Gather the results and start the reduction. TODO: think if it can go
+        # to the private _reduce method of the based class.
         result = list(Components)
         # Create the overall connected components of the graph
-        while len(result)!=0:
+        while len(result) != 0:
             item1 = result[0]
             result.pop(0)
             ind = []
             for i, item2 in enumerate(Components):
                 if item1.intersection(item2):
-                    item1=item1.union(item2)
+                    item1 = item1.union(item2)
                     ind.append(i)
             ind.reverse()
             [Components.pop(j) for j in ind]
@@ -197,7 +204,6 @@ class LeafletFinder(ParallelAnalysisBase):
         # Change output for and return.
         indices = [np.sort(list(g)) for g in Components]
         return indices
-
 
     def run(self,
             start=None,
@@ -225,8 +231,9 @@ class LeafletFinder(ParallelAnalysisBase):
             This argument will be ignored when the distributed scheduler is
             used
         n_blocks : int, optional
-            number of partitions to divide trajectory frame into. If ``None`` set equal
-            to sqrt(n_jobs) or number of available workers in scheduler.
+            number of partitions to divide trajectory frame into. If ``None``
+            set equal to sqrt(n_jobs) or number of available workers in
+            scheduler.
 
         """
         if scheduler is None:
@@ -245,12 +252,11 @@ class LeafletFinder(ParallelAnalysisBase):
                     "Couldn't guess ideal number of blocks from scheduler."
                     "Please provide `n_blocks` in call to method.")
 
-        
         universe = mda.Universe(self._top, self._traj)
         scheduler_kwargs = {'get': scheduler.get}
         if scheduler == multiprocessing:
             scheduler_kwargs['num_workers'] = n_jobs
-
+        
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
@@ -261,16 +267,16 @@ class LeafletFinder(ParallelAnalysisBase):
                     leaflet = self._single_frame(scheduler_kwargs=scheduler_kwargs,
                                                  n_blocks=n_blocks,
                                                  cutoff=cutoff)
-                    frames.append(leaflet[0:1])
+                    frames.append(leaflet[0:2])
             self._results = frames
             with timeit() as conclude:
                 self._conclude()
         # TODO: Fix timinns
-        #self.timing = Timing(
+        # self.timing = Timing(
         #    np.hstack([el[1] for el in res]),
         #    np.hstack([el[2] for el in res]), total.elapsed,
         #    np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
     def _conclude(self):
-        self.results = np.hstack(self._results)
+        self.results = [self._atomgroup[i] for i in self._results]
