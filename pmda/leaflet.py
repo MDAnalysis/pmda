@@ -80,7 +80,6 @@ class LeafletFinder(ParallelAnalysisBase):
         ----------
 
         """
-        #super(ParallelAnalysisBase, self).__init__()
         self._trajectory = universe.trajectory
         self._top = universe.filename
         self._traj = universe.trajectory.filename
@@ -169,6 +168,7 @@ class LeafletFinder(ParallelAnalysisBase):
         # Get positions of the atoms in the atomgroup and find their number.
         atoms = self._atomgroup.positions
         matrix_size = atoms.shape[0]
+        print(matrix_size)
         arraged_coord = list()
         part_size = int(matrix_size / n_blocks)
         # Partition the data based on a 2-dimensional partitioning
@@ -264,9 +264,10 @@ class LeafletFinder(ParallelAnalysisBase):
             frames = []
             with self.readonly_attributes():
                 for frame in range(start, stop, step):
-                    leaflet = self._single_frame(scheduler_kwargs=scheduler_kwargs,
-                                                 n_blocks=n_blocks,
-                                                 cutoff=cutoff)
+                    leaflet = self. \
+                               _single_frame(scheduler_kwargs=scheduler_kwargs,
+                                             n_blocks=n_blocks,
+                                             cutoff=cutoff)
                     frames.append(leaflet[0:2])
             self._results = frames
             with timeit() as conclude:
