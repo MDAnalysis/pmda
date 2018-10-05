@@ -84,6 +84,7 @@ class LeafletFinder(ParallelAnalysisBase):
         self._top = universe.filename
         self._traj = universe.trajectory.filename
         self._atomgroup = atomgroup
+        self._results = list()
 
     def _find_parcc(self, data, cutoff=15.0):
         window, index = data[0]
@@ -145,9 +146,6 @@ class LeafletFinder(ParallelAnalysisBase):
 
         Parameters
         ----------
-        atomgroups : tuple
-            Tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            instances that are updated to the current frame.
         scheduler_kwargs : Dask Scheduler parameters.
         cutoff : float (optional)
             head group-defining atoms within a distance of `cutoff`
@@ -168,7 +166,6 @@ class LeafletFinder(ParallelAnalysisBase):
         # Get positions of the atoms in the atomgroup and find their number.
         atoms = self._atomgroup.positions
         matrix_size = atoms.shape[0]
-        print(matrix_size)
         arraged_coord = list()
         part_size = int(matrix_size / n_blocks)
         # Partition the data based on a 2-dimensional partitioning
@@ -261,15 +258,16 @@ class LeafletFinder(ParallelAnalysisBase):
             start, stop, step)
         n_frames = len(range(start, stop, step))
         with timeit() as total:
-            frames = []
             with self.readonly_attributes():
+                frames = list()
                 for frame in range(start, stop, step):
-                    leaflet = self. \
+                    components = self. \
                                _single_frame(scheduler_kwargs=scheduler_kwargs,
                                              n_blocks=n_blocks,
                                              cutoff=cutoff)
-                    frames.append(leaflet[0:2])
-            self._results = frames
+                    leaflet1 = self._atomgroup[components[0]]
+                    leaflet2 = self._atomgroup[components[1]]
+                    self._results.append([leaflet1,leaflet2])
             with timeit() as conclude:
                 self._conclude()
         # TODO: Fix timinns
@@ -280,4 +278,4 @@ class LeafletFinder(ParallelAnalysisBase):
         return self
 
     def _conclude(self):
-        self.results = [self._atomgroup[i] for i in self._results]
+        self.results = self._results
