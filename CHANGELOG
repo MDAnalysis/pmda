@@ -21,6 +21,7 @@ Enhancements
   * add add timing for _conclude and _prepare (Issue #49)
   * add parallel particle-particle RDF calculation module pmda.rdf (Issue #41)
   * add readonly_attributes context manager to ParallelAnalysisBase
+  * add parallel implementation of Leaflet Finder (Issue #47)
 
 
 06/07/18 orbeckst
