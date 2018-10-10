@@ -40,13 +40,8 @@ class LeafletFinder(ParallelAnalysisBase):
     Identify atoms in the same leaflet of a lipid bilayer.
     This class implements and parallelizes the *LeafletFinder* algorithm
     [Michaud-Agrawal2011]_.
-    The parallelization is done based on:
 
-    "Task-parallel Analysis of Molecular Dynamics Trajectories",
-    Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan, George
-    Chantzialexiou, Thomas E. Cheatham, Oliver Beckstein, Geoffrey C. Fox and
-    Shantenu Jha
-    47th International Conference on Parallel Processing (ICPP 2018)
+    The parallelization is done based on [Paraskevakos2018]_.
 
     Attributes
     ----------
@@ -63,6 +58,10 @@ class LeafletFinder(ParallelAnalysisBase):
     ----
     At the moment, this class has far fewer features than the serial
     version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.
+
+    This version offers Leaflet Finder algorithm 4 ("Tree-based Nearest 
+    Neighbor and Parallel-Connected Com- ponents (Tree-Search)") in 
+    [Paraskevakos2018]_.
 
     """
 
@@ -120,7 +119,7 @@ class LeafletFinder(ParallelAnalysisBase):
                      edge_list_flat[i, 0] <= 2 * num - 1) and \
                     (edge_list_flat[i, 1] >= num and
                      edge_list_flat[i, 1] <= 2 * num - 1):
-                        removed_elements.append(i)
+                    removed_elements.append(i)
             res = np.delete(edge_list_flat, removed_elements,
                             axis=0).transpose()
             res[0] = res[0] + i_index - 1
@@ -179,7 +178,7 @@ class LeafletFinder(ParallelAnalysisBase):
         # and execute.
         parAtoms = db.from_sequence(arraged_coord,
                                     npartitions=len(arraged_coord))
-        parAtomsMap = parAtoms.map_partitions(self._find_parcc)
+        parAtomsMap = parAtoms.map_partitions(self._find_parcc,cutoff=cutoff)
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
         # Gather the results and start the reduction. TODO: think if it can go
@@ -253,28 +252,28 @@ class LeafletFinder(ParallelAnalysisBase):
         scheduler_kwargs = {'get': scheduler.get}
         if scheduler == multiprocessing:
             scheduler_kwargs['num_workers'] = n_jobs
-        
+
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
         with timeit() as total:
             with self.readonly_attributes():
                 frames = list()
+                timings = list()
                 for frame in range(start, stop, step):
-                    components = self. \
+                    with timeit() as b_compute:
+                        components = self. \
                                _single_frame(scheduler_kwargs=scheduler_kwargs,
                                              n_blocks=n_blocks,
                                              cutoff=cutoff)
                     leaflet1 = self._atomgroup[components[0]]
                     leaflet2 = self._atomgroup[components[1]]
-                    self._results.append([leaflet1,leaflet2])
+                    timings.append(b_compute.elapsed)
+                    self._results.append([leaflet1, leaflet2])
             with timeit() as conclude:
                 self._conclude()
-        # TODO: Fix timinns
-        # self.timing = Timing(
-        #    np.hstack([el[1] for el in res]),
-        #    np.hstack([el[2] for el in res]), total.elapsed,
-        #    np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
+        self.timing = Timing(
+            np.hstack(timings), total.elapsed, conclude.elapsed)
         return self
 
     def _conclude(self):
