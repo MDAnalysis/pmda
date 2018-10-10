@@ -175,8 +175,69 @@ class InterRDF(ParallelAnalysisBase):
 
 
 class InterRDF_s(ParallelAnalysisBase):
+    """Site-specific intermolecular pair distribution function
+
+    Arguments
+    ---------
+    u : Universe
+          a Universe that contains atoms in `ags`
+    ags : list
+          a list of pairs of :class:`~MDAnalysis.core.groups.AtomGroup`
+          instances
+    nbins : int (optional)
+          Number of bins in the histogram [75]
+    range : tuple or list (optional)
+          The size of the RDF [0.0, 15.0]
+
+    Example
+    -------
+
+    First create the :class:`InterRDF_s` object, by supplying one Universe and
+    one list of pairs of AtomGroups, then use the :meth:`~InterRDF_s.run`
+    method::
+
+      from MDAnalysisTests.datafiles import GRO_MEMPROT, XTC_MEMPROT
+      u = mda.Universe(GRO_MEMPROT, XTC_MEMPROT)
+
+      s1 = u.select_atoms('name ZND and resid 289')
+      s2 = u.select_atoms('(name OD1 or name OD2) and resid 51 and sphzone 5.0
+                         (resid 289)')
+      s3 = u.select_atoms('name ZND and (resid 291 or resid 292)')
+      s4 = u.select_atoms('(name OD1 or name OD2) and sphzone 5.0 (resid 291)')
+      ags = [[s1, s2], [s3, s4]]
+
+      rdf = InterRDF_s(u, ags)
+      rdf.run()
+
+    Results are available through the :attr:`bins` and :attr:`rdf` attributes::
+
+      plt.plot(rdf.bins, rdf.rdf[0][0][0])
+
+    (Which plots the rdf between the first atom in ``s1`` and the first atom in
+    ``s2``)
+
+    To generate the *cumulative distribution function* (cdf), use the
+    :meth:`~InterRDF_s.get_cdf` method ::
+
+      cdf = rdf.get_cdf()
+
+    Results are available through the :attr:'cdf' attribute::
+
+      plt.plot(rdf.bins, rdf.cdf[0][0][0])
+
+    (Which plots the cdf between the first atom in ``s1`` and the first atom in
+    ``s2``)
+
+    See Also
+    --------
+    MDAnalysis.analysis.rdf.InterRDF_s
+
+
+    .. versionadded:: 0.2.0
+    """
+
     def __init__(self, u, ags,
-                 nbins=75, range=(0.0, 15.0), density=True, **kwargs):
+                 nbins=75, range=(0.0, 15.0), density=True):
         atomgroups = []
         for pair in ags:
             atomgroups.append(pair[0])
@@ -193,7 +254,6 @@ class InterRDF_s(ParallelAnalysisBase):
 
     def _prepare(self):
         # Empty list to store the RDF
-        count_list = []
         count, edges = np.histogram([-1], **self.rdf_settings)
         self.len = len(count)
         self.edges = edges
@@ -203,11 +263,10 @@ class InterRDF_s(ParallelAnalysisBase):
         self.volume = 0.0
         self._maxrange = self.rdf_settings['range'][1]
 
-
     def _single_frame(self, ts, atomgroups):
         ags = [[atomgroups[2*i], atomgroups[2*i+1]] for i in range(self.n)]
-        count = [np.zeros((ag1.n_atoms, ag2.n_atoms, self.len), dtype=np.float64)
-                 for ag1, ag2 in ags]
+        count = [np.zeros((ag1.n_atoms, ag2.n_atoms, self.len),
+                 dtype=np.float64) for ag1, ag2 in ags]
         for i, (ag1, ag2) in enumerate(ags):
             u = ag1.universe
             pairs, dist = distances.capped_distance(ag1.positions,
