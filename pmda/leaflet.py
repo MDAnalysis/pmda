@@ -192,7 +192,7 @@ class LeafletFinder(ParallelAnalysisBase):
 
         # Partition the data based on a 2-dimensional partitioning
         for i in range(1, matrix_size + 1, part_size):
-            for j in range(1, matrix_size + 1, part_size):
+            for j in range(i, matrix_size + 1, part_size):
                 arranged_coord.append(([atoms[i - 1:i - 1 + part_size],
                                        atoms[j - 1:j - 1 + part_size]],
                                       [i, j]))
