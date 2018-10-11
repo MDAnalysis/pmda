@@ -51,9 +51,9 @@ setup(
         'MDAnalysis>=0.18',
         'dask',
         'six',
-        'joblib',
+        'joblib', # cpu_count func currently
         'networkx',
-        'scipy',  # cpu_count func currently
+        'scipy',  
     ],
     tests_require=[
         'pytest',

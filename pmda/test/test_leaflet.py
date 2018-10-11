@@ -53,8 +53,10 @@ class TestLeafLet(object):
                                   correct_values_single_frame):
         lipid_heads = u_one_frame.select_atoms("name PO4")
         u_one_frame.trajectory.rewind()
-        leaflets = leaflet.LeafletFinder(u_one_frame, lipid_heads).run(start=0,
-                                                                       stop=1)
+        leaflets = leaflet.LeafletFinder(u_one_frame,
+                                         lipid_heads).run(start=0, stop=1,
+                                                          n_jobs=2)
+
         assert_almost_equal([atoms.indices for atomgroup in leaflets.results
                             for atoms in atomgroup],
                             correct_values_single_frame, err_msg="error: " +

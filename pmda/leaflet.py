@@ -25,6 +25,7 @@ import numpy as np
 import dask.bag as db
 import networkx as nx
 from scipy.spatial import cKDTree
+from sklearn.neighbors import BallTree
 
 import MDAnalysis as mda
 from dask import distributed, multiprocessing
@@ -59,33 +60,46 @@ class LeafletFinder(ParallelAnalysisBase):
     At the moment, this class has far fewer features than the serial
     version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.
 
-    This version offers Leaflet Finder algorithm 4 ("Tree-based Nearest 
-    Neighbor and Parallel-Connected Com- ponents (Tree-Search)") in 
+    This version offers Leaflet Finder algorithm 4 ("Tree-based Nearest
+    Neighbor and Parallel-Connected Com- ponents (Tree-Search)") in
     [Paraskevakos2018]_.
+
+    Currently, periodic boundaries are not taken into account.
+
+    The calculation is parallelized on a per-frame basis [Paraskevakos2018]_;
+    at the moment, no parallelization over trajectory blocks is performed.
 
     """
 
     def __init__(self, universe, atomgroup):
-        """Parameters
-        ----------
-        Universe : :class:`~MDAnalysis.core.groups.Universe`
-            a :class:`MDAnalysis.core.groups.Universe` (the
-            `atomgroup` must belong to this Universe)
-
-        atomgroup : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            atomgroup that are iterated in parallel
-
-        Attributes
-        ----------
-
-        """
         self._trajectory = universe.trajectory
         self._top = universe.filename
         self._traj = universe.trajectory.filename
         self._atomgroup = atomgroup
         self._results = list()
 
-    def _find_parcc(self, data, cutoff=15.0):
+    def _find_connected_components(self, data, cutoff=15.0):
+        """Perform the Connected Components discovery for the atoms in data.
+
+        Parameters
+        ----------
+        data : Tuple of lists of Numpy arrays
+            This is a data and index tuple. The data are organized as
+            `([AtomPositions1<NumpyArray>,AtomPositions2<NumpyArray>],
+            [index1,index2])`. `index1` and `index2` are showing the
+            position of the `AtomPosition` in the adjacency matrix and
+            allows to correct the node number of the produced graph.
+        cutoff : float (optional)
+            head group-defining atoms within a distance of `cutoff`
+            Angstroms are deemed to be in the same leaflet [15.0]
+
+        Returns
+        -------
+        values : list.
+            A list of all the connected components of the graph that is
+            generated from `data`
+
+        """
         window, index = data[0]
         num = window[0].shape[0]
         i_index = index[0]
@@ -97,6 +111,7 @@ class LeafletFinder(ParallelAnalysisBase):
         else:
             train = np.vstack([window[0], window[1]])
             test = np.vstack([window[0], window[1]])
+
         tree = cKDTree(train, leafsize=40)
         edges = tree.query_ball_point(test, cutoff)
         edge_list = [list(zip(np.repeat(idx, len(dest_list)), dest_list))
@@ -104,6 +119,7 @@ class LeafletFinder(ParallelAnalysisBase):
 
         edge_list_flat = np.array([list(item) for sublist in edge_list for
                                    item in sublist])
+
         if i_index == j_index:
             res = edge_list_flat.transpose()
             res[0] = res[0] + i_index - 1
@@ -118,12 +134,18 @@ class LeafletFinder(ParallelAnalysisBase):
                     (edge_list_flat[i, 0] >= num and
                      edge_list_flat[i, 0] <= 2 * num - 1) and \
                     (edge_list_flat[i, 1] >= num and
-                     edge_list_flat[i, 1] <= 2 * num - 1):
+                     edge_list_flat[i, 1] <= 2 * num - 1) or \
+                    (edge_list_flat[i, 0] >= num and
+                     edge_list_flat[i, 0] <= 2 * num - 1) and \
+                    (edge_list_flat[i, 1] >= 0 and
+                     edge_list_flat[i, 1] <= num - 1):
                     removed_elements.append(i)
             res = np.delete(edge_list_flat, removed_elements,
                             axis=0).transpose()
             res[0] = res[0] + i_index - 1
             res[1] = res[1] - num + j_index - 1
+        if res.shape[1] == 0:
+            res = np.zeros((2, 1), dtype=np.int)
 
         edges = [(res[0, k], res[1, k]) for k in range(0, res.shape[1])]
         graph.add_edges_from(edges)
@@ -134,7 +156,7 @@ class LeafletFinder(ParallelAnalysisBase):
         comp = [g for g in subgraphs]
         return comp
 
-    def _single_frame(self, scheduler_kwargs, n_blocks, cutoff=15.0):
+    def _single_frame(self, scheduler_kwargs, n_jobs, cutoff=15.0):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
@@ -165,25 +187,27 @@ class LeafletFinder(ParallelAnalysisBase):
         # Get positions of the atoms in the atomgroup and find their number.
         atoms = self._atomgroup.positions
         matrix_size = atoms.shape[0]
-        arraged_coord = list()
-        part_size = int(matrix_size / n_blocks)
+        arranged_coord = list()
+        part_size = int(matrix_size / n_jobs)
+
         # Partition the data based on a 2-dimensional partitioning
         for i in range(1, matrix_size + 1, part_size):
             for j in range(1, matrix_size + 1, part_size):
-                arraged_coord.append(([atoms[i - 1:i - 1 + part_size],
+                arranged_coord.append(([atoms[i - 1:i - 1 + part_size],
                                        atoms[j - 1:j - 1 + part_size]],
                                       [i, j]))
-
         # Distribute the data over the available cores, apply the map function
         # and execute.
-        parAtoms = db.from_sequence(arraged_coord,
-                                    npartitions=len(arraged_coord))
-        parAtomsMap = parAtoms.map_partitions(self._find_parcc,cutoff=cutoff)
+        parAtoms = db.from_sequence(arranged_coord,
+                                    npartitions=len(arranged_coord))
+        parAtomsMap = parAtoms.map_partitions(self._find_connected_components,
+                                              cutoff=cutoff)
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
         # Gather the results and start the reduction. TODO: think if it can go
         # to the private _reduce method of the based class.
         result = list(Components)
+
         # Create the overall connected components of the graph
         while len(result) != 0:
             item1 = result[0]
@@ -207,7 +231,6 @@ class LeafletFinder(ParallelAnalysisBase):
             step=None,
             scheduler=None,
             n_jobs=1,
-            n_blocks=None,
             cutoff=15.0):
         """Perform the calculation
 
@@ -226,54 +249,57 @@ class LeafletFinder(ParallelAnalysisBase):
             number of tasks to start, if `-1` use number of logical cpu cores.
             This argument will be ignored when the distributed scheduler is
             used
-        n_blocks : int, optional
-            number of partitions to divide trajectory frame into. If ``None``
-            set equal to sqrt(n_jobs) or number of available workers in
-            scheduler.
 
         """
         if scheduler is None:
             scheduler = multiprocessing
 
         if n_jobs == -1:
-            n_jobs = cpu_count()
-
-        if n_blocks is None:
             if scheduler == multiprocessing:
-                n_blocks = n_jobs
+                n_jobs = cpu_count()
             elif isinstance(scheduler, distributed.Client):
-                n_blocks = len(scheduler.ncores())
+                n_jobs = len(scheduler.ncores())
             else:
                 raise ValueError(
-                    "Couldn't guess ideal number of blocks from scheduler."
-                    "Please provide `n_blocks` in call to method.")
+                    "Couldn't guess ideal number of jobs from scheduler."
+                    "Please provide `n_jobs` in call to method.")
 
-        universe = mda.Universe(self._top, self._traj)
+        with timeit() as b_universe:
+            universe = mda.Universe(self._top, self._traj)
+
         scheduler_kwargs = {'get': scheduler.get}
         if scheduler == multiprocessing:
             scheduler_kwargs['num_workers'] = n_jobs
 
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
-        n_frames = len(range(start, stop, step))
         with timeit() as total:
+            with timeit() as prepare:
+                self._prepare()
+
             with self.readonly_attributes():
                 frames = list()
                 timings = list()
+                times_io = []
                 for frame in range(start, stop, step):
+                    with timeit() as b_io:
+                        ts = universe.trajectory[frame]
+                    times_io.append(b_io.elapsed)          
                     with timeit() as b_compute:
                         components = self. \
                                _single_frame(scheduler_kwargs=scheduler_kwargs,
-                                             n_blocks=n_blocks,
+                                             n_jobs=n_jobs,
                                              cutoff=cutoff)
+
+                    timings.append(b_compute.elapsed)
                     leaflet1 = self._atomgroup[components[0]]
                     leaflet2 = self._atomgroup[components[1]]
-                    timings.append(b_compute.elapsed)
                     self._results.append([leaflet1, leaflet2])
             with timeit() as conclude:
                 self._conclude()
-        self.timing = Timing(
-            np.hstack(timings), total.elapsed, conclude.elapsed)
+        self.timing = Timing(times_io, 
+            np.hstack(timings), total.elapsed, b_universe.elapsed, 
+             prepare.elapsed, conclude.elapsed)
         return self
 
     def _conclude(self):
