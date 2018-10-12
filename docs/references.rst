@@ -40,6 +40,6 @@
                       Beckstein, Geoffrey C. Fox and Shantenu Jha. Task-
                       parallel Analysis of Molecular Dynamics Trajectories. In
                       47th International Conference on Parallel Processing 
-                      (ICPP 2018). doi: `10.1145/3225058.32251281`_
+                      (ICPP 2018). doi: `10.1145/3225058.3225128`_
 
 .. _`10.1145/3225058.3225128` : https://doi.org/10.1145/3225058.3225128

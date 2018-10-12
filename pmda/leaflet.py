@@ -104,6 +104,7 @@ class LeafletFinder(ParallelAnalysisBase):
         i_index = index[0]
         j_index = index[1]
         graph = nx.Graph()
+
         if i_index == j_index:
             train = window[0]
             test = window[1]
@@ -155,7 +156,8 @@ class LeafletFinder(ParallelAnalysisBase):
         comp = [g for g in subgraphs]
         return comp
 
-    def _single_frame(self, scheduler_kwargs, n_jobs, cutoff=15.0):
+    def _single_frame(self, ts, atomgroups, scheduler_kwargs, n_jobs,
+                      cutoff=15.0):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
@@ -184,11 +186,10 @@ class LeafletFinder(ParallelAnalysisBase):
         """
 
         # Get positions of the atoms in the atomgroup and find their number.
-        atoms = self._atomgroup.positions
+        atoms = ts.positions[atomgroups.indices]
         matrix_size = atoms.shape[0]
         arranged_coord = list()
         part_size = int(matrix_size / n_jobs)
-
         # Partition the data based on a 2-dimensional partitioning
         for i in range(1, matrix_size + 1, part_size):
             for j in range(i, matrix_size + 1, part_size):
@@ -217,7 +218,8 @@ class LeafletFinder(ParallelAnalysisBase):
                     item1 = item1.union(item2)
                     ind.append(i)
             ind.reverse()
-            [Components.pop(j) for j in ind]
+            for j in ind:
+                Components.pop(j)
             Components.append(item1)
 
         # Change output for and return.
@@ -229,7 +231,7 @@ class LeafletFinder(ParallelAnalysisBase):
             stop=None,
             step=None,
             scheduler=None,
-            n_jobs=1,
+            n_jobs=-1,
             cutoff=15.0):
         """Perform the calculation
 
@@ -277,7 +279,6 @@ class LeafletFinder(ParallelAnalysisBase):
                 self._prepare()
 
             with self.readonly_attributes():
-                frames = list()
                 timings = list()
                 times_io = []
                 for frame in range(start, stop, step):
@@ -286,7 +287,9 @@ class LeafletFinder(ParallelAnalysisBase):
                     times_io.append(b_io.elapsed)
                     with timeit() as b_compute:
                         components = self. \
-                               _single_frame(scheduler_kwargs=scheduler_kwargs,
+                               _single_frame(ts=ts,
+                                             atomgroups=self._atomgroup,
+                                             scheduler_kwargs=scheduler_kwargs,
                                              n_jobs=n_jobs,
                                              cutoff=cutoff)
 
