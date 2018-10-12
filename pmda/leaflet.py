@@ -296,8 +296,8 @@ class LeafletFinder(ParallelAnalysisBase):
                     self._results.append([leaflet1, leaflet2])
             with timeit() as conclude:
                 self._conclude()
-        self.timing = Timing(times_io, 
-            np.hstack(timings), total.elapsed, b_universe.elapsed, 
+        self.timing = Timing(times_io,
+             np.hstack(timings), total.elapsed, b_universe.elapsed,
              prepare.elapsed, conclude.elapsed)
         return self
 
