@@ -283,7 +283,7 @@ class LeafletFinder(ParallelAnalysisBase):
                 for frame in range(start, stop, step):
                     with timeit() as b_io:
                         ts = universe.trajectory[frame]
-                    times_io.append(b_io.elapsed)          
+                    times_io.append(b_io.elapsed)
                     with timeit() as b_compute:
                         components = self. \
                                _single_frame(scheduler_kwargs=scheduler_kwargs,
@@ -297,8 +297,9 @@ class LeafletFinder(ParallelAnalysisBase):
             with timeit() as conclude:
                 self._conclude()
         self.timing = Timing(times_io,
-             np.hstack(timings), total.elapsed, b_universe.elapsed,
-             prepare.elapsed, conclude.elapsed)
+                             np.hstack(timings), total.elapsed,
+                             b_universe.elapsed, prepare.elapsed,
+                             conclude.elapsed)
         return self
 
     def _conclude(self):
