@@ -25,7 +25,6 @@ import numpy as np
 import dask.bag as db
 import networkx as nx
 from scipy.spatial import cKDTree
-from sklearn.neighbors import BallTree
 
 import MDAnalysis as mda
 from dask import distributed, multiprocessing
