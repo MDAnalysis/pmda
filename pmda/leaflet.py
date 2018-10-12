@@ -65,7 +65,7 @@ class LeafletFinder(ParallelAnalysisBase):
 
     Currently, periodic boundaries are not taken into account.
 
-    The calculation is parallelized on a per-frame basis [Paraskevakos2018]_;
+    The calculation is parallelized on a per-frame basis;
     at the moment, no parallelization over trajectory blocks is performed.
 
     """
