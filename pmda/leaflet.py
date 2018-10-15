@@ -19,7 +19,7 @@ This module contains parallel versions of analysis tasks in
    :inherited-members:
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import numpy as np
 import dask.bag as db
@@ -70,12 +70,11 @@ class LeafletFinder(ParallelAnalysisBase):
 
     """
 
-    def __init__(self, universe, atomgroup):
-        self._trajectory = universe.trajectory
-        self._top = universe.filename
-        self._traj = universe.trajectory.filename
-        self._atomgroup = atomgroup
+    def __init__(self, universe, atomgroups):
+        self._atomgroup = atomgroups
         self._results = list()
+
+        super(LeafletFinder, self).__init__(universe, (atomgroups,))
 
     def _find_connected_components(self, data, cutoff=15.0):
         """Perform the Connected Components discovery for the atoms in data.
@@ -156,6 +155,7 @@ class LeafletFinder(ParallelAnalysisBase):
         comp = [g for g in subgraphs]
         return comp
 
+    # pylint: disable=arguments-differ
     def _single_frame(self, ts, atomgroups, scheduler_kwargs, n_jobs,
                       cutoff=15.0):
         """Perform computation on a single trajectory frame.
@@ -226,6 +226,7 @@ class LeafletFinder(ParallelAnalysisBase):
         indices = [np.sort(list(g)) for g in Components]
         return indices
 
+    # pylint: disable=arguments-differ
     def run(self,
             start=None,
             stop=None,
