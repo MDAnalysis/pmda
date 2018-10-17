@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>1.1. Using the pmda analysis classes &#8212; PMDA 0.1.1+34.g3d78fc7 documentation</title>
+    <title>1.1. Using the pmda analysis classes &#8212; PMDA 0.1.1+35.ga718250 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+34.g3d78fc7',
+        VERSION:     '0.1.1+35.ga718250',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+34.g3d78fc7 documentation"
+          title="Search within PMDA 0.1.1+35.ga718250 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -50,9 +50,9 @@
   <div class="section" id="using-the-pmda-analysis-classes">
 <span id="pmda-basics"></span><h1>1.1. Using the <code class="xref py py-mod docutils literal"><span class="pre">pmda</span></code> analysis classes<a class="headerlink" href="#using-the-pmda-analysis-classes" title="Permalink to this headline">¶</a></h1>
 <p>Pre-defined analysis classes follow a common pattern. They require one
-or more MDAnalysis <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>
+or more MDAnalysis <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>
 instances as input (which one obtains from a MDAnalysis
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a>, typically by performing a
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a>, typically by performing a
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/selections.html">selection</a>). They also typically require a number of parameters that
 are provided as keyword arguments:</p>
 <dl class="class">
@@ -91,7 +91,7 @@ numpy array of the RMSD time series.</p>
 <span id="id1"></span><h2>1.1.1. Example: Parallel RMSD<a class="headerlink" href="#example-parallel-rmsd" title="Permalink to this headline">¶</a></h2>
 <p>In order to use the parallel RMSD calculator <a class="reference internal" href="../api/rms.html#pmda.rms.RMSD" title="pmda.rms.RMSD"><code class="xref py py-class docutils literal"><span class="pre">pmda.rms.RMSD</span></code></a>,
 import the module, set up two
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.18)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
 class and directly use its <a class="reference internal" href="../api/rms.html#pmda.rms.RMSD.run" title="pmda.rms.RMSD.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">pmda</span> <span class="k">import</span> <span class="n">rms</span>
@@ -188,11 +188,11 @@ time series in the attribute <a class="reference internal" href="../api/rms.html
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein.
+      &copy;2018, Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein, Ioannis Paraskevakos.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/userguide/pmda_classes.rst.txt"

@@ -1,0 +1,445 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pmda.leaflet &#8212; PMDA 0.1.1+35.ga718250 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1+35.ga718250',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.1.1+35.ga718250 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pmda.leaflet</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
+<span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
+<span class="c1">#</span>
+<span class="c1"># PMDA</span>
+<span class="c1"># Copyright (c) 2018 The MDAnalysis Development Team and contributors</span>
+<span class="c1"># (see the file AUTHORS for the full list of names)</span>
+<span class="c1">#</span>
+<span class="c1"># Released under the GNU Public Licence, v2 or any higher version</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LeafletFInder Analysis tool --- :mod:`pmda.leaflet`</span>
+<span class="sd">==========================================================</span>
+
+<span class="sd">This module contains parallel versions of analysis tasks in</span>
+<span class="sd">:mod:`MDAnalysis.analysis.leaflet`.</span>
+
+<span class="sd">.. autoclass:: LeafletFinder</span>
+<span class="sd">   :members:</span>
+<span class="sd">   :undoc-members:</span>
+<span class="sd">   :inherited-members:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">dask.bag</span> <span class="k">as</span> <span class="nn">db</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="k">import</span> <span class="n">cKDTree</span>
+
+<span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="k">import</span> <span class="n">distributed</span><span class="p">,</span> <span class="n">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
+
+<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span><span class="p">,</span> <span class="n">Timing</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">timeit</span>
+
+
+<div class="viewcode-block" id="LeafletFinder"><a class="viewcode-back" href="../../api/leaflet.html#pmda.leaflet.LeafletFinder">[docs]</a><span class="k">class</span> <span class="nc">LeafletFinder</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parallel Leaflet Finder analysis.</span>
+
+<span class="sd">    Identify atoms in the same leaflet of a lipid bilayer.</span>
+<span class="sd">    This class implements and parallelizes the *LeafletFinder* algorithm</span>
+<span class="sd">    [Michaud-Agrawal2011]_.</span>
+
+<span class="sd">    The parallelization is done based on [Paraskevakos2018]_.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        Universe : :class:`~MDAnalysis.core.groups.Universe`</span>
+<span class="sd">            a :class:`MDAnalysis.core.groups.Universe` (the</span>
+<span class="sd">            `atomgroup` must belong to this Universe)</span>
+<span class="sd">        atomgroup : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`</span>
+<span class="sd">            atomgroups that are iterated in parallel</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    At the moment, this class has far fewer features than the serial</span>
+<span class="sd">    version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.</span>
+
+<span class="sd">    This version offers Leaflet Finder algorithm 4 (&quot;Tree-based Nearest</span>
+<span class="sd">    Neighbor and Parallel-Connected Com- ponents (Tree-Search)&quot;) in</span>
+<span class="sd">    [Paraskevakos2018]_.</span>
+
+<span class="sd">    Currently, periodic boundaries are not taken into account.</span>
+
+<span class="sd">    The calculation is parallelized on a per-frame basis;</span>
+<span class="sd">    at the moment, no parallelization over trajectory blocks is performed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">universe</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span> <span class="o">=</span> <span class="n">atomgroups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">LeafletFinder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="p">(</span><span class="n">atomgroups</span><span class="p">,))</span>
+
+    <span class="k">def</span> <span class="nf">_find_connected_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform the Connected Components discovery for the atoms in data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : Tuple of lists of Numpy arrays</span>
+<span class="sd">            This is a data and index tuple. The data are organized as</span>
+<span class="sd">            `([AtomPositions1&lt;NumpyArray&gt;,AtomPositions2&lt;NumpyArray&gt;],</span>
+<span class="sd">            [index1,index2])`. `index1` and `index2` are showing the</span>
+<span class="sd">            position of the `AtomPosition` in the adjacency matrix and</span>
+<span class="sd">            allows to correct the node number of the produced graph.</span>
+<span class="sd">        cutoff : float (optional)</span>
+<span class="sd">            head group-defining atoms within a distance of `cutoff`</span>
+<span class="sd">            Angstroms are deemed to be in the same leaflet [15.0]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        values : list.</span>
+<span class="sd">            A list of all the connected components of the graph that is</span>
+<span class="sd">            generated from `data`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">i_index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">j_index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">i_index</span> <span class="o">==</span> <span class="n">j_index</span><span class="p">:</span>
+            <span class="n">train</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">leafsize</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query_ball_point</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">)</span>
+        <span class="n">edge_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dest_list</span><span class="p">)),</span> <span class="n">dest_list</span><span class="p">))</span>
+                     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dest_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edges</span><span class="p">)]</span>
+
+        <span class="n">edge_list_flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">edge_list</span> <span class="k">for</span>
+                                   <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">i_index</span> <span class="o">==</span> <span class="n">j_index</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">edge_list_flat</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_index</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">j_index</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">removed_elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">edge_list_flat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span>
+                    <span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="p">(</span><span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span>
+                     <span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">num</span> <span class="ow">and</span>
+                     <span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="p">(</span><span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">num</span> <span class="ow">and</span>
+                     <span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">num</span> <span class="ow">and</span>
+                     <span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="p">(</span><span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span>
+                     <span class="n">edge_list_flat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">removed_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">edge_list_flat</span><span class="p">,</span> <span class="n">removed_elements</span><span class="p">,</span>
+                            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_index</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">num</span> <span class="o">+</span> <span class="n">j_index</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+
+        <span class="c1"># partial connected components</span>
+
+        <span class="n">subgraphs</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">subgraphs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">comp</span>
+
+    <span class="c1"># pylint: disable=arguments-differ</span>
+    <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">,</span> <span class="n">scheduler_kwargs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">,</span>
+                      <span class="n">cutoff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform computation on a single trajectory frame.</span>
+
+<span class="sd">        Must return computed values as a list. You can only **read**</span>
+<span class="sd">        from member variables stored in ``self``. Changing them during</span>
+<span class="sd">        a run will result in undefined behavior. `ts` and any of the</span>
+<span class="sd">        atomgroups can be changed (but changes will be overwritten</span>
+<span class="sd">        when the next time step is read).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scheduler_kwargs : Dask Scheduler parameters.</span>
+<span class="sd">        cutoff : float (optional)</span>
+<span class="sd">            head group-defining atoms within a distance of `cutoff`</span>
+<span class="sd">            Angstroms are deemed to be in the same leaflet [15.0]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        values : anything</span>
+<span class="sd">            The output from the computation over a single frame must</span>
+<span class="sd">            be returned. The `value` will be added to a list for each</span>
+<span class="sd">            block and the list of blocks is stored as :attr:`_results`</span>
+<span class="sd">            before :meth:`_conclude` is run. In order to simplify</span>
+<span class="sd">            processing, the `values` should be &quot;simple&quot; shallow data</span>
+<span class="sd">            structures such as arrays or lists of numbers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get positions of the atoms in the atomgroup and find their number.</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">atomgroups</span><span class="o">.</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">matrix_size</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">arranged_coord</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">part_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">matrix_size</span> <span class="o">/</span> <span class="n">n_jobs</span><span class="p">)</span>
+        <span class="c1"># Partition the data based on a 2-dimensional partitioning</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">matrix_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">part_size</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">matrix_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">part_size</span><span class="p">):</span>
+                <span class="n">arranged_coord</span><span class="o">.</span><span class="n">append</span><span class="p">(([</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">part_size</span><span class="p">],</span>
+                                       <span class="n">atoms</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">part_size</span><span class="p">]],</span>
+                                      <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]))</span>
+        <span class="c1"># Distribute the data over the available cores, apply the map function</span>
+        <span class="c1"># and execute.</span>
+        <span class="n">parAtoms</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">from_sequence</span><span class="p">(</span><span class="n">arranged_coord</span><span class="p">,</span>
+                                    <span class="n">npartitions</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">arranged_coord</span><span class="p">))</span>
+        <span class="n">parAtomsMap</span> <span class="o">=</span> <span class="n">parAtoms</span><span class="o">.</span><span class="n">map_partitions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_find_connected_components</span><span class="p">,</span>
+                                              <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+        <span class="n">Components</span> <span class="o">=</span> <span class="n">parAtomsMap</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">scheduler_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Gather the results and start the reduction. TODO: think if it can go</span>
+        <span class="c1"># to the private _reduce method of the based class.</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Components</span><span class="p">)</span>
+
+        <span class="c1"># Create the overall connected components of the graph</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">item1</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Components</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">item2</span><span class="p">):</span>
+                    <span class="n">item1</span> <span class="o">=</span> <span class="n">item1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">item2</span><span class="p">)</span>
+                    <span class="n">ind</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">ind</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ind</span><span class="p">:</span>
+                <span class="n">Components</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+            <span class="n">Components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item1</span><span class="p">)</span>
+
+        <span class="c1"># Change output for and return.</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="p">))</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">Components</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">indices</span>
+
+    <span class="c1"># pylint: disable=arguments-differ</span>
+<div class="viewcode-block" id="LeafletFinder.run"><a class="viewcode-back" href="../../api/leaflet.html#pmda.leaflet.LeafletFinder.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">cutoff</span><span class="o">=</span><span class="mf">15.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform the calculation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start : int, optional</span>
+<span class="sd">            start frame of analysis</span>
+<span class="sd">        stop : int, optional</span>
+<span class="sd">            stop frame of analysis</span>
+<span class="sd">        step : int, optional</span>
+<span class="sd">            number of frames to skip between each analysed frame</span>
+<span class="sd">        scheduler : dask scheduler, optional</span>
+<span class="sd">            Use dask scheduler, defaults to multiprocessing. This can be used</span>
+<span class="sd">            to spread work to a distributed scheduler</span>
+<span class="sd">        n_jobs : int, optional</span>
+<span class="sd">            number of tasks to start, if `-1` use number of logical cpu cores.</span>
+<span class="sd">            This argument will be ignored when the distributed scheduler is</span>
+<span class="sd">            used</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="n">multiprocessing</span>
+
+        <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="n">multiprocessing</span><span class="p">:</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scheduler</span><span class="o">.</span><span class="n">ncores</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Couldn&#39;t guess ideal number of jobs from scheduler.&quot;</span>
+                    <span class="s2">&quot;Please provide `n_jobs` in call to method.&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_universe</span><span class="p">:</span>
+            <span class="n">universe</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traj</span><span class="p">)</span>
+
+        <span class="n">scheduler_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;get&#39;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="n">multiprocessing</span><span class="p">:</span>
+            <span class="n">scheduler_kwargs</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_jobs</span>
+
+        <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="o">.</span><span class="n">check_slice_indices</span><span class="p">(</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">total</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">prepare</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
+
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">readonly_attributes</span><span class="p">():</span>
+                <span class="n">timings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">times_io</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_io</span><span class="p">:</span>
+                        <span class="n">ts</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span>
+                    <span class="n">times_io</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_io</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_compute</span><span class="p">:</span>
+                        <span class="n">components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span> \
+                               <span class="n">_single_frame</span><span class="p">(</span><span class="n">ts</span><span class="o">=</span><span class="n">ts</span><span class="p">,</span>
+                                             <span class="n">atomgroups</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span><span class="p">,</span>
+                                             <span class="n">scheduler_kwargs</span><span class="o">=</span><span class="n">scheduler_kwargs</span><span class="p">,</span>
+                                             <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+                                             <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+
+                    <span class="n">timings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_compute</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
+                    <span class="n">leaflet1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span><span class="p">[</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                    <span class="n">leaflet2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span><span class="p">[</span><span class="n">components</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">leaflet1</span><span class="p">,</span> <span class="n">leaflet2</span><span class="p">])</span>
+            <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">conclude</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timing</span> <span class="o">=</span> <span class="n">Timing</span><span class="p">(</span><span class="n">times_io</span><span class="p">,</span>
+                             <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">timings</span><span class="p">),</span> <span class="n">total</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span>
+                             <span class="n">b_universe</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">prepare</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span>
+                             <span class="n">conclude</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein, Ioannis Paraskevakos.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

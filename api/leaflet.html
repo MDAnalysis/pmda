@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.2.1. RMSD analysis tools — pmda.rms &#8212; PMDA 0.1.1+35.ga718250 documentation</title>
+    <title>2.2.4. LeafletFInder Analysis tool — pmda.leaflet &#8212; PMDA 0.1.1+35.ga718250 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -28,8 +28,8 @@
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.2.2. Native contacts analysis — pmda.contacts" href="contacts.html" />
-    <link rel="prev" title="2.1.2. Parallel Analysis helper — pmda.custom" href="custom.html" />
+    <link rel="next" title="3. References" href="../references.html" />
+    <link rel="prev" title="2.2.3. Radial Distribution Functions — pmda.rdf" href="rdf.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -47,38 +47,26 @@
 
           <div class="body" role="main">
             
-  <span class="target" id="module-pmda.rms"></span><div class="section" id="rmsd-analysis-tools-pmda-rms">
-<h1>2.2.1. RMSD analysis tools — <a class="reference internal" href="#module-pmda.rms" title="pmda.rms"><code class="xref py py-mod docutils literal"><span class="pre">pmda.rms</span></code></a><a class="headerlink" href="#rmsd-analysis-tools-pmda-rms" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-pmda.leaflet"></span><div class="section" id="leafletfinder-analysis-tool-pmda-leaflet">
+<h1>2.2.4. LeafletFInder Analysis tool — <a class="reference internal" href="#module-pmda.leaflet" title="pmda.leaflet"><code class="xref py py-mod docutils literal"><span class="pre">pmda.leaflet</span></code></a><a class="headerlink" href="#leafletfinder-analysis-tool-pmda-leaflet" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#module-MDAnalysis.analysis.leaflet" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.leaflet</span></code></a>.</p>
 <dl class="class">
-<dt id="pmda.rms.RMSD">
-<em class="property">class </em><code class="descclassname">pmda.rms.</code><code class="descname">RMSD</code><span class="sig-paren">(</span><em>mobile</em>, <em>ref</em>, <em>superposition=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms.html#RMSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.RMSD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parallel RMSD analysis.</p>
-<p>Optimally superimpose the coordinates in the
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
-each frame in the trajectory of <cite>mobile</cite> and calculate the time
-series of the RMSD. The single frame calculation is performed with
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.rmsd" title="(in MDAnalysis v0.19)"><code class="xref py py-func docutils literal"><span class="pre">MDAnalysis.analysis.rms.rmsd()</span></code></a> (with <code class="docutils literal"><span class="pre">superposition=True</span></code>
-by default).</p>
-<dl class="attribute">
-<dt id="pmda.rms.RMSD.rmsd">
-<code class="descname">rmsd</code><a class="headerlink" href="#pmda.rms.RMSD.rmsd" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array</em> – Result as a Nx3 array where each row contains
-<cite>[frame, time (ps), RMSD (Å)]</cite>.</p>
-</dd></dl>
-
+<dt id="pmda.leaflet.LeafletFinder">
+<em class="property">class </em><code class="descclassname">pmda.leaflet.</code><code class="descname">LeafletFinder</code><span class="sig-paren">(</span><em>universe</em>, <em>atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parallel Leaflet Finder analysis.</p>
+<p>Identify atoms in the same leaflet of a lipid bilayer.
+This class implements and parallelizes the <em>LeafletFinder</em> algorithm
+<a class="reference internal" href="../references.html#michaud-agrawal2011" id="id1">[Michaud-Agrawal2011]</a>.</p>
+<p>The parallelization is done based on <a class="reference internal" href="../references.html#paraskevakos2018" id="id2">[Paraskevakos2018]</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>mobile</strong> (<em>AtomGroup</em>) – atoms that are optimally superimposed on <cite>ref</cite> before
-the RMSD is calculated for all atoms. The coordinates
-of <cite>mobile</cite> change with each frame in the trajectory.</li>
-<li><strong>ref</strong> (<em>AtomGroup</em>) – fixed reference coordinates</li>
-<li><strong>superposition</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – <code class="docutils literal"><span class="pre">True</span></code> perform a RMSD-superposition, <code class="docutils literal"><span class="pre">False</span></code> only
-calculates the RMSD. The default is <code class="docutils literal"><span class="pre">True</span></code>.</li>
+<li><strong>Universe</strong> (<code class="xref py py-class docutils literal"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
+<cite>atomgroup</cite> must belong to this Universe)</li>
+<li><strong>atomgroup</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</li>
 </ul>
 </td>
 </tr>
@@ -86,12 +74,18 @@ calculates the RMSD. The default is <code class="docutils literal"><span class="
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">At the moment, this class has far fewer features than the serial
-version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
+<p>At the moment, this class has far fewer features than the serial
+version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#MDAnalysis.analysis.leaflet.LeafletFinder" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.leaflet.LeafletFinder</span></code></a>.</p>
+<p>This version offers Leaflet Finder algorithm 4 (“Tree-based Nearest
+Neighbor and Parallel-Connected Com- ponents (Tree-Search)”) in
+<a class="reference internal" href="../references.html#paraskevakos2018" id="id3">[Paraskevakos2018]</a>.</p>
+<p>Currently, periodic boundaries are not taken into account.</p>
+<p class="last">The calculation is parallelized on a per-frame basis;
+at the moment, no parallelization over trajectory blocks is performed.</p>
 </div>
 <dl class="method">
-<dt id="pmda.rms.RMSD.readonly_attributes">
-<code class="descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.readonly_attributes" title="Permalink to this definition">¶</a></dt>
+<dt id="pmda.leaflet.LeafletFinder.readonly_attributes">
+<code class="descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.leaflet.LeafletFinder.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
 <p>Useful to avoid the class being modified when passing it around.</p>
 <p>To be used as a context manager:</p>
@@ -102,8 +96,8 @@ version <a class="reference external" href="https://www.mdanalysis.org/docs/docu
 </dd></dl>
 
 <dl class="method">
-<dt id="pmda.rms.RMSD.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.run" title="Permalink to this definition">¶</a></dt>
+<dt id="pmda.leaflet.LeafletFinder.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=-1</em>, <em>cutoff=15.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -115,11 +109,9 @@ version <a class="reference external" href="https://www.mdanalysis.org/docs/docu
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
 <li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
 to spread work to a distributed scheduler</li>
-<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of tasks to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</li>
-<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
-to n_jobs or number of available workers in scheduler.</li>
 </ul>
 </td>
 </tr>
@@ -164,10 +156,10 @@ to n_jobs or number of available workers in scheduler.</li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.1. RMSD analysis tools — <code class="docutils literal"><span class="pre">pmda.rms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms.html">2.2.1. RMSD analysis tools — <code class="docutils literal"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="contacts.html">2.2.2. Native contacts analysis — <code class="docutils literal"><span class="pre">pmda.contacts</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rdf.html">2.2.3. Radial Distribution Functions — <code class="docutils literal"><span class="pre">pmda.rdf</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.4. LeafletFInder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.4. LeafletFInder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -191,8 +183,8 @@ to n_jobs or number of available workers in scheduler.</li>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a><ul>
-      <li>Previous: <a href="custom.html" title="previous chapter">2.1.2. Parallel Analysis helper — <code class="docutils literal"><span class="pre">pmda.custom</span></code></a></li>
-      <li>Next: <a href="contacts.html" title="next chapter">2.2.2. Native contacts analysis — <code class="docutils literal"><span class="pre">pmda.contacts</span></code></a></li>
+      <li>Previous: <a href="rdf.html" title="previous chapter">2.2.3. Radial Distribution Functions — <code class="docutils literal"><span class="pre">pmda.rdf</span></code></a></li>
+      <li>Next: <a href="../references.html" title="next chapter">3. References</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -219,7 +211,7 @@ to n_jobs or number of available workers in scheduler.</li>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/api/rms.rst.txt"
+      <a href="../_sources/api/leaflet.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
