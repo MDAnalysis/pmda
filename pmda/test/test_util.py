@@ -8,6 +8,8 @@
 # Released under the GNU Public Licence, v2 or any higher version
 from __future__ import absolute_import
 
+from six.moves import range, zip
+
 import pytest
 
 import time
@@ -25,6 +27,7 @@ def test_timeit():
 
 
 @pytest.mark.parametrize("start", (None, 0, 1, 10))
+@pytest.mark.parametrize("step", (None, 1))  # test only step 1 here
 @pytest.mark.parametrize("n_frames,n_blocks,result", [
     (5, 1, [0, 5]),
     (5, 2, [0, 3, 5]),
@@ -35,12 +38,40 @@ def test_timeit():
     (10, 3, [0, 4, 7, 10]),
     (10, 7, [0, 2, 4, 6, 7, 8, 9, 10]),
 ])
-def test_make_balanced_blocks(n_frames, n_blocks, start, result):
-    start = start if start is not None else 0
-    result = np.array(result) + start
+def test_make_balanced_blocks_step1(n_frames, n_blocks, start, step, result):
+    assert step in (None, 1), "This test can only test step None or 1"
 
-    idx = make_balanced_blocks(n_frames, n_blocks, start=start)
-    assert_equal(idx, result)
+    _start = start if start is not None else 0
+    _result = np.asarray(result) + _start
+
+    idx = make_balanced_blocks(n_frames, n_blocks, start=start, step=step)
+    assert_equal(idx, _result)
+
+
+@pytest.mark.parametrize('n_blocks', [1, 2, 3, 4, 5, 7, 10, 11])
+@pytest.mark.parametrize('start', [0, 1, 10])
+@pytest.mark.parametrize('stop', [11, 20, 21])
+@pytest.mark.parametrize('step', [None, 1, 2, 3, 5, 7])
+@pytest.mark.parametrize('scale', [1, 2])
+def test_make_balanced_blocks(n_blocks, start, stop, step, scale):
+    _start = start if start is not None else 0
+
+    traj_frames = range(scale * stop)
+    frames = traj_frames[start:stop:step]
+    n_frames = len(frames)
+
+    idx = make_balanced_blocks(n_frames, n_blocks, start=start, step=step)
+
+    assert len(idx) == n_blocks + 1
+
+    # assemble frames again by blocks and show that we have all
+    # the original frames
+
+    block_frames = []
+    for bstart, bstop in zip(idx[:-1], idx[1:]):
+        block_frames.extend(list(traj_frames[bstart:bstop:step]))
+
+    assert_equal(np.asarray(block_frames), np.asarray(frames))
 
 
 @pytest.mark.parametrize("n_frames,n_blocks,start",

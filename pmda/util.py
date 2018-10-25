@@ -45,12 +45,18 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
     Arguments
     ---------
     n_frames : int
-        number of frames in the trajectory (>0)
+        number of frames in the trajectory (>0). This must be the number of
+        frames *after* the trajectory has been sliced,
+        i.e. ``len(u.trajectory[start:stop:step])`` and `start` and `step` must
+        be provided as parameters.
     n_blocks : int
         number of blocks (>0)
     start : int
-        first index of the trajectory (default is None, which is
-        interpreted as "first frame", i.e., 0)
+        first index of the trajectory (default is ``None``, which is
+        interpreted as "first frame", i.e., 0); see comments on `n_frames`.
+    step : int
+        step by which the trajectory is sliced (see description of `n_frames`);
+        the default is ``None`` which corresponds to ``step=1``.
 
     Returns
     -------
@@ -69,11 +75,13 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
 
     The indices can be used to slice a trajectory into blocks::
 
-        idx = assign_blocks(5, 4)
+        n_blocks = 5
+        n_frames = len(u.trajectory[start:stop:step])
+
+        idx = assign_blocks(n_frames, n_blocks)
         for i_block, (start, stop) in enumerate(zip(idx[:-1], idx[1:])):
            for ts in u.trajectory[start:stop]:
                # do stuff for block number i_block
-
 
     Notes
     -----
@@ -89,6 +97,12 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
             m[i] += 1     # distribute the remaining frames
                           # over the first r blocks
 
+    For a `step` > 1, we use ``r *= step``. This approach can give a last index
+    that is larger than the real last index; this is not a problem for slicing
+    but it's not pretty. As an example, we have the original trajectory slice
+    ``[0:20:3]``, which results in ``n_frames=7``, ``start=0``, ``step=3`` and
+    the last frame index will be 21 instead of 20.
+
 
     .. versionadded:: 0.2.0
 
@@ -102,10 +116,13 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
         raise ValueError("n_blocks must be > 0")
     elif start < 0:
         raise ValueError("start must be >= 0")
-    if step != 1:
-        raise NotImplementedError("Only step=1 or step=None is supported")
 
     bsizes = np.ones(n_blocks, dtype=np.int64) * n_frames // n_blocks
     bsizes += (np.arange(n_blocks, dtype=np.int64) < n_frames % n_blocks)
+    # This can give a last index that is larger than the real last index;
+    # this is not a problem for slicing but it's not pretty.
+    # Example: original [0:20:3] -> n_frames=7, start=0, step=3:
+    #          last frame 21 instead of 20
+    bsizes *= step
     frame_indices = np.cumsum(np.concatenate(([start], bsizes)))
     return frame_indices
