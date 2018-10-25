@@ -31,6 +31,15 @@
                      Huff, David Lippa, Dillon Niederhut, and M. Pacer,
                      editors, Proceedings of the 16th Python in Science
                      Conference, pages 64–72, Austin,
-	             TX, 2017. SciPy. doi:`10.25080/shinma-7f4c6e7-00a`_
+	             TX, 2017. SciPy. doi:`10.25080/shinma-7f4c6e7-00a`_.
 
-.. _`10.25080/shinma-7f4c6e7-00a`: https://doi.org/10.25080/shinma-7f4c6e7-00a		    
+.. _`10.25080/shinma-7f4c6e7-00a`: https://doi.org/10.25080/shinma-7f4c6e7-00a
+
+.. [Paraskevakos2018] Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan, 
+                      George Chantzialexiou, Thomas E. Cheatham, Oliver 
+                      Beckstein, Geoffrey C. Fox and Shantenu Jha. Task-
+                      parallel Analysis of Molecular Dynamics Trajectories. In
+                      47th International Conference on Parallel Processing 
+                      (ICPP 2018). doi: `10.1145/3225058.3225128`_.
+
+.. _`10.1145/3225058.3225128` : https://doi.org/10.1145/3225058.3225128
