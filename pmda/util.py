@@ -33,6 +33,7 @@ class timeit(object):
         # always propagate exceptions forward
         return False
 
+
 def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
     """Divide `n_frames` into `n_blocks` balanced blocks.
 
@@ -85,7 +86,8 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
         m[i] = M // N     # initial frames for block i
         r = M % N         # remaining frames 0 ≤ r < N
         for i in range(r):
-            m[i] += 1     # distribute the remaining frames over the first r blocks
+            m[i] += 1     # distribute the remaining frames
+                          # over the first r blocks
 
 
     .. versionadded:: 0.2.0
@@ -106,5 +108,5 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
 
     bsizes = np.ones(n_blocks, dtype=np.int64) * n_frames // n_blocks
     bsizes += (np.arange(n_blocks, dtype=np.int64) < n_frames % n_blocks)
-    frame_indices = np.cumsum(np.concatenate(([start], bsizes)))  # [start, start, start, ...]
+    frame_indices = np.cumsum(np.concatenate(([start], bsizes)))
     return frame_indices

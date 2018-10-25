@@ -23,23 +23,25 @@ def test_timeit():
 
     assert_almost_equal(timer.elapsed, 1, decimal=2)
 
+
+@pytest.mark.parametrize("start", (None, 0, 1, 10))
 @pytest.mark.parametrize("n_frames,n_blocks,result", [
     (5, 1, [0, 5]),
     (5, 2, [0, 3, 5]),
     (5, 3, [0, 2, 4, 5]),
-    (5, 4, [0, 2, 3, 4 ,5]),
-    (5, 5, [0, 1, 2, 3, 4 ,5]),
+    (5, 4, [0, 2, 3, 4, 5]),
+    (5, 5, [0, 1, 2, 3, 4, 5]),
     (10, 2, [0, 5, 10]),
     (10, 3, [0, 4, 7, 10]),
     (10, 7, [0, 2, 4, 6, 7, 8, 9, 10]),
 ])
-@pytest.mark.parametrize("start", (None, 0, 1, 10))
 def test_make_balanced_blocks(n_frames, n_blocks, start, result):
     start = start if start is not None else 0
     result = np.array(result) + start
 
     idx = make_balanced_blocks(n_frames, n_blocks, start=start)
     assert_equal(idx, result)
+
 
 @pytest.mark.parametrize("n_frames,n_blocks,start",
                          [(0, 5, None), (-1, 5, None), (5, 0, None),
@@ -48,4 +50,3 @@ def test_make_balanced_blocks(n_frames, n_blocks, start, result):
 def test_make_balanced_blocks_ValueError(n_frames, n_blocks, start):
     with pytest.raises(ValueError):
         make_balanced_blocks(n_frames, n_blocks, start=start)
-
