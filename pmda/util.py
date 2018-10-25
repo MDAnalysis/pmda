@@ -104,7 +104,6 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
         raise ValueError("start must be >= 0")
     if step != 1:
         raise NotImplementedError("Only step=1 or step=None is supported")
-    # TODO: use step
 
     bsizes = np.ones(n_blocks, dtype=np.int64) * n_frames // n_blocks
     bsizes += (np.arange(n_blocks, dtype=np.int64) < n_frames % n_blocks)
