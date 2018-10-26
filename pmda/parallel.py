@@ -16,7 +16,7 @@ classes.
 """
 from __future__ import absolute_import, division
 from contextlib import contextmanager
-from six.moves import range
+from six.moves import range, zip
 
 import MDAnalysis as mda
 from dask import distributed, multiprocessing
@@ -24,7 +24,7 @@ from dask.delayed import delayed
 from joblib import cpu_count
 import numpy as np
 
-from .util import timeit
+from .util import timeit, make_balanced_blocks
 
 
 class Timing(object):
@@ -313,7 +313,8 @@ class ParallelAnalysisBase(object):
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
-        bsize = int(np.ceil(n_frames / float(n_blocks)))
+        idx = make_balanced_blocks(n_frames, n_blocks,
+                                   start=start, step=step)
 
         with timeit() as total:
             with timeit() as prepare:
@@ -321,11 +322,11 @@ class ParallelAnalysisBase(object):
             time_prepare = prepare.elapsed
             blocks = []
             with self.readonly_attributes():
-                for b in range(n_blocks):
+                for bstart, bstop in zip(idx[:-1], idx[1:]):
                     task = delayed(
                         self._dask_helper, pure=False)(
-                            b * bsize * step + start,
-                            min(stop, (b + 1) * bsize * step + start),
+                            bstart,
+                            min(bstop, stop),
                             step,
                             self._indices,
                             self._top,
