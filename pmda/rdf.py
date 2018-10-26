@@ -236,6 +236,9 @@ class InterRDF_s(ParallelAnalysisBase):
     .. versionadded:: 0.2.0
     """
 
+    # pylint: disable=redefined-builtin
+    # continue to use 'range' as long as MDAnalysis uses it so that
+    # the user interface remains consistent
     def __init__(self, u, ags,
                  nbins=75, range=(0.0, 15.0), density=True):
         atomgroups = []
@@ -251,6 +254,8 @@ class InterRDF_s(ParallelAnalysisBase):
         self.nf = u.trajectory.n_frames
         self.rdf_settings = {'bins': nbins,
                              'range': range}
+
+    # pylint: enable=redefined-builtin
 
     def _prepare(self):
         # Empty list to store the RDF
