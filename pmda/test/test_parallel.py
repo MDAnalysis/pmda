@@ -82,7 +82,8 @@ def test_sub_frames(analysis, n_jobs):
 def test_no_frames(analysis, n_jobs):
     u = mda.Universe(analysis._top, analysis._traj)
     n_frames = u.trajectory.n_frames
-    analysis.run(start=n_frames, stop=n_frames+1, n_jobs=n_jobs)
+    with pytest.warns(UserWarning):
+        analysis.run(start=n_frames, stop=n_frames+1, n_jobs=n_jobs)
     assert len(analysis.res) == 0
     np.testing.assert_equal(analysis.res, [])
     np.testing.assert_equal(analysis.timing.compute, [])

@@ -8,7 +8,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 from __future__ import absolute_import
 
-from six.moves import range, zip
+from six.moves import range
 
 import pytest
 
