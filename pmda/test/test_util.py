@@ -74,8 +74,16 @@ def test_make_balanced_blocks(n_blocks, start, stop, step, scale):
     assert_equal(np.asarray(block_frames), np.asarray(frames))
 
 
+@pytest.mark.parametrize('n_blocks', [1, 2])
+@pytest.mark.parametrize('start', [0, 10])
+@pytest.mark.parametrize('step', [None, 1, 2])
+def test_make_balanced_blocks_empty(n_blocks, start, step):
+    idx = make_balanced_blocks(0, n_blocks, start=start, step=step)
+    assert idx == []
+
+
 @pytest.mark.parametrize("n_frames,n_blocks,start",
-                         [(0, 5, None), (-1, 5, None), (5, 0, None),
+                         [(-1, 5, None), (5, 0, None),
                           (5, -1, None), (0, 0, None), (-1, -1, None),
                           (5, 4, -1), (0, 5, -1), (5, 0, -1)])
 def test_make_balanced_blocks_ValueError(n_frames, n_blocks, start):

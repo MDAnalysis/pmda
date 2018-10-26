@@ -70,7 +70,7 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
     Arguments
     ---------
     n_frames : int
-        number of frames in the trajectory (>0). This must be the number of
+        number of frames in the trajectory (≥0). This must be the number of
         frames *after* the trajectory has been sliced,
         i.e. ``len(u.trajectory[start:stop:step])`` and `start` and `step` must
         be provided as parameters.
@@ -90,6 +90,8 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
         each block; the last index ``frame_indices[-1]`` corresponds to the
         last index of the last block + 1 so that one can easily use the array
         for slicing, as shown in the example below.
+
+        If `n_frames` = 0 then an empty list ``[]`` is returned.
 
         .. note:: For `step` > 1 the last index in `frame_indices` may be
                   larger than the real last index in the trajectory; this is
@@ -150,12 +152,16 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
     start = start if start is not None else 0
     step = step if step is not None else 1
 
-    if n_frames <= 0:
-        raise ValueError("n_frames must be > 0")
+    if n_frames < 0:
+        raise ValueError("n_frames must be >= 0")
     elif n_blocks <= 0:
         raise ValueError("n_blocks must be > 0")
     elif start < 0:
         raise ValueError("start must be >= 0")
+
+    if n_frames == 0:
+        # not very useful but allows calling code to work more gracefully
+        return []
 
     bsizes = np.ones(n_blocks, dtype=np.int64) * n_frames // n_blocks
     bsizes += (np.arange(n_blocks, dtype=np.int64) < n_frames % n_blocks)

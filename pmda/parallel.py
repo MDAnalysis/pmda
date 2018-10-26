@@ -334,6 +334,10 @@ class ParallelAnalysisBase(object):
                     blocks.append(task)
                 blocks = delayed(blocks)
                 res = blocks.compute(**scheduler_kwargs)
+            # hack to handle n_frames == 0 in this framework
+            if len(res) == 0:
+                # everything else wants list of block tuples
+                res = [([], [], [], 0)]
             self._results = np.asarray([el[0] for el in res])
             with timeit() as conclude:
                 self._conclude()
