@@ -6,10 +6,12 @@
 # (see the file AUTHORS for the full list of names)
 #
 # Released under the GNU Public Licence, v2 or any higher version
-"""
-Utility functions --- :mod:`pmda.util`
-=====================================================================
+"""Utility functions --- :mod:`pmda.util`
+=========================================
 
+
+This module contains helper functions and classes that can be used throughout
+:mod:`pmda`.
 
 """
 from __future__ import absolute_import, division
@@ -21,6 +23,29 @@ import numpy as np
 
 class timeit(object):
     """measure time spend in context
+
+    :class:`timeit` is a context manager (to be used with the :keyword:`with`
+    statement) that records the execution time for the enclosed context block
+    in :attr:`elapsed`.
+
+    Attributes
+    ----------
+    elapsed : float
+        Time in seconds that elapsed between entering
+        and exiting the context.
+
+    Example
+    -------
+    Use as a context manager::
+
+       with timeit() as total:
+          # code to be timed
+
+       print(total.elapsed, "seconds")
+
+    See Also
+    --------
+    :func:`time.time`
 
     """
     def __enter__(self):
@@ -66,6 +91,12 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
         last index of the last block + 1 so that one can easily use the array
         for slicing, as shown in the example below.
 
+        .. note:: For `step` > 1 the last index in `frame_indices` may be
+                  larger than the real last index in the trajectory; this is
+                  not a problem for slicing but it means that one should *not*
+                  rely on the last index for any other operations except
+                  slicing of the original trajectory.
+
     Example
     -------
     For a trajectory with 5 frames and 4 blocks we get block sizes ``[2, 1, 1,
@@ -79,17 +110,24 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
         n_frames = len(u.trajectory[start:stop:step])
 
         idx = assign_blocks(n_frames, n_blocks)
-        for i_block, (start, stop) in enumerate(zip(idx[:-1], idx[1:])):
-           for ts in u.trajectory[start:stop]:
+        for i_block, (bstart, bstop) in enumerate(zip(idx[:-1], idx[1:])):
+           for ts in u.trajectory[bstart:bstop:step]:
                # do stuff for block number i_block
+
+    Note that in order to access the correct frames in each block, the
+    trajectory *must be sliced with the original `step` value* (``step`` in the
+    example) and the start and stop indices returned by
+    :func:`make_balanced_blocks`, namely ``bstart`` and ``bstop`` in the
+    example above.
+
 
     Notes
     -----
-    Explanation of the algorithm: For `M` trajectory frames in the trajectory
-    and `N` blocks (or processes), where `i` with 0 ≤ i N-1 is the block number
-    and `m[i]` is the number of frames for block `i` we get a *balanced
-    distribution* (one that does not contain blocks of size 0) with the
-    algorithm ::
+    Explanation of the algorithm: For `N` trajectory frames in the trajectory
+    and `N` blocks (or processes), where `i` with 0 ≤ `i` ≤ `N` - 1 is
+    the block number and `m[i]` is the number of frames for block `i` we
+    get a *balanced distribution* (one that does not contain blocks of size 0)
+    with the algorithm ::
 
         m[i] = M // N     # initial frames for block i
         r = M % N         # remaining frames 0 ≤ r < N
@@ -97,11 +135,13 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
             m[i] += 1     # distribute the remaining frames
                           # over the first r blocks
 
-    For a `step` > 1, we use ``r *= step``. This approach can give a last index
-    that is larger than the real last index; this is not a problem for slicing
-    but it's not pretty. As an example, we have the original trajectory slice
-    ``[0:20:3]``, which results in ``n_frames=7``, ``start=0``, ``step=3`` and
-    the last frame index will be 21 instead of 20.
+    For a `step` > 1, we use ``m[i] *= step``. This approach can give a last
+    index that is larger than the real last index; this is not a problem for
+    slicing but it's not pretty. As an example, we have the original trajectory
+    slice ``[0:20:3]``, which corresponds to ``n_frames=7``, ``start=0``,
+    ``step=3`` and the last frame index will always be 21 instead of 20 (for
+    instance for ``n_blocks=1`` we get ``[0, 21]`` and for two blocks, ``[0,
+    12, 21]``).
 
 
     .. versionadded:: 0.2.0
