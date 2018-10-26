@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PMDA'
-author = u'Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein'
+author = u'Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein, Ioannis Paraskevakos'
 copyright = u'2018, ' + author
 
 
