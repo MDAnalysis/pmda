@@ -41,15 +41,18 @@ def u():
 @pytest.fixture(scope='module')
 def sels(u):
     s1 = u.select_atoms('name ZND and resid 289')
-    s2 = u.select_atoms('(name OD1 or name OD2) and resid 51 and sphzone 5.0 (resid 289)')
+    s2 = u.select_atoms('(name OD1 or name OD2) and resid 51 and
+                         sphzone 5.0 (resid 289)')
     s3 = u.select_atoms('name ZND and (resid 291 or resid 292)')
     s4 = u.select_atoms('(name OD1 or name OD2) and sphzone 5.0 (resid 291)')
     ags = [[s1, s2], [s3, s4]]
     return ags
 
+
 @pytest.fixture(scope='module')
 def rdf_s(u, sels):
     return InterRDF_s(u, sels).run()
+
 
 def test_nbins(u):
     ags = sels(u)
@@ -95,6 +98,7 @@ def test_double_run(rdf_s):
     assert len(rdf_s.count[0][0][1][rdf_s.count[0][0][1] == 5]) == 1
     assert len(rdf_s.count[1][1][0][rdf_s.count[1][1][0] == 3]) == 1
 
+
 def test_cdf(rdf_s):
     rdf_s.get_cdf()
     assert rdf_s.cdf[0][0][0][-1] == rdf_s.count[0][0][0].sum()/rdf_s.nf
@@ -111,7 +115,8 @@ def test_reduce(rdf_s):
 
 
 def test_same_result(u, sels):
-    # should see same results from analysis.rdf.InterRDF_s and pmda.rdf.InterRDF_s
+    # should see same results from analysis.rdf.InterRDF_s
+    # and pmda.rdf.InterRDF_s
     nrdf = rdf.InterRDF_s(u, sels).run()
     prdf = InterRDF_s(u, sels).run(n_jobs=3)
     assert_almost_equal(nrdf.count[0][0][0], prdf.count[0][0][0])
