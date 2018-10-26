@@ -24,7 +24,7 @@ from dask.delayed import delayed
 from joblib import cpu_count
 import numpy as np
 
-from .util import timeit, make_balanced_blocks
+from .util import timeit, make_balanced_slices
 
 
 class Timing(object):
@@ -313,8 +313,8 @@ class ParallelAnalysisBase(object):
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
-        idx = make_balanced_blocks(n_frames, n_blocks,
-                                   start=start, step=step)
+        slices = make_balanced_slices(n_frames, n_blocks,
+                                      sl=slice(start, stop, step))
 
         with timeit() as total:
             with timeit() as prepare:
@@ -322,12 +322,10 @@ class ParallelAnalysisBase(object):
             time_prepare = prepare.elapsed
             blocks = []
             with self.readonly_attributes():
-                for bstart, bstop in zip(idx[:-1], idx[1:]):
+                for bslice in slices:
                     task = delayed(
                         self._dask_helper, pure=False)(
-                            bstart,
-                            min(bstop, stop),
-                            step,
+                            bslice,
                             self._indices,
                             self._top,
                             self._traj, )
@@ -348,7 +346,7 @@ class ParallelAnalysisBase(object):
             np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
-    def _dask_helper(self, start, stop, step, indices, top, traj):
+    def _dask_helper(self, bslice, indices, top, traj):
         """helper function to actually setup dask graph"""
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
@@ -357,8 +355,12 @@ class ParallelAnalysisBase(object):
         res = []
         times_io = []
         times_compute = []
-        for i in range(start, stop, step):
+        assert bslice.stop is not None, \
+            "_dask_helper always needs explicit stop frame index"
+        for i in range(bslice.start, bslice.stop, bslice.step):
             with timeit() as b_io:
+                # explicit instead of 'for ts in u.trajectory[bslice]'
+                # so that we can get accurate timing.
                 ts = u.trajectory[i]
             with timeit() as b_compute:
                 res = self._reduce(res, self._single_frame(ts, agroups))
