@@ -78,7 +78,7 @@ def test_sub_frames(analysis, n_jobs):
     np.testing.assert_almost_equal(analysis.res, [10, 20, 30, 40])
 
 
-@pytest.mark.parametrize('n_jobs', (1, 2))
+@pytest.mark.parametrize('n_jobs', (1, 2, 3))
 def test_no_frames(analysis, n_jobs):
     u = mda.Universe(analysis._top, analysis._traj)
     n_frames = u.trajectory.n_frames

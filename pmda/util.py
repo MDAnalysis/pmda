@@ -125,11 +125,11 @@ def make_balanced_blocks(n_frames, n_blocks, start=None, step=None):
 
     Notes
     -----
-    Explanation of the algorithm: For `N` trajectory frames in the trajectory
-    and `N` blocks (or processes), where `i` with 0 ≤ `i` ≤ `N` - 1 is
-    the block number and `m[i]` is the number of frames for block `i` we
-    get a *balanced distribution* (one that does not contain blocks of size 0)
-    with the algorithm ::
+    Explanation of the algorithm: For `M` frames in the trajectory and
+    `N` blocks (or processes), where `i` with 0 ≤ `i` ≤ `N` - 1 is the
+    block number and `m[i]` is the number of frames for block `i` we
+    get a *balanced distribution* (one that does not contain blocks of
+    size 0) with the algorithm ::
 
         m[i] = M // N     # initial frames for block i
         r = M % N         # remaining frames 0 ≤ r < N
