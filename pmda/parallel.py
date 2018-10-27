@@ -315,8 +315,12 @@ class ParallelAnalysisBase(object):
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
+
         if n_frames == 0:
             warnings.warn("run() analyses no frames: check start/stop/step")
+        if n_frames < n_blocks:
+            warnings.warn("run() uses more blocks than frames: decrease n_blocks")
+
         slices = make_balanced_slices(n_frames, n_blocks,
                                       sl=slice(start, stop, step))
 

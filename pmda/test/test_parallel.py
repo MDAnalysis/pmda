@@ -91,6 +91,14 @@ def test_no_frames(analysis, n_jobs):
     assert analysis.timing.universe == 0
 
 
+def test_nframes_less_nblocks_warning(analysis):
+    u = mda.Universe(analysis._top, analysis._traj)
+    n_frames = u.trajectory.n_frames
+    with pytest.warns(UserWarning):
+        analysis.run(stop=2, n_blocks=4, n_jobs=2)
+    assert len(analysis.res) == 2
+
+
 def test_scheduler(analysis, scheduler):
     analysis.run(scheduler=scheduler)
 
