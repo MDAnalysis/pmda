@@ -59,7 +59,7 @@ class timeit(object):
         return False
 
 
-def make_balanced_slices(n_frames, n_blocks, sl=None):
+def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
     """Divide `n_frames` into `n_blocks` balanced blocks.
 
     The blocks are generated in such a way that they contain equal numbers of
@@ -74,28 +74,18 @@ def make_balanced_slices(n_frames, n_blocks, sl=None):
         number of frames *after* the trajectory has been sliced,
         i.e. ``len(u.trajectory[start:stop:step])``. If any of
         `start`, `stop, and `step` are not the defaults (left empty or
-        set to ``None``) they must be provided as parameters in `sl`.
+        set to ``None``) they must be provided as parameters.
     n_blocks : int
         number of blocks (>0)
-    sl : slice, optional
-        Python :class:`slice` instance that contains
-
-        - :attr:`sl.start <slice.start>` as the first index of the
-          trajectory (default is ``None``, which is interpreted as
-          "first frame", i.e., 0).
-
-        - :attr:`sl.stop <slice.stop>` as the index of the last frame
-          + 1 (default is ``None``, which is interpreted as "up to and
-          including the last frame".
-
-        - :attr:`sl.step <slice.step>` is the step size by which the
-          trajectory is sliced; the default is ``None`` which
-          corresponds to ``step=1``.
-
-        See description of `n_frames` for further context on the slice.
-
-        If set to ``None`` then the default "slice-everything" slice
-        ``slice(None, None, None)`` is used.
+    start : int or None
+        The first index of the trajectory (default is ``None``, which
+        is interpreted as "first frame", i.e., 0).
+    stop : int or None
+        The index of the last frame + 1 (default is ``None``, which is
+        interpreted as "up to and including the last frame".
+    step : int or None
+        Step size by which the trajectory is sliced; the default is
+        ``None`` which corresponds to ``step=1``.
 
     Returns
     -------
@@ -120,7 +110,7 @@ def make_balanced_slices(n_frames, n_blocks, sl=None):
         n_frames = len(u.trajectory[start:stop:step])
 
         slices = make_balanced_slices(n_frames, n_blocks,
-                                      sl=slice(start, stop, step)
+                                      start=start, stop=stop, step=step)
         for i_block, block in enumerate(slices):
            for ts in u.trajectory[block]:
                # do stuff for block number i_block
@@ -146,22 +136,20 @@ def make_balanced_slices(n_frames, n_blocks, sl=None):
 
     """
 
-    sl = sl if sl is not None else slice(None, None, None)
-    if not isinstance(sl, slice):
-        raise TypeError("sl must be a slice")
-
-    start = sl.start if sl.start is not None else 0
-    step = sl.step if sl.step is not None else 1
-    stop = sl.stop
+    start = int(start) if start is not None else 0
+    stop = int(stop) if stop is not None else None
+    step = int(step) if step is not None else 1
 
     if n_frames < 0:
         raise ValueError("n_frames must be >= 0")
     elif n_blocks < 1:
         raise ValueError("n_blocks must be > 0")
     elif start < 0:
-        raise ValueError("start must be >= 0")
+        raise ValueError("start must be >= 0 or None")
+    elif stop is not None and stop < 0:
+        raise ValueError("stop must be >= 0 or None")
     elif step < 1:
-        raise ValueError("step must be > 0")
+        raise ValueError("step must be > 0 or None")
 
     if n_frames == 0:
         # not very useful but allows calling code to work more gracefully
