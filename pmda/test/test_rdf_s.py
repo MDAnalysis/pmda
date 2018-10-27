@@ -41,8 +41,8 @@ def u():
 @pytest.fixture(scope='module')
 def sels(u):
     s1 = u.select_atoms('name ZND and resid 289')
-    s2 = u.select_atoms('(name OD1 or name OD2) and resid 51 and
-                         sphzone 5.0 (resid 289)')
+    s2 = u.select_atoms(
+         '(name OD1 or name OD2) and resid 51 and sphzone 5.0 (resid 289)')
     s3 = u.select_atoms('name ZND and (resid 291 or resid 292)')
     s4 = u.select_atoms('(name OD1 or name OD2) and sphzone 5.0 (resid 291)')
     ags = [[s1, s2], [s3, s4]]
