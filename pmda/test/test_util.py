@@ -88,10 +88,17 @@ def test_make_balanced_slices_empty(n_blocks, start, step):
     assert slices == []
 
 
-@pytest.mark.parametrize("n_frames,n_blocks,start",
-                         [(-1, 5, None), (5, 0, None),
-                          (5, -1, None), (0, 0, None), (-1, -1, None),
-                          (5, 4, -1), (0, 5, -1), (5, 0, -1)])
-def test_make_balanced_slices_ValueError(n_frames, n_blocks, start):
+@pytest.mark.parametrize("n_frames,n_blocks,start,step",
+                         [(-1, 5, None, None), (5, 0, None, None),
+                          (5, -1, None, None), (0, 0, None, None),
+                          (-1, -1, None, None),
+                          (5, 4, -1, None), (0, 5, -1, None), (5, 0, -1, None),
+                          (5, 4, None, -1), (5, 4, None, 0)])
+def test_make_balanced_slices_ValueError(n_frames, n_blocks, start, step):
     with pytest.raises(ValueError):
-        make_balanced_slices(n_frames, n_blocks, sl=slice(start, None))
+        make_balanced_slices(n_frames, n_blocks, sl=slice(start, None, step))
+
+
+def test_make_balanced_slices_TypeError():
+    with pytest.raises(TypeError):
+        make_balanced_slices(5, 4, sl=(0, None, 1))
