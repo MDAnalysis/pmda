@@ -364,8 +364,8 @@ class ParallelAnalysisBase(object):
         res = []
         times_io = []
         times_compute = []
-        assert bslice.stop is not None, \
-            "_dask_helper always needs explicit stop frame index"
+        # NOTE: bslice.stop cannot be None! Always make sure
+        #       that it comes from  _trajectory.check_slice_indices()!
         for i in range(bslice.start, bslice.stop, bslice.step):
             with timeit() as b_io:
                 # explicit instead of 'for ts in u.trajectory[bslice]'
