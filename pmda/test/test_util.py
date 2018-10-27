@@ -53,12 +53,7 @@ def test_make_balanced_slices_step1(n_frames, n_blocks, start, result, step=1):
     assert_equal(slices, _result)
 
 
-@pytest.mark.parametrize('n_blocks', [1, 2, 3, 4, 5, 7, 10, 11])
-@pytest.mark.parametrize('start', [0, 1, 10])
-@pytest.mark.parametrize('stop', [11, 100, 256])
-@pytest.mark.parametrize('step', [None, 1, 2, 3, 5, 7])
-@pytest.mark.parametrize('scale', [1, 2])
-def test_make_balanced_slices(n_blocks, start, stop, step, scale):
+def _test_make_balanced_slices(n_blocks, start, stop, step, scale):
     _start = start if start is not None else 0
 
     traj_frames = range(scale * stop)
@@ -100,6 +95,20 @@ def test_make_balanced_slices(n_blocks, start, stop, step, scale):
             "For n_blocks>n_frames, some blocks contain != 1 frame"
 
 
+@pytest.mark.parametrize('n_blocks', [1, 2, 3, 4, 5, 7, 10, 11])
+@pytest.mark.parametrize('start', [0, 1, 10])
+@pytest.mark.parametrize('stop', [11, 100, 256])
+@pytest.mark.parametrize('step', [None, 1, 2, 3, 5, 7])
+@pytest.mark.parametrize('scale', [1, 2])
+def test_make_balanced_slices(n_blocks, start, stop, step, scale):
+    return _test_make_balanced_slices(n_blocks, start, stop, step, scale)
+
+
+def test_make_balanced_slices_step_gt_stop(n_blocks=2, start=None,
+                                           stop=5, step=6, scale=1):
+    return _test_make_balanced_slices(n_blocks, start, stop, step, scale)
+
+
 @pytest.mark.parametrize('n_blocks', [1, 2])
 @pytest.mark.parametrize('start', [0, 10])
 @pytest.mark.parametrize('step', [None, 1, 2])
@@ -114,7 +123,7 @@ def test_make_balanced_slices_empty(n_blocks, start, step):
                           (-1, -1, None, None, None),
                           (5, 4, -1, None, None), (0, 5, -1, None, None),
                           (5, 0, -1, None, None),
-                          (5, 4, None, -1, None),
+                          (5, 4, None, -1, None), (5, 4, 3, 2, None),
                           (5, 4, None, None, -1), (5, 4, None, None, 0)])
 def test_make_balanced_slices_ValueError(n_frames, n_blocks,
                                          start, stop, step):

@@ -67,6 +67,11 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
     with a naive distribution of ``ceil(n_frames/n_blocks)`` per block and a
     remainder block).
 
+    If the trajectory is sliced in any way (``u.trajectory[start:stop:step]``)
+    then the appropriate values for `start`, `stop`, and `step` must be passed
+    to this function. Defaults can be set to ``None``. Only a subset of legal
+    values for slices is supported: ``0 ≤ start ≤ stop`` and ``step ≥ 1``.
+
     Arguments
     ---------
     n_frames : int
@@ -94,7 +99,6 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
         for each block.
 
         If `n_frames` = 0 then an empty list ``[]`` is returned.
-
 
     Example
     -------
@@ -146,8 +150,8 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
         raise ValueError("n_blocks must be > 0")
     elif start < 0:
         raise ValueError("start must be >= 0 or None")
-    elif stop is not None and stop < 0:
-        raise ValueError("stop must be >= 0 or None")
+    elif stop is not None and stop < start:
+        raise ValueError("stop must be >= start and >= 0 or None")
     elif step < 1:
         raise ValueError("step must be > 0 or None")
 
