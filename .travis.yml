@@ -15,7 +15,7 @@ env:
     # Set default python version to avoid repetition later
     - PYTHON_VERSION=3.6
     - MAIN_CMD="pytest"
-    - SETUP_CMD="pmda --pep8 -v --cov pmda"
+    - SETUP_CMD="pmda --pep8 --cov pmda"
     # mdanalysis develop from source (see below), which needs
     # minimal CONDA_MDANALYSIS_DEPENDENCIES
     #- CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib pytest-pep8 mock codecov cython hypothesis sphinx"

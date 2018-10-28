@@ -78,6 +78,27 @@ def test_sub_frames(analysis, n_jobs):
     np.testing.assert_almost_equal(analysis.res, [10, 20, 30, 40])
 
 
+@pytest.mark.parametrize('n_jobs', (1, 2, 3))
+def test_no_frames(analysis, n_jobs):
+    u = mda.Universe(analysis._top, analysis._traj)
+    n_frames = u.trajectory.n_frames
+    with pytest.warns(UserWarning):
+        analysis.run(start=n_frames, stop=n_frames+1, n_jobs=n_jobs)
+    assert len(analysis.res) == 0
+    np.testing.assert_equal(analysis.res, [])
+    np.testing.assert_equal(analysis.timing.compute, [])
+    np.testing.assert_equal(analysis.timing.io, [])
+    assert analysis.timing.universe == 0
+
+
+def test_nframes_less_nblocks_warning(analysis):
+    u = mda.Universe(analysis._top, analysis._traj)
+    n_frames = u.trajectory.n_frames
+    with pytest.warns(UserWarning):
+        analysis.run(stop=2, n_blocks=4, n_jobs=2)
+    assert len(analysis.res) == 2
+
+
 def test_scheduler(analysis, scheduler):
     analysis.run(scheduler=scheduler)
 
