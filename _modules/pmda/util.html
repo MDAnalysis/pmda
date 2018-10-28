@@ -1,0 +1,314 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pmda.util &#8212; PMDA 0.1.1+52.g6aa6c61 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1+52.g6aa6c61',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.1.1+52.g6aa6c61 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pmda.util</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
+<span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
+<span class="c1">#</span>
+<span class="c1"># PMDA</span>
+<span class="c1"># Copyright (c) 2017 The MDAnalysis Development Team and contributors</span>
+<span class="c1"># (see the file AUTHORS for the full list of names)</span>
+<span class="c1">#</span>
+<span class="c1"># Released under the GNU Public Licence, v2 or any higher version</span>
+<span class="sd">&quot;&quot;&quot;Utility functions --- :mod:`pmda.util`</span>
+<span class="sd">=========================================</span>
+
+
+<span class="sd">This module contains helper functions and classes that can be used throughout</span>
+<span class="sd">:mod:`pmda`.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="timeit"><a class="viewcode-back" href="../../api/util.html#pmda.util.timeit">[docs]</a><span class="k">class</span> <span class="nc">timeit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;measure time spend in context</span>
+
+<span class="sd">    :class:`timeit` is a context manager (to be used with the :keyword:`with`</span>
+<span class="sd">    statement) that records the execution time for the enclosed context block</span>
+<span class="sd">    in :attr:`elapsed`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    elapsed : float</span>
+<span class="sd">        Time in seconds that elapsed between entering</span>
+<span class="sd">        and exiting the context.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    Use as a context manager::</span>
+
+<span class="sd">       with timeit() as total:</span>
+<span class="sd">          # code to be timed</span>
+
+<span class="sd">       print(total.elapsed, &quot;seconds&quot;)</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`time.time`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>
+        <span class="c1"># always propagate exceptions forward</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="make_balanced_slices"><a class="viewcode-back" href="../../api/util.html#pmda.util.make_balanced_slices">[docs]</a><span class="k">def</span> <span class="nf">make_balanced_slices</span><span class="p">(</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Divide `n_frames` into `n_blocks` balanced blocks.</span>
+
+<span class="sd">    The blocks are generated in such a way that they contain equal numbers of</span>
+<span class="sd">    frames when possible, but there are also no empty blocks (which can happen</span>
+<span class="sd">    with a naive distribution of ``ceil(n_frames/n_blocks)`` per block and a</span>
+<span class="sd">    remainder block).</span>
+
+<span class="sd">    If the trajectory is sliced in any way (``u.trajectory[start:stop:step]``)</span>
+<span class="sd">    then the appropriate values for `start`, `stop`, and `step` must be passed</span>
+<span class="sd">    to this function. Defaults can be set to ``None``. Only a subset of legal</span>
+<span class="sd">    values for slices is supported: ``0 ≤ start ≤ stop`` and ``step ≥ 1``.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    n_frames : int</span>
+<span class="sd">        number of frames in the trajectory (≥0). This must be the</span>
+<span class="sd">        number of frames *after* the trajectory has been sliced,</span>
+<span class="sd">        i.e. ``len(u.trajectory[start:stop:step])``. If any of</span>
+<span class="sd">        `start`, `stop, and `step` are not the defaults (left empty or</span>
+<span class="sd">        set to ``None``) they must be provided as parameters.</span>
+<span class="sd">    n_blocks : int</span>
+<span class="sd">        number of blocks (&gt;0)</span>
+<span class="sd">    start : int or None</span>
+<span class="sd">        The first index of the trajectory (default is ``None``, which</span>
+<span class="sd">        is interpreted as &quot;first frame&quot;, i.e., 0).</span>
+<span class="sd">    stop : int or None</span>
+<span class="sd">        The index of the last frame + 1 (default is ``None``, which is</span>
+<span class="sd">        interpreted as &quot;up to and including the last frame&quot;.</span>
+<span class="sd">    step : int or None</span>
+<span class="sd">        Step size by which the trajectory is sliced; the default is</span>
+<span class="sd">        ``None`` which corresponds to ``step=1``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    slices : list of slice</span>
+<span class="sd">        List of length ``n_blocks`` with one :class:`slice`</span>
+<span class="sd">        for each block.</span>
+
+<span class="sd">        If `n_frames` = 0 then an empty list ``[]`` is returned.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    For a trajectory with 5 frames and 4 blocks we get block sizes ``[2, 1, 1,</span>
+<span class="sd">    1]`` (instead of ``[2, 2, 1, 0]`` with the naive algorithm).</span>
+
+<span class="sd">    The slices will be ``[slice(0, 2, None), slice(2, 3, None),</span>
+<span class="sd">    slice(3, 4, None), slice(4, 5, None)]``.</span>
+
+<span class="sd">    The indices can be used to slice a trajectory into blocks::</span>
+
+<span class="sd">        n_blocks = 5</span>
+<span class="sd">        n_frames = len(u.trajectory[start:stop:step])</span>
+
+<span class="sd">        slices = make_balanced_slices(n_frames, n_blocks,</span>
+<span class="sd">                                      start=start, stop=stop, step=step)</span>
+<span class="sd">        for i_block, block in enumerate(slices):</span>
+<span class="sd">           for ts in u.trajectory[block]:</span>
+<span class="sd">               # do stuff for block number i_block</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Explanation of the algorithm: For `M` frames in the trajectory and</span>
+<span class="sd">    `N` blocks (or processes), where `i` with 0 ≤ `i` ≤ `N` - 1 is the</span>
+<span class="sd">    block number and `m[i]` is the number of frames for block `i` we</span>
+<span class="sd">    get a *balanced distribution* (one that does not contain blocks of</span>
+<span class="sd">    size 0) with the algorithm ::</span>
+
+<span class="sd">        m[i] = M // N     # initial frames for block i</span>
+<span class="sd">        r = M % N         # remaining frames 0 ≤ r &lt; N</span>
+<span class="sd">        for i in range(r):</span>
+<span class="sd">            m[i] += 1     # distribute the remaining frames</span>
+<span class="sd">                          # over the first r blocks</span>
+
+<span class="sd">    For a `step` &gt; 1, we use ``m[i] *= step``. The last slice will</span>
+<span class="sd">    never go beyond the original `stop` if a value was provided.</span>
+
+<span class="sd">    .. versionadded:: 0.2.0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span> <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">if</span> <span class="n">step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">n_frames</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_frames must be &gt;= 0&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">n_blocks</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_blocks must be &gt; 0&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;start must be &gt;= 0 or None&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stop</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;stop must be &gt;= start and &gt;= 0 or None&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;step must be &gt; 0 or None&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_frames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># not very useful but allows calling code to work more gracefully</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">bsizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_frames</span> <span class="o">//</span> <span class="n">n_blocks</span>
+    <span class="n">bsizes</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_frames</span> <span class="o">%</span> <span class="n">n_blocks</span><span class="p">)</span>
+    <span class="c1"># This can give a last index that is larger than the real last index;</span>
+    <span class="c1"># this is not a problem for slicing but it&#39;s not pretty.</span>
+    <span class="c1"># Example: original [0:20:3] -&gt; n_frames=7, start=0, step=3:</span>
+    <span class="c1">#          last frame 21 instead of 20</span>
+    <span class="n">bsizes</span> <span class="o">*=</span> <span class="n">step</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="n">start</span><span class="p">],</span> <span class="n">bsizes</span><span class="p">)))</span>
+    <span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="n">bstart</span><span class="p">,</span> <span class="n">bstop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+              <span class="k">for</span> <span class="n">bstart</span><span class="p">,</span> <span class="n">bstop</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">idx</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+
+    <span class="c1"># fix very last stop index: make sure it&#39;s within trajectory range or None</span>
+    <span class="c1"># (no really critical because the slices will work regardless, but neater)</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">slices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">last_stop</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">last</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stop</span>
+    <span class="n">slices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">last</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">last_stop</span><span class="p">,</span> <span class="n">last</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">slices</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein, Ioannis Paraskevakos.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

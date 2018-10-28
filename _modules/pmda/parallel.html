@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pmda.parallel &#8212; PMDA 0.1.1+35.ga718250 documentation</title>
+    <title>pmda.parallel &#8212; PMDA 0.1.1+52.g6aa6c61 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1+35.ga718250',
+        VERSION:     '0.1.1+52.g6aa6c61',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+35.ga718250 documentation"
+          title="Search within PMDA 0.1.1+52.g6aa6c61 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -64,6 +64,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
 <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span>
 
 <span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
@@ -72,7 +74,7 @@
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">timeit</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">timeit</span><span class="p">,</span> <span class="n">make_balanced_slices</span>
 
 
 <div class="viewcode-block" id="Timing"><a class="viewcode-back" href="../../api/parallel.html#pmda.contacts.Timing">[docs]</a><span class="k">class</span> <span class="nc">Timing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -361,7 +363,15 @@
         <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="o">.</span><span class="n">check_slice_indices</span><span class="p">(</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
         <span class="n">n_frames</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
-        <span class="n">bsize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_frames</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">n_frames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;run() analyses no frames: check start/stop/step&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_frames</span> <span class="o">&lt;</span> <span class="n">n_blocks</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;run() uses more blocks than frames: &quot;</span>
+                          <span class="s2">&quot;decrease n_blocks&quot;</span><span class="p">)</span>
+
+        <span class="n">slices</span> <span class="o">=</span> <span class="n">make_balanced_slices</span><span class="p">(</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">,</span>
+                                      <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">total</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">prepare</span><span class="p">:</span>
@@ -369,18 +379,20 @@
             <span class="n">time_prepare</span> <span class="o">=</span> <span class="n">prepare</span><span class="o">.</span><span class="n">elapsed</span>
             <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">readonly_attributes</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">bslice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
                     <span class="n">task</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_dask_helper</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span>
-                            <span class="n">b</span> <span class="o">*</span> <span class="n">bsize</span> <span class="o">*</span> <span class="n">step</span> <span class="o">+</span> <span class="n">start</span><span class="p">,</span>
-                            <span class="nb">min</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bsize</span> <span class="o">*</span> <span class="n">step</span> <span class="o">+</span> <span class="n">start</span><span class="p">),</span>
-                            <span class="n">step</span><span class="p">,</span>
+                            <span class="n">bslice</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_top</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_traj</span><span class="p">,</span> <span class="p">)</span>
                     <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
                 <span class="n">blocks</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">scheduler_kwargs</span><span class="p">)</span>
+            <span class="c1"># hack to handle n_frames == 0 in this framework</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># everything else wants list of block tuples</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="p">[([],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">)]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">conclude</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span><span class="p">()</span>
@@ -391,7 +403,7 @@
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">time_prepare</span><span class="p">,</span> <span class="n">conclude</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">_dask_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_dask_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bslice</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;helper function to actually setup dask graph&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_universe</span><span class="p">:</span>
             <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
@@ -400,8 +412,12 @@
         <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">times_io</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">times_compute</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+        <span class="c1"># NOTE: bslice.stop cannot be None! Always make sure</span>
+        <span class="c1">#       that it comes from  _trajectory.check_slice_indices()!</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bslice</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">bslice</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">bslice</span><span class="o">.</span><span class="n">step</span><span class="p">):</span>
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_io</span><span class="p">:</span>
+                <span class="c1"># explicit instead of &#39;for ts in u.trajectory[bslice]&#39;</span>
+                <span class="c1"># so that we can get accurate timing.</span>
                 <span class="n">ts</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_compute</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_frame</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">agroups</span><span class="p">))</span>
