@@ -321,6 +321,7 @@ class InterRDF_s(ParallelAnalysisBase):
         """Calculate the cumulative distribution functions (CDF) for all sites.
         Note that this is the actual count within a given radius, i.e.,
         :math:`N(r)`.
+
         Returns
         -------
               cdf : list
