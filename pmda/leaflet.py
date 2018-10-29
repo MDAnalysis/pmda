@@ -7,8 +7,8 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 """
-LeafletFInder Analysis tool --- :mod:`pmda.leaflet`
-==========================================================
+LeafletFinder Analysis tool --- :mod:`pmda.leaflet`
+===================================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.leaflet`.
@@ -27,7 +27,7 @@ import networkx as nx
 from scipy.spatial import cKDTree
 
 import MDAnalysis as mda
-from dask import distributed, multiprocessing
+from dask import distributed
 from joblib import cpu_count
 
 from .parallel import ParallelAnalysisBase, Timing
@@ -59,8 +59,8 @@ class LeafletFinder(ParallelAnalysisBase):
     At the moment, this class has far fewer features than the serial
     version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.
 
-    This version offers Leaflet Finder algorithm 4 ("Tree-based Nearest
-    Neighbor and Parallel-Connected Com- ponents (Tree-Search)") in
+    This version offers LeafletFinder algorithm 4 ("Tree-based Nearest
+    Neighbor and Parallel-Connected Components (Tree-Search)") in
     [Paraskevakos2018]_.
 
     Currently, periodic boundaries are not taken into account.
@@ -254,10 +254,10 @@ class LeafletFinder(ParallelAnalysisBase):
 
         """
         if scheduler is None:
-            scheduler = multiprocessing
+            scheduler = 'multiprocessing'
 
         if n_jobs == -1:
-            if scheduler == multiprocessing:
+            if scheduler == 'multiprocessing':
                 n_jobs = cpu_count()
             elif isinstance(scheduler, distributed.Client):
                 n_jobs = len(scheduler.ncores())
@@ -269,8 +269,8 @@ class LeafletFinder(ParallelAnalysisBase):
         with timeit() as b_universe:
             universe = mda.Universe(self._top, self._traj)
 
-        scheduler_kwargs = {'get': scheduler.get}
-        if scheduler == multiprocessing:
+        scheduler_kwargs = {'scheduler': scheduler}
+        if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
 
         start, stop, step = self._trajectory.check_slice_indices(
