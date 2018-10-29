@@ -22,6 +22,9 @@ Enhancements
   * add parallel particle-particle RDF calculation module pmda.rdf (Issue #41)
   * add readonly_attributes context manager to ParallelAnalysisBase
   * add parallel implementation of Leaflet Finder (Issue #47)
+  * add parallel site-specific RDF calculation module pmda.rdf.InterRDF_s
+    (Issue #60)
+
 
 Fixes
   * always distribute frames over blocks so that no empty blocks are
