@@ -11,6 +11,7 @@
 from dask import distributed, multiprocessing
 import pytest
 
+
 @pytest.fixture(scope="session", params=(1, 2))
 def client(tmpdir_factory, request):
     with tmpdir_factory.mktemp("dask_cluster").as_cwd():
