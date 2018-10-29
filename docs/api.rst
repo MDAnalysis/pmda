@@ -26,6 +26,7 @@ a single frame. If your need more flexibility you can use the
 
    api/parallel
    api/custom
+   api/util
 
 .. _pre-defined-analysis-tasks:
 
@@ -42,3 +43,4 @@ also function as examples for how to implement your own functions with
    api/rms
    api/contacts
    api/rdf
+   api/leaflet

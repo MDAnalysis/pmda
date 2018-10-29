@@ -16,6 +16,8 @@ classes.
 """
 from __future__ import absolute_import, division
 from contextlib import contextmanager
+import warnings
+
 from six.moves import range
 
 import MDAnalysis as mda
@@ -24,7 +26,7 @@ from dask.delayed import delayed
 from joblib import cpu_count
 import numpy as np
 
-from .util import timeit
+from .util import timeit, make_balanced_slices
 
 
 class Timing(object):
@@ -313,7 +315,15 @@ class ParallelAnalysisBase(object):
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
         n_frames = len(range(start, stop, step))
-        bsize = int(np.ceil(n_frames / float(n_blocks)))
+
+        if n_frames == 0:
+            warnings.warn("run() analyses no frames: check start/stop/step")
+        if n_frames < n_blocks:
+            warnings.warn("run() uses more blocks than frames: "
+                          "decrease n_blocks")
+
+        slices = make_balanced_slices(n_frames, n_blocks,
+                                      start=start, stop=stop, step=step)
 
         with timeit() as total:
             with timeit() as prepare:
@@ -321,18 +331,20 @@ class ParallelAnalysisBase(object):
             time_prepare = prepare.elapsed
             blocks = []
             with self.readonly_attributes():
-                for b in range(n_blocks):
+                for bslice in slices:
                     task = delayed(
                         self._dask_helper, pure=False)(
-                            b * bsize * step + start,
-                            min(stop, (b + 1) * bsize * step + start),
-                            step,
+                            bslice,
                             self._indices,
                             self._top,
                             self._traj, )
                     blocks.append(task)
                 blocks = delayed(blocks)
                 res = blocks.compute(**scheduler_kwargs)
+            # hack to handle n_frames == 0 in this framework
+            if len(res) == 0:
+                # everything else wants list of block tuples
+                res = [([], [], [], 0)]
             self._results = np.asarray([el[0] for el in res])
             with timeit() as conclude:
                 self._conclude()
@@ -343,7 +355,7 @@ class ParallelAnalysisBase(object):
             np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
-    def _dask_helper(self, start, stop, step, indices, top, traj):
+    def _dask_helper(self, bslice, indices, top, traj):
         """helper function to actually setup dask graph"""
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
@@ -352,8 +364,12 @@ class ParallelAnalysisBase(object):
         res = []
         times_io = []
         times_compute = []
-        for i in range(start, stop, step):
+        # NOTE: bslice.stop cannot be None! Always make sure
+        #       that it comes from  _trajectory.check_slice_indices()!
+        for i in range(bslice.start, bslice.stop, bslice.step):
             with timeit() as b_io:
+                # explicit instead of 'for ts in u.trajectory[bslice]'
+                # so that we can get accurate timing.
                 ts = u.trajectory[i]
             with timeit() as b_compute:
                 res = self._reduce(res, self._single_frame(ts, agroups))
