@@ -8,7 +8,7 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 
-from dask import distributed, multiprocessing
+from dask import distributed
 import pytest
 
 
@@ -29,4 +29,4 @@ def scheduler(request, client):
     if request.param == 'distributed':
         return client
     else:
-        return multiprocessing
+        return request.param
