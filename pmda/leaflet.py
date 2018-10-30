@@ -27,7 +27,7 @@ import networkx as nx
 from scipy.spatial import cKDTree
 
 import MDAnalysis as mda
-from dask import distributed
+import dask
 from joblib import cpu_count
 
 from .parallel import ParallelAnalysisBase, Timing

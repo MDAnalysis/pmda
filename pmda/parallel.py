@@ -22,6 +22,7 @@ from six.moves import range
 
 import MDAnalysis as mda
 from dask.delayed import delayed
+import dask
 from joblib import cpu_count
 import numpy as np
 
