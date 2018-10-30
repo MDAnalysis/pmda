@@ -21,7 +21,6 @@ import warnings
 from six.moves import range
 
 import MDAnalysis as mda
-from dask import distributed
 from dask.delayed import delayed
 from joblib import cpu_count
 import numpy as np
@@ -267,7 +266,6 @@ class ParallelAnalysisBase(object):
             start=None,
             stop=None,
             step=None,
-            scheduler=None,
             n_jobs=1,
             n_blocks=None):
         """Perform the calculation
@@ -280,9 +278,6 @@ class ParallelAnalysisBase(object):
             stop frame of analysis
         step : int, optional
             number of frames to skip between each analysed frame
-        scheduler : dask scheduler, optional
-            Use dask scheduler, defaults to multiprocessing. This can be used
-            to spread work to a distributed scheduler
         n_jobs : int, optional
             number of jobs to start, if `-1` use number of logical cpu cores.
             This argument will be ignored when the distributed scheduler is
@@ -292,11 +287,28 @@ class ParallelAnalysisBase(object):
             to n_jobs or number of available workers in scheduler.
 
         """
-        if scheduler is None:
+        # are we using a distributed scheduler or should we use multiprocessing?
+        scheduler = dask.config.get('scheduler', None)
+        if scheduler is None and client is None:
             scheduler = 'multiprocessing'
+        elif scheduler is None:
+            # maybe we can grab a global worker
+            try:
+                from dask import distributed
+                scheduler = distributed.worker.get_client()
+            except ValueError:
+                pass
+            except ImportError:
+                pass
 
         if n_jobs == -1:
             n_jobs = cpu_count()
+
+        # we could not find a global scheduler to use and we ask for a single
+        # job. Therefore we run this on the single threaded scheduler for
+        # debugging.
+        if scheduler is None and n_jobs == 1:
+            scheduler = 'single-threaded'
 
         if n_blocks is None:
             if scheduler == 'multiprocessing':
@@ -304,8 +316,9 @@ class ParallelAnalysisBase(object):
             elif isinstance(scheduler, distributed.Client):
                 n_blocks = len(scheduler.ncores())
             else:
-                raise ValueError(
-                    "Couldn't guess ideal number of blocks from scheduler."
+                n_blocks = 1
+                warnings.warn(
+                    "Couldn't guess ideal number of blocks from scheduler. Set n_blocks=1"
                     "Please provide `n_blocks` in call to method.")
 
         scheduler_kwargs = {'scheduler': scheduler}

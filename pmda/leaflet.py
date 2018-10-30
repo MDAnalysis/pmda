@@ -231,7 +231,6 @@ class LeafletFinder(ParallelAnalysisBase):
             start=None,
             stop=None,
             step=None,
-            scheduler=None,
             n_jobs=-1,
             cutoff=15.0):
         """Perform the calculation
@@ -244,34 +243,52 @@ class LeafletFinder(ParallelAnalysisBase):
             stop frame of analysis
         step : int, optional
             number of frames to skip between each analysed frame
-        scheduler : dask scheduler, optional
-            Use dask scheduler, defaults to multiprocessing. This can be used
-            to spread work to a distributed scheduler
         n_jobs : int, optional
             number of tasks to start, if `-1` use number of logical cpu cores.
             This argument will be ignored when the distributed scheduler is
             used
 
         """
-        if scheduler is None:
+        # are we using a distributed scheduler or should we use multiprocessing?
+        scheduler = dask.config.get('scheduler', None)
+        if scheduler is None and client is None:
             scheduler = 'multiprocessing'
+        elif scheduler is None:
+            # maybe we can grab a global worker
+            try:
+                from dask import distributed
+                scheduler = distributed.worker.get_client()
+            except ValueError:
+                pass
+            except ImportError:
+                pass
 
         if n_jobs == -1:
-            if scheduler == 'multiprocessing':
-                n_jobs = cpu_count()
-            elif isinstance(scheduler, distributed.Client):
-                n_jobs = len(scheduler.ncores())
-            else:
-                raise ValueError(
-                    "Couldn't guess ideal number of jobs from scheduler."
-                    "Please provide `n_jobs` in call to method.")
+            n_jobs = cpu_count()
 
-        with timeit() as b_universe:
-            universe = mda.Universe(self._top, self._traj)
+        # we could not find a global scheduler to use and we ask for a single
+        # job. Therefore we run this on the single threaded scheduler for
+        # debugging.
+        if scheduler is None and n_jobs == 1:
+            scheduler = 'single-threaded'
+
+        if n_blocks is None:
+            if scheduler == 'multiprocessing':
+                n_blocks = n_jobs
+            elif isinstance(scheduler, distributed.Client):
+                n_blocks = len(scheduler.ncores())
+            else:
+                n_blocks = 1
+                warnings.warn(
+                    "Couldn't guess ideal number of blocks from scheduler. Set n_blocks=1"
+                    "Please provide `n_blocks` in call to method.")
 
         scheduler_kwargs = {'scheduler': scheduler}
         if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
+
+        with timeit() as b_universe:
+            universe = mda.Universe(self._top, self._traj)
 
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)

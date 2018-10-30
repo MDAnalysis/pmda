@@ -27,13 +27,13 @@ def test_AnalysisFromFunction(scheduler):
     u = mda.Universe(PSF, DCD)
     step = 2
     ana1 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
-        step=step, scheduler=scheduler
+        step=step
     )
     ana2 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
-        step=step, scheduler=scheduler
+        step=step
     )
     ana3 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
-        step=step, scheduler=scheduler
+        step=step
     )
 
     results = []

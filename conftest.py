@@ -9,6 +9,7 @@
 # Released under the GNU Public Licence, v2 or any higher version
 
 from dask import distributed
+import dask
 import pytest
 
 
@@ -24,9 +25,11 @@ def client(tmpdir_factory, request):
         lc.close()
 
 
-@pytest.fixture(scope='session', params=('distributed', 'multiprocessing'))
+@pytest.fixture(scope='session', params=('distributed', 'multiprocessing', 'single-threaded'))
 def scheduler(request, client):
     if request.param == 'distributed':
-        return client
+        arg = client
     else:
-        return request.param
+        arg = request.param
+    with dask.config.set(scheduler=arg):
+        yield

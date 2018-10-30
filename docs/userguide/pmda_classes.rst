@@ -17,7 +17,7 @@ are provided as keyword arguments:
 
 	   set up the parallel analysis
 	   
-   .. method:: run(n_jobs=-1, scheduler=None)
+   .. method:: run(n_jobs=-1)
 	       
 	       perform parallel analysis; see :ref:`parallelization`
 	       for explanation of the arguments

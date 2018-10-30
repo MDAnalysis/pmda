@@ -60,11 +60,6 @@ def analysis():
     return ana
 
 
-def test_wrong_scheduler(analysis):
-    with pytest.raises(ValueError):
-        analysis.run(scheduler=2)
-
-
 @pytest.mark.parametrize('n_jobs', (1, 2))
 def test_all_frames(analysis, n_jobs):
     analysis.run(n_jobs=n_jobs)
@@ -91,16 +86,8 @@ def test_no_frames(analysis, n_jobs):
     assert analysis.timing.universe == 0
 
 
-@pytest.fixture(scope='session', params=('distributed', 'multiprocessing'))
-def scheduler(request, client):
-    if request.param == 'distributed':
-        return client
-    else:
-        return request.param
-
-
 def test_scheduler(analysis, scheduler):
-    analysis.run(scheduler=scheduler)
+    analysis.run()
 
 
 def test_nframes_less_nblocks_warning(analysis):
