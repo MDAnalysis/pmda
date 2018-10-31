@@ -12,7 +12,6 @@ from __future__ import absolute_import, division
 import numpy as np
 import MDAnalysis as mda
 from MDAnalysisTests.datafiles import PSF, DCD
-from MDAnalysisTests.util import no_deprecated_call
 import pytest
 from numpy.testing import assert_equal
 
@@ -81,18 +80,3 @@ def test_analysis_class():
     assert_equal(results, ana.results)
     with pytest.raises(ValueError):
         ana_class(2)
-
-
-def test_analysis_class_decorator():
-    # Issue #1511
-    # analysis_class should not raise
-    # a DeprecationWarning
-    u = mda.Universe(PSF, DCD)
-
-    def distance(a, b):
-        return np.linalg.norm((a.centroid() - b.centroid()))
-
-    Distances = custom.analysis_class(distance)
-
-    with no_deprecated_call():
-        Distances(u, u.atoms[:10], u.atoms[10:20]).run()

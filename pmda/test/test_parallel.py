@@ -14,7 +14,7 @@ import MDAnalysis as mda
 from MDAnalysisTests.datafiles import DCD, PSF
 import joblib
 
-from dask import distributed
+import dask
 
 from pmda import parallel
 
@@ -105,7 +105,8 @@ def test_nblocks(analysis, n_blocks):
 
 
 def test_guess_nblocks(analysis):
-    analysis.run(n_jobs=-1)
+    with dask.config.set(scheduler='multiprocessing'):
+        analysis.run(n_jobs=-1)
     assert len(analysis._results) == joblib.cpu_count()
 
 

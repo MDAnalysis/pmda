@@ -13,7 +13,7 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-xx/xx/18 VOD555, richardjgowers, iparask, orbeckst
+11/xx/18 VOD555, richardjgowers, iparask, orbeckst, kain88-de
 
   * 0.2.0
 
@@ -26,6 +26,15 @@ Enhancements
 Fixes
   * always distribute frames over blocks so that no empty blocks are
     created ("balanced blocks", Issue #71)
+
+Changes
+  * requires dask >= 0.18.0 and respects/requires globally setting of the dask
+    scheduler (Issue #48)
+  * removed the 'scheduler' keyword from the run() method; use
+    dask.config.set(scheduler=...) as recommended in the dask docs
+  * uses single-threaaded scheduler if n_jobs=1 (Issue #17)
+  * n_jobs=1 is now the default for run() (used to be n_jobs=-1)
+  * dask.distributed is now a dependency
 
 
 06/07/18 orbeckst

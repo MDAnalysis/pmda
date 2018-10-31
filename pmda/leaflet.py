@@ -249,18 +249,14 @@ class LeafletFinder(ParallelAnalysisBase):
             used
 
         """
-        # are we using a distributed scheduler or should we use multiprocessing?
+        # are we using a distributed scheduler or should we use
+        # multiprocessing?
         scheduler = dask.config.get('scheduler', None)
-        if scheduler is None and client is None:
-            scheduler = 'multiprocessing'
-        elif scheduler is None:
+        if scheduler is None:
             # maybe we can grab a global worker
             try:
-                from dask import distributed
-                scheduler = distributed.worker.get_client()
+                scheduler = dask.distributed.worker.get_client()
             except ValueError:
-                pass
-            except ImportError:
                 pass
 
         if n_jobs == -1:
@@ -272,16 +268,9 @@ class LeafletFinder(ParallelAnalysisBase):
         if scheduler is None and n_jobs == 1:
             scheduler = 'single-threaded'
 
-        if n_blocks is None:
-            if scheduler == 'multiprocessing':
-                n_blocks = n_jobs
-            elif isinstance(scheduler, distributed.Client):
-                n_blocks = len(scheduler.ncores())
-            else:
-                n_blocks = 1
-                warnings.warn(
-                    "Couldn't guess ideal number of blocks from scheduler. Set n_blocks=1"
-                    "Please provide `n_blocks` in call to method.")
+        # fall back to multiprocessing, we tried everything
+        if scheduler is None:
+            scheduler = 'multiprocessing'
 
         scheduler_kwargs = {'scheduler': scheduler}
         if scheduler == 'multiprocessing':
