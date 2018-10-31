@@ -48,7 +48,7 @@ setup(
     },
     packages=find_packages(),
     install_requires=[
-        'MDAnalysis>=0.18',
+        'MDAnalysis>=0.19.0',
         'dask>=0.18',
         'distributed',
         'six',
@@ -58,5 +58,5 @@ setup(
     ],
     tests_require=[
         'pytest',
-        'MDAnalysisTests>=0.18',  # keep
+        'MDAnalysisTests>=0.19.0',  # keep
     ], )
