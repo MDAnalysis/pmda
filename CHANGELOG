@@ -13,7 +13,7 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-11/xx/18 VOD555, richardjgowers, iparask, orbeckst, kain88-de
+11/xx/18 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
 
   * 0.2.0
 
@@ -24,6 +24,7 @@ Enhancements
   * add parallel implementation of Leaflet Finder (Issue #47)
 
 Fixes
+  * stacking results failed with odd number of frames (Issue #58)
   * always distribute frames over blocks so that no empty blocks are
     created ("balanced blocks", Issue #71)
 
