@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>1.2. Parallelization &#8212; PMDA 0.1.1+52.g6aa6c61 documentation</title>
+    <title>1.2. Parallelization &#8212; PMDA 0.1.1+64.gaaa478c documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+52.g6aa6c61',
+        VERSION:     '0.1.1+64.gaaa478c',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+52.g6aa6c61 documentation"
+          title="Search within PMDA 0.1.1+64.gaaa478c documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -59,7 +59,7 @@ can be set, e.g., <code class="docutils literal"><span class="pre">n_jobs=4</spa
 want to make use of more advanced scheduler features or scale your
 analysis to multiple nodes, e.g., in an HPC (high performance
 computing) environment, then use the <code class="xref py py-mod docutils literal"><span class="pre">distributed</span></code> scheduler, as
-described next.</p>
+described next. If <code class="docutils literal"><span class="pre">n_jobs==1</span></code> use a single threaded scheduler.</p>
 </div>
 <div class="section" id="dask-distributed">
 <h2>1.2.2. <code class="docutils literal"><span class="pre">dask.distributed</span></code><a class="headerlink" href="#dask-distributed" title="Permalink to this headline">¶</a></h2>
@@ -80,7 +80,7 @@ sets up a scheduler and workers on the local machine.</p>
 <p>The <code class="docutils literal"><span class="pre">client</span></code> can be passed to the <code class="docutils literal"><span class="pre">scheduler</span></code> argument of the
 <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method; we continue to
 use the <a class="reference internal" href="pmda_classes.html#example-parallel-rmsd"><span class="std std-ref">RMSD example</span></a>):</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Because the local cluster contains 8 workers, the RMSD trajectory
@@ -96,7 +96,7 @@ would initialize the <a class="reference external" href="https://distributed.rea
 analysis <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;192.168.0.1:8786&#39;</span><span class="p">)</span>
-<span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="n">client</span><span class="p">)</span>
+<span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>In this way one can spread an analysis task over many different nodes.</p>

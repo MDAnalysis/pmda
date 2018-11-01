@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.2.2. Native contacts analysis — pmda.contacts &#8212; PMDA 0.1.1+52.g6aa6c61 documentation</title>
+    <title>2.2.2. Native contacts analysis — pmda.contacts &#8212; PMDA 0.1.1+64.gaaa478c documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+52.g6aa6c61',
+        VERSION:     '0.1.1+64.gaaa478c',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+52.g6aa6c61 documentation"
+          title="Search within PMDA 0.1.1+64.gaaa478c documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -280,7 +280,7 @@ respective functions for reasonable values.</li>
 
 <dl class="method">
 <dt id="pmda.contacts.Contacts.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -290,8 +290,6 @@ respective functions for reasonable values.</li>
 <li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
 <li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
-<li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
-to spread work to a distributed scheduler</li>
 <li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</li>
@@ -350,7 +348,7 @@ to n_jobs or number of available workers in scheduler.</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="rdf.html">2.2.3. Radial Distribution Functions — <code class="docutils literal"><span class="pre">pmda.rdf</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.4. LeafletFInder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.4. LeafletFinder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
 </ul>
 </li>
 </ul>

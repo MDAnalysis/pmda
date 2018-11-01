@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.2.4. LeafletFInder Analysis tool — pmda.leaflet &#8212; PMDA 0.1.1+52.g6aa6c61 documentation</title>
+    <title>2.2.4. LeafletFinder Analysis tool — pmda.leaflet &#8212; PMDA 0.1.1+64.gaaa478c documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+52.g6aa6c61',
+        VERSION:     '0.1.1+64.gaaa478c',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+52.g6aa6c61 documentation"
+          title="Search within PMDA 0.1.1+64.gaaa478c documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -48,7 +48,7 @@
           <div class="body" role="main">
             
   <span class="target" id="module-pmda.leaflet"></span><div class="section" id="leafletfinder-analysis-tool-pmda-leaflet">
-<h1>2.2.4. LeafletFInder Analysis tool — <a class="reference internal" href="#module-pmda.leaflet" title="pmda.leaflet"><code class="xref py py-mod docutils literal"><span class="pre">pmda.leaflet</span></code></a><a class="headerlink" href="#leafletfinder-analysis-tool-pmda-leaflet" title="Permalink to this headline">¶</a></h1>
+<h1>2.2.4. LeafletFinder Analysis tool — <a class="reference internal" href="#module-pmda.leaflet" title="pmda.leaflet"><code class="xref py py-mod docutils literal"><span class="pre">pmda.leaflet</span></code></a><a class="headerlink" href="#leafletfinder-analysis-tool-pmda-leaflet" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#module-MDAnalysis.analysis.leaflet" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.leaflet</span></code></a>.</p>
 <dl class="class">
@@ -76,8 +76,8 @@ This class implements and parallelizes the <em>LeafletFinder</em> algorithm
 <p class="first admonition-title">Note</p>
 <p>At the moment, this class has far fewer features than the serial
 version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#MDAnalysis.analysis.leaflet.LeafletFinder" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.leaflet.LeafletFinder</span></code></a>.</p>
-<p>This version offers Leaflet Finder algorithm 4 (“Tree-based Nearest
-Neighbor and Parallel-Connected Com- ponents (Tree-Search)”) in
+<p>This version offers LeafletFinder algorithm 4 (“Tree-based Nearest
+Neighbor and Parallel-Connected Components (Tree-Search)”) in
 <a class="reference internal" href="../references.html#paraskevakos2018" id="id3">[Paraskevakos2018]</a>.</p>
 <p>Currently, periodic boundaries are not taken into account.</p>
 <p class="last">The calculation is parallelized on a per-frame basis;
@@ -97,7 +97,7 @@ at the moment, no parallelization over trajectory blocks is performed.</p>
 
 <dl class="method">
 <dt id="pmda.leaflet.LeafletFinder.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>scheduler=None</em>, <em>n_jobs=-1</em>, <em>cutoff=15.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=-1</em>, <em>cutoff=15.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -107,8 +107,6 @@ at the moment, no parallelization over trajectory blocks is performed.</p>
 <li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
 <li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
 <li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
-<li><strong>scheduler</strong> (<em>dask scheduler</em><em>, </em><em>optional</em>) – Use dask scheduler, defaults to multiprocessing. This can be used
-to spread work to a distributed scheduler</li>
 <li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of tasks to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</li>
@@ -159,7 +157,7 @@ used</li>
 <li class="toctree-l3"><a class="reference internal" href="rms.html">2.2.1. RMSD analysis tools — <code class="docutils literal"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="contacts.html">2.2.2. Native contacts analysis — <code class="docutils literal"><span class="pre">pmda.contacts</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rdf.html">2.2.3. Radial Distribution Functions — <code class="docutils literal"><span class="pre">pmda.rdf</span></code></a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.4. LeafletFInder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.4. LeafletFinder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
 </ul>
 </li>
 </ul>

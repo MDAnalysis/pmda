@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pmda.parallel &#8212; PMDA 0.1.1+52.g6aa6c61 documentation</title>
+    <title>pmda.parallel &#8212; PMDA 0.1.1+64.gaaa478c documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1+52.g6aa6c61',
+        VERSION:     '0.1.1+64.gaaa478c',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+52.g6aa6c61 documentation"
+          title="Search within PMDA 0.1.1+64.gaaa478c documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -69,8 +69,9 @@
 <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span>
 
 <span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
-<span class="kn">from</span> <span class="nn">dask</span> <span class="k">import</span> <span class="n">distributed</span><span class="p">,</span> <span class="n">multiprocessing</span>
 <span class="kn">from</span> <span class="nn">dask.delayed</span> <span class="k">import</span> <span class="n">delayed</span>
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">dask.distributed</span>
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -315,7 +316,6 @@
             <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">n_blocks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform the calculation</span>
@@ -328,9 +328,6 @@
 <span class="sd">            stop frame of analysis</span>
 <span class="sd">        step : int, optional</span>
 <span class="sd">            number of frames to skip between each analysed frame</span>
-<span class="sd">        scheduler : dask scheduler, optional</span>
-<span class="sd">            Use dask scheduler, defaults to multiprocessing. This can be used</span>
-<span class="sd">            to spread work to a distributed scheduler</span>
 <span class="sd">        n_jobs : int, optional</span>
 <span class="sd">            number of jobs to start, if `-1` use number of logical cpu cores.</span>
 <span class="sd">            This argument will be ignored when the distributed scheduler is</span>
@@ -340,24 +337,43 @@
 <span class="sd">            to n_jobs or number of available workers in scheduler.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># are we using a distributed scheduler or should we use</span>
+        <span class="c1"># multiprocessing?</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scheduler&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">scheduler</span> <span class="o">=</span> <span class="n">multiprocessing</span>
+            <span class="c1"># maybe we can grab a global worker</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scheduler</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">get_client</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
 
         <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
 
+        <span class="c1"># we could not find a global scheduler to use and we ask for a single</span>
+        <span class="c1"># job. Therefore we run this on the single threaded scheduler for</span>
+        <span class="c1"># debugging.</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="s1">&#39;single-threaded&#39;</span>
+
+        <span class="c1"># fall back to multiprocessing, we tried everything</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="s1">&#39;multiprocessing&#39;</span>
+
         <span class="k">if</span> <span class="n">n_blocks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="n">multiprocessing</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="s1">&#39;multiprocessing&#39;</span><span class="p">:</span>
                 <span class="n">n_blocks</span> <span class="o">=</span> <span class="n">n_jobs</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">dask</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">):</span>
                 <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scheduler</span><span class="o">.</span><span class="n">ncores</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Couldn&#39;t guess ideal number of blocks from scheduler.&quot;</span>
+                <span class="n">n_blocks</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Couldn&#39;t guess ideal number of blocks from scheduler. &quot;</span>
+                    <span class="s2">&quot;Setting n_blocks=1. &quot;</span>
                     <span class="s2">&quot;Please provide `n_blocks` in call to method.&quot;</span><span class="p">)</span>
 
-        <span class="n">scheduler_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;get&#39;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get</span><span class="p">}</span>
-        <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="n">multiprocessing</span><span class="p">:</span>
+        <span class="n">scheduler_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scheduler&#39;</span><span class="p">:</span> <span class="n">scheduler</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="o">==</span> <span class="s1">&#39;multiprocessing&#39;</span><span class="p">:</span>
             <span class="n">scheduler_kwargs</span><span class="p">[</span><span class="s1">&#39;num_workers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_jobs</span>
 
         <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="o">.</span><span class="n">check_slice_indices</span><span class="p">(</span>
