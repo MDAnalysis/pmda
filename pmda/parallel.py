@@ -293,13 +293,13 @@ class ParallelAnalysisBase(object):
 
         """
         if scheduler is None:
-            scheduler = multiprocessing
+            scheduler = 'multiprocessing'
 
         if n_jobs == -1:
             n_jobs = cpu_count()
 
         if n_blocks is None:
-            if scheduler == multiprocessing:
+            if scheduler == 'multiprocessing':
                 n_blocks = n_jobs
             elif isinstance(scheduler, distributed.Client):
                 n_blocks = len(scheduler.ncores())
@@ -308,8 +308,8 @@ class ParallelAnalysisBase(object):
                     "Couldn't guess ideal number of blocks from scheduler."
                     "Please provide `n_blocks` in call to method.")
 
-        scheduler_kwargs = {'get': scheduler.get}
-        if scheduler == multiprocessing:
+        scheduler_kwargs = {'scheduler': scheduler}
+        if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
 
         start, stop, step = self._trajectory.check_slice_indices(
