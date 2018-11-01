@@ -248,7 +248,6 @@ class InterRDF_s(ParallelAnalysisBase):
         super(InterRDF_s, self).__init__(u, atomgroups)
 
         # List of pairs of AtomGroups
-        #self.ags = ags
         self._density = density
         self.n = len(ags)
         self.nf = u.trajectory.n_frames
@@ -260,7 +259,7 @@ class InterRDF_s(ParallelAnalysisBase):
             indices.append([ag1.indices, ag2.indices])
             ag_shape.append([len(ag1), len(ag2)])
         self.indices = indices
-        self.ag_shape =ag_shape
+        self.ag_shape = ag_shape
 
     # pylint: enable=redefined-builtin
 
@@ -306,8 +305,6 @@ class InterRDF_s(ParallelAnalysisBase):
 
         for i, (nA, nB) in enumerate(self.ag_shape):
             # Number of each selection
-            #nA = len(ag1)
-            #nB = len(ag2)
             N = nA * nB
 
             # Average number density
