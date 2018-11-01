@@ -248,12 +248,19 @@ class InterRDF_s(ParallelAnalysisBase):
         super(InterRDF_s, self).__init__(u, atomgroups)
 
         # List of pairs of AtomGroups
-        self.ags = ags
+        #self.ags = ags
         self._density = density
         self.n = len(ags)
         self.nf = u.trajectory.n_frames
         self.rdf_settings = {'bins': nbins,
                              'range': range}
+        ag_shape = []
+        indices = []
+        for (ag1, ag2) in ags:
+            indices.append([ag1.indices, ag2.indices])
+            ag_shape.append([len(ag1), len(ag2)])
+        self.indices = indices
+        self.ag_shape =ag_shape
 
     # pylint: enable=redefined-builtin
 
@@ -295,15 +302,13 @@ class InterRDF_s(ParallelAnalysisBase):
         vol *= 4/3.0 * np.pi
 
         # Empty lists to restore indices, RDF
-        indices = []
         rdf = []
 
-        for i, (ag1, ag2) in enumerate(self.ags):
+        for i, (nA, nB) in enumerate(self.ag_shape):
             # Number of each selection
-            nA = len(ag1)
-            nB = len(ag2)
+            #nA = len(ag1)
+            #nB = len(ag2)
             N = nA * nB
-            indices.append([ag1.indices, ag2.indices])
 
             # Average number density
             box_vol = self.volume / self.nf
@@ -315,7 +320,6 @@ class InterRDF_s(ParallelAnalysisBase):
                 rdf.append(self.count[i] / (vol * self.nf))
 
         self.rdf = rdf
-        self.indices = indices
 
     def get_cdf(self):
         """Calculate the cumulative distribution functions (CDF) for all sites.
