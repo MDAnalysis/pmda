@@ -73,11 +73,12 @@ def test_double_run(sels):
     assert len(rdf.count[rdf.count == 3]) == 7
 
 
-def test_same_result(sels):
+@pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
+def test_same_result(sels, n_blocks):
     # should see same results from analysis.rdf and pmda.rdf
     s1, s2 = sels
     nrdf = rdf.InterRDF(s1, s2).run()
-    prdf = InterRDF(s1, s2).run()
+    prdf = InterRDF(s1, s2).run(n_blocks=n_blocks)
     assert_almost_equal(nrdf.count, prdf.count)
     assert_almost_equal(nrdf.rdf, prdf.rdf)
 

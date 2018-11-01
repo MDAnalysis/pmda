@@ -101,7 +101,7 @@ def test_reduce(rdf_s):
     assert_almost_equal(res[1], np.array([6]))
 
 
-@pytest.mark.parametrize("n_blocks", [1, 2])
+@pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
 def test_same_result(u, sels, n_blocks):
     # should see same results from analysis.rdf.InterRDF_s
     # and pmda.rdf.InterRDF_s
