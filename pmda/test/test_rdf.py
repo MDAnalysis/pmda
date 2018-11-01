@@ -50,7 +50,7 @@ def test_range(u):
     assert rdf.edges[-1] == rmax
 
 
-def test_count_sum(sels):
+def test_count_sum(sels, scheduler):
     # OD1 vs OD2
     # should see 577 comparisons in count
     s1, s2 = sels
