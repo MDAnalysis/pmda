@@ -19,7 +19,7 @@ Internally, this uses the multiprocessing `scheduler`_ of dask. If you
 want to make use of more advanced scheduler features or scale your
 analysis to multiple nodes, e.g., in an HPC (high performance
 computing) environment, then use the :mod:`distributed` scheduler, as
-described next.
+described next. If ``n_jobs==1`` use a single threaded scheduler.
 
 .. _`scheduler`:
    https://dask.pydata.org/en/latest/scheduler-overview.html
@@ -58,7 +58,7 @@ use the :ref:`RMSD example<example-parallel-rmsd>`):
       
 .. code:: python
 
-   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run(scheduler=client)	  
+   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run()	  
 
 Because the local cluster contains 8 workers, the RMSD trajectory
 analysis will be parallelized over 8 trajectory segments.
@@ -78,7 +78,7 @@ analysis :meth:`~pmda.parallel.ParallelAnalysisBase.run` method:
 
    import distributed
    client = distributed.Client('192.168.0.1:8786')   
-   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run(scheduler=client)	  
+   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run()	  
 
 In this way one can spread an analysis task over many different nodes.
    

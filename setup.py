@@ -48,14 +48,15 @@ setup(
     },
     packages=find_packages(),
     install_requires=[
-        'MDAnalysis>=0.18',
-        'dask',
+        'MDAnalysis>=0.19.0',
+        'dask>=0.18',
+        'distributed',
         'six',
         'joblib', # cpu_count func currently
         'networkx',
-        'scipy',  
+        'scipy',
     ],
     tests_require=[
         'pytest',
-        'MDAnalysisTests>=0.18',  # keep
+        'MDAnalysisTests>=0.19.0',  # keep
     ], )

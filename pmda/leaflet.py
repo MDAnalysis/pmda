@@ -7,8 +7,8 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 """
-LeafletFInder Analysis tool --- :mod:`pmda.leaflet`
-==========================================================
+LeafletFinder Analysis tool --- :mod:`pmda.leaflet`
+===================================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.leaflet`.
@@ -27,7 +27,7 @@ import networkx as nx
 from scipy.spatial import cKDTree
 
 import MDAnalysis as mda
-from dask import distributed, multiprocessing
+import dask
 from joblib import cpu_count
 
 from .parallel import ParallelAnalysisBase, Timing
@@ -59,8 +59,8 @@ class LeafletFinder(ParallelAnalysisBase):
     At the moment, this class has far fewer features than the serial
     version :class:`MDAnalysis.analysis.leaflet.LeafletFinder`.
 
-    This version offers Leaflet Finder algorithm 4 ("Tree-based Nearest
-    Neighbor and Parallel-Connected Com- ponents (Tree-Search)") in
+    This version offers LeafletFinder algorithm 4 ("Tree-based Nearest
+    Neighbor and Parallel-Connected Components (Tree-Search)") in
     [Paraskevakos2018]_.
 
     Currently, periodic boundaries are not taken into account.
@@ -231,7 +231,6 @@ class LeafletFinder(ParallelAnalysisBase):
             start=None,
             stop=None,
             step=None,
-            scheduler=None,
             n_jobs=-1,
             cutoff=15.0):
         """Perform the calculation
@@ -244,34 +243,41 @@ class LeafletFinder(ParallelAnalysisBase):
             stop frame of analysis
         step : int, optional
             number of frames to skip between each analysed frame
-        scheduler : dask scheduler, optional
-            Use dask scheduler, defaults to multiprocessing. This can be used
-            to spread work to a distributed scheduler
         n_jobs : int, optional
             number of tasks to start, if `-1` use number of logical cpu cores.
             This argument will be ignored when the distributed scheduler is
             used
 
         """
+        # are we using a distributed scheduler or should we use
+        # multiprocessing?
+        scheduler = dask.config.get('scheduler', None)
         if scheduler is None:
-            scheduler = multiprocessing
+            # maybe we can grab a global worker
+            try:
+                scheduler = dask.distributed.worker.get_client()
+            except ValueError:
+                pass
 
         if n_jobs == -1:
-            if scheduler == multiprocessing:
-                n_jobs = cpu_count()
-            elif isinstance(scheduler, distributed.Client):
-                n_jobs = len(scheduler.ncores())
-            else:
-                raise ValueError(
-                    "Couldn't guess ideal number of jobs from scheduler."
-                    "Please provide `n_jobs` in call to method.")
+            n_jobs = cpu_count()
+
+        # we could not find a global scheduler to use and we ask for a single
+        # job. Therefore we run this on the single threaded scheduler for
+        # debugging.
+        if scheduler is None and n_jobs == 1:
+            scheduler = 'single-threaded'
+
+        # fall back to multiprocessing, we tried everything
+        if scheduler is None:
+            scheduler = 'multiprocessing'
+
+        scheduler_kwargs = {'scheduler': scheduler}
+        if scheduler == 'multiprocessing':
+            scheduler_kwargs['num_workers'] = n_jobs
 
         with timeit() as b_universe:
             universe = mda.Universe(self._top, self._traj)
-
-        scheduler_kwargs = {'get': scheduler.get}
-        if scheduler == multiprocessing:
-            scheduler_kwargs['num_workers'] = n_jobs
 
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
