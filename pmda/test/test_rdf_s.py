@@ -37,7 +37,7 @@ def sels(u):
 
 
 @pytest.fixture(scope='module')
-def rdf_s(u, sels):
+def rdf_s(u, sels, scheduler):
     return InterRDF_s(u, sels).run()
 
 
