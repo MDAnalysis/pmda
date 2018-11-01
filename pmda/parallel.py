@@ -21,8 +21,9 @@ import warnings
 from six.moves import range
 
 import MDAnalysis as mda
-from dask import distributed, multiprocessing
 from dask.delayed import delayed
+import dask
+import dask.distributed
 from joblib import cpu_count
 import numpy as np
 
@@ -267,7 +268,6 @@ class ParallelAnalysisBase(object):
             start=None,
             stop=None,
             step=None,
-            scheduler=None,
             n_jobs=1,
             n_blocks=None):
         """Perform the calculation
@@ -280,9 +280,6 @@ class ParallelAnalysisBase(object):
             stop frame of analysis
         step : int, optional
             number of frames to skip between each analysed frame
-        scheduler : dask scheduler, optional
-            Use dask scheduler, defaults to multiprocessing. This can be used
-            to spread work to a distributed scheduler
         n_jobs : int, optional
             number of jobs to start, if `-1` use number of logical cpu cores.
             This argument will be ignored when the distributed scheduler is
@@ -292,24 +289,43 @@ class ParallelAnalysisBase(object):
             to n_jobs or number of available workers in scheduler.
 
         """
+        # are we using a distributed scheduler or should we use
+        # multiprocessing?
+        scheduler = dask.config.get('scheduler', None)
         if scheduler is None:
-            scheduler = multiprocessing
+            # maybe we can grab a global worker
+            try:
+                scheduler = dask.distributed.worker.get_client()
+            except ValueError:
+                pass
 
         if n_jobs == -1:
             n_jobs = cpu_count()
 
+        # we could not find a global scheduler to use and we ask for a single
+        # job. Therefore we run this on the single threaded scheduler for
+        # debugging.
+        if scheduler is None and n_jobs == 1:
+            scheduler = 'single-threaded'
+
+        # fall back to multiprocessing, we tried everything
+        if scheduler is None:
+            scheduler = 'multiprocessing'
+
         if n_blocks is None:
-            if scheduler == multiprocessing:
+            if scheduler == 'multiprocessing':
                 n_blocks = n_jobs
-            elif isinstance(scheduler, distributed.Client):
+            elif isinstance(scheduler, dask.distributed.Client):
                 n_blocks = len(scheduler.ncores())
             else:
-                raise ValueError(
-                    "Couldn't guess ideal number of blocks from scheduler."
+                n_blocks = 1
+                warnings.warn(
+                    "Couldn't guess ideal number of blocks from scheduler. "
+                    "Setting n_blocks=1. "
                     "Please provide `n_blocks` in call to method.")
 
-        scheduler_kwargs = {'get': scheduler.get}
-        if scheduler == multiprocessing:
+        scheduler_kwargs = {'scheduler': scheduler}
+        if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
 
         start, stop, step = self._trajectory.check_slice_indices(

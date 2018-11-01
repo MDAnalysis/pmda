@@ -19,13 +19,14 @@ env:
     # mdanalysis develop from source (see below), which needs
     # minimal CONDA_MDANALYSIS_DEPENDENCIES
     #- CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib pytest-pep8 mock codecov cython hypothesis sphinx"
-    - CONDA_MDANALYSIS_DEPENDENCIES="cython mmtf-python six biopython networkx scipy griddataformats gsd hypothesis"
-    - CONDA_DEPENDENCIES="${CONDA_MDANALYSIS_DEPENDENCIES} dask joblib pytest-pep8 mock codecov"
+    #- CONDA_MDANALYSIS_DEPENDENCIES="cython mmtf-python six biopython networkx scipy griddataformats gsd hypothesis"
+    - CONDA_MDANALYSIS_DEPENDENCIES="mdanalysis mdanalysistests"
+    - CONDA_DEPENDENCIES="${CONDA_MDANALYSIS_DEPENDENCIES} dask distributed joblib pytest-pep8 mock codecov"
     - CONDA_CHANNELS='conda-forge'
     - CONDA_CHANNEL_PRIORITY=True
     # install development version of MDAnalysis (needed until the test
     # files for analysis.rdf are available in release 0.19.0)
-    - PIP_DEPENDENCIES="git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysis&subdirectory=package git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysistests&subdirectory=testsuite"
+    #- PIP_DEPENDENCIES="git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysis&subdirectory=package git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysistests&subdirectory=testsuite"
     - NUMPY_VERSION=stable
     - BUILD_CMD='python setup.py develop'
     - CODECOV=false

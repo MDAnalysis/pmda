@@ -14,7 +14,7 @@ import MDAnalysis as mda
 from MDAnalysisTests.datafiles import DCD, PSF
 import joblib
 
-from dask import distributed, multiprocessing
+import dask
 
 from pmda import parallel
 
@@ -60,11 +60,6 @@ def analysis():
     return ana
 
 
-def test_wrong_scheduler(analysis):
-    with pytest.raises(ValueError):
-        analysis.run(scheduler=2)
-
-
 @pytest.mark.parametrize('n_jobs', (1, 2))
 def test_all_frames(analysis, n_jobs):
     analysis.run(n_jobs=n_jobs)
@@ -91,16 +86,16 @@ def test_no_frames(analysis, n_jobs):
     assert analysis.timing.universe == 0
 
 
+def test_scheduler(analysis, scheduler):
+    analysis.run()
+
+
 def test_nframes_less_nblocks_warning(analysis):
     u = mda.Universe(analysis._top, analysis._traj)
     n_frames = u.trajectory.n_frames
     with pytest.warns(UserWarning):
         analysis.run(stop=2, n_blocks=4, n_jobs=2)
     assert len(analysis.res) == 2
-
-
-def test_scheduler(analysis, scheduler):
-    analysis.run(scheduler=scheduler)
 
 
 @pytest.mark.parametrize('n_blocks', np.arange(1, 11))
@@ -110,7 +105,8 @@ def test_nblocks(analysis, n_blocks):
 
 
 def test_guess_nblocks(analysis):
-    analysis.run(n_jobs=-1)
+    with dask.config.set(scheduler='multiprocessing'):
+        analysis.run(n_jobs=-1)
     assert len(analysis._results) == joblib.cpu_count()
 
 
