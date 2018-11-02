@@ -42,7 +42,7 @@ class TestLeafLet(object):
     @pytest.mark.parametrize('n_jobs', (pytest.mark.xfail(-1),
                                         1,
                                         pytest.mark.xfail(2)))
-    def test_leaflet(self, universe, correct_values, n_jobs):
+    def test_leaflet(self, universe, correct_values, n_jobs, scheduler):
         lipid_heads = universe.select_atoms("name P and resname POPG")
         universe.trajectory.rewind()
         leaflets = leaflet.LeafletFinder(universe, lipid_heads)
@@ -57,7 +57,8 @@ class TestLeafLet(object):
     def test_leaflet_single_frame(self,
                                   u_one_frame,
                                   correct_values_single_frame,
-                                  n_jobs):
+                                  n_jobs,
+                                  scheduler):
         lipid_heads = u_one_frame.select_atoms("name PO4")
         u_one_frame.trajectory.rewind()
         leaflets = leaflet.LeafletFinder(u_one_frame,
