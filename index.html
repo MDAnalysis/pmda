@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.1.1+66.g38ba7a9 documentation</title>
+    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.1.1+71.g2ecd983 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.1+66.g38ba7a9',
+        VERSION:     '0.1.1+71.g2ecd983',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+66.g38ba7a9 documentation"
+          title="Search within PMDA 0.1.1+71.g2ecd983 documentation"
           href="_static/opensearch.xml"/>
     <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
@@ -53,7 +53,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.1+66.g38ba7a9</td>
+<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.1+71.g2ecd983</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Nov 02, 2018</td>
 </tr>
@@ -96,6 +96,26 @@ files AUTHORS and LICENSE for details).</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to install PMDA is as a <a class="reference internal" href="#install-conda"><span class="std std-ref">conda package</span></a>
+and will result in a complete installation on Linux, macOS, and Windows
+<a class="footnote-reference" href="#windows-support" id="id1">[1]</a>. If you have not installed Python packages before, we
+recommend that you perform the conda installation.</p>
+<p>PMDA runs under Python 3.4 or higher or Python 2.7 on Linux, macOS, and
+Windows <a class="footnote-reference" href="#windows-support" id="id2">[1]</a>.</p>
+<div class="section" id="install-a-release-with-conda">
+<span id="install-conda"></span><h3>Install a release with <code class="docutils literal"><span class="pre">conda</span></code><a class="headerlink" href="#install-a-release-with-conda" title="Permalink to this headline">¶</a></h3>
+<p>First installation with <a class="reference external" href="https://conda.io/docs/">conda</a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>conda config --add channels conda-forge
+conda install pmda
+</pre></div>
+</div>
+<p>which will automatically install a <em>full set of dependencies</em> (including
+<a class="reference external" href="https://www.mdanalysis.org">MDAnalysis</a>, <a class="reference external" href="https://dask.org/">Dask</a>, and <a class="reference external" href="https://distributed.readthedocs.io/">distributed</a>).</p>
+<p>To upgrade later:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>conda update pmda
+</pre></div>
+</div>
+</div>
 <div class="section" id="install-a-release-with-pip">
 <h3>Install a release with <code class="docutils literal"><span class="pre">pip</span></code><a class="headerlink" href="#install-a-release-with-pip" title="Permalink to this headline">¶</a></h3>
 <p>The latest release is available from <a class="reference external" href="https://pypi.org/project/pmda/">https://pypi.org/project/pmda/</a>
@@ -116,9 +136,7 @@ python setup.py install
 </div>
 <div class="section" id="getting-help">
 <h2>Getting help<a class="headerlink" href="#getting-help" title="Permalink to this headline">¶</a></h2>
-<p><em>Help</em> is also available through the <em>MDAnalysis mailing list</em></p>
-<blockquote>
-<div><a class="reference external" href="https://groups.google.com/group/mdnalysis-discussion">https://groups.google.com/group/mdnalysis-discussion</a></div></blockquote>
+<p><em>Help</em> is also available through the <a class="reference external" href="https://groups.google.com/group/mdnalysis-discussion">MDAnalysis mailing list</a>.</p>
 <p>Please report <em>bugs and feature requests</em> for PMDA through the <a class="reference external" href="https://github.com/MDAnalysis/pmda/issues">Issue
 Tracker</a>.</p>
 </div>
@@ -131,17 +149,28 @@ mailing list</a> to discuss and ask questions.</p>
 </div>
 <div class="section" id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
-<p>If you use PMDA in published work please cite <a class="reference internal" href="#linke2018" id="id1">[Linke2018]</a>.</p>
+<p>If you use PMDA in published work please cite <a class="reference internal" href="#linke2018" id="id3">[Linke2018]</a>.</p>
 <table class="docutils citation" frame="void" id="linke2018" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[Linke2018]</a></td><td>Max Linke, &amp; Oliver Beckstein. (2018, June 7). MDAnalysis/pmda:
-0.1.1 (Version 0.1.1). Zenodo.
-<a class="reference external" href="https://doi.org/10.5281/zenodo.1285288">https://doi.org/10.5281/zenodo.1285288</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[Linke2018]</a></td><td>Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers,
+Ioannis Paraskevakos, Michael Gecht. (2018, November
+2). MDAnalysis/pmda: 0.2.0 (Version 0.2.0). Zenodo.
+doi: <a class="reference external" href="https://doi.org/10.5281/zenodo.1244323">10.5281/zenodo.1244323</a></td></tr>
 </tbody>
 </table>
 <div class="toctree-wrapper compound">
 </div>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="windows-support" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> PMDA itself is a pure Python package and runs without
+problems on all operating systems that support Python. However, it requires
+MDAnalysis for its operation and support for Windows is currently
+<em>experimental in MDAnalysis 0.19.1</em>.</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -185,7 +214,7 @@ mailing list</a> to discuss and ask questions.</p>
     
     <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
     
-    <li class="toctree-l1"><a href="https://dask.pydata.org">Dask</a></li>
+    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
     
     <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
     
@@ -213,7 +242,7 @@ mailing list</a> to discuss and ask questions.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, Max Linke, Shujie Fan, Richard J. Gowers, Oliver Beckstein, Ioannis Paraskevakos.
+      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
