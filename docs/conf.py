@@ -124,7 +124,7 @@ html_theme_options = {
     'github_banner': True,
     'extra_nav_links': {
         "MDAnalysis": "https://www.mdanalysis.org",
-        "Dask": "https://dask.pydata.org",
+        "Dask": "https://dask.org",
         "distributed": "https://distributed.readthedocs.io/",
 #        "mpi4py": "https://mpi4py.readthedocs.io",
     },

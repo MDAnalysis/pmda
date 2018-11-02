@@ -60,6 +60,39 @@ https://github.com/MDAnalysis/pmda/.
 Installation
 ============
 
+The easiest way to install PMDA is as a :ref:`conda package <install-conda>`
+and will result in a complete installation on Linux, macOS, and Windows
+[#windows-support]_. If you have not installed Python packages before, we
+recommend that you perform the conda installation.
+
+PMDA runs under Python 3.4 or higher or Python 2.7 on Linux, macOS, and
+Windows [#windows-support]_.
+
+
+.. _install-conda:
+
+Install a release with ``conda``
+--------------------------------
+
+First installation with conda_:	
+
+.. code-block:: bash 
+
+   conda config --add channels conda-forge
+   conda install pmda
+
+which will automatically install a *full set of dependencies* (including
+MDAnalysis_, Dask_, and distributed_).
+
+To upgrade later:
+
+.. code-block:: bash 
+
+   conda update pmda
+
+
+
+
 Install a release with ``pip``
 ------------------------------
 
@@ -87,9 +120,7 @@ To install the latest development version from source, run
 Getting help
 ============
 
-*Help* is also available through the *MDAnalysis mailing list*
-
-     https://groups.google.com/group/mdnalysis-discussion
+*Help* is also available through the `MDAnalysis mailing list`_.
 
 Please report *bugs and feature requests* for PMDA through the `Issue
 Tracker`_.
@@ -122,9 +153,12 @@ If you use PMDA in published work please cite [Linke2018]_.
 .. _distributed: https://distributed.readthedocs.io/
 .. _`Issue tracker`: https://github.com/MDAnalysis/pmda/issues
 .. _`PMDA repository`: https://github.com/MDAnalysis/pmda/
+.. _conda: https://conda.io/docs/
 .. _pip: https://pip.pypa.io/en/stable/
 .. _`GNU General Public License, version 2`:
    https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+.. _`MDAnalysis mailing list`:
+   https://groups.google.com/group/mdnalysis-discussion   
 .. _`MDAnalysis developer mailing list`:
    https://groups.google.com/group/mdnalysis-devel
 
@@ -161,3 +195,9 @@ If you use PMDA in published work please cite [Linke2018]_.
    api   
    references
 
+
+.. rubric:: Footnotes
+.. [#windows-support] PMDA itself is a pure Python package and runs without
+   problems on all operating systems that support Python. However, it requires
+   MDAnalysis for its operation and support for Windows is currently
+   *experimental in MDAnalysis 0.19.1*.
