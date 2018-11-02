@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.1.1+65.gf3bbd13 documentation</title>
+    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.1.1+66.g38ba7a9 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.1+65.gf3bbd13',
+        VERSION:     '0.1.1+66.g38ba7a9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+65.gf3bbd13 documentation"
+          title="Search within PMDA 0.1.1+66.g38ba7a9 documentation"
           href="_static/opensearch.xml"/>
     <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
@@ -53,14 +53,14 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.1+65.gf3bbd13</td>
+<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.1+66.g38ba7a9</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Nov 02, 2018</td>
 </tr>
 </tbody>
 </table>
 <p>Ready to use analysis and buildings blocks to write parallel analysis algorithms
-using <a class="reference external" href="https://www.mdanalysis.org">MDAnalysis</a> with <a class="reference external" href="https://dask.pydata.org/en/latest/">dask</a>.</p>
+using <a class="reference external" href="https://www.mdanalysis.org">MDAnalysis</a> with <a class="reference external" href="https://dask.org/">Dask</a>.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This project is <strong>alpha software</strong> and not API stable. It will and
@@ -79,12 +79,11 @@ parallel analysis in a seamless and intuitive fashion.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">rmsd_ana</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>By default PMDA use the multiprocessing scheduler of <a class="reference external" href="https://dask.pydata.org/en/latest/">dask</a>. This is sufficient
-if you want to run your simulation on a single machine. If your analysis takes
-a very long time (&gt;30 min) you can also spread it to several nodes using the
-<a class="reference external" href="https://distributed.readthedocs.io/">distributed</a> scheduler. To do this you can pass a <code class="docutils literal"><span class="pre">scheduler</span></code> keyword
-argument to the <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method (see
-<a class="reference internal" href="userguide/parallelization.html#parallelization"><span class="std std-ref">Parallelization</span></a> for more details).</p>
+<p>By default PMDA uses the multiprocessing scheduler of <a class="reference external" href="https://dask.org/">Dask</a>. This is sufficient
+if you want to run your simulation on a single machine although you may use any
+of the <a class="reference external" href="https://docs.dask.org/en/latest/setup/single-machine.html">single-machine schedulers</a> that Dask supports. If your analysis takes
+a long time you can also spread it to several nodes using the <a class="reference external" href="https://distributed.readthedocs.io/">distributed</a>
+scheduler (see <a class="reference internal" href="userguide/parallelization.html#parallelization"><span class="std std-ref">Parallelization</span></a> for more details).</p>
 <p>To write your own parallel algorithms you can subclass the
 <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal"><span class="pre">ParallelAnalysisBase</span></code></a> class (see
 <a class="reference internal" href="userguide/new_classes.html#example-new-parallel-analysis"><span class="std std-ref">Writing new parallel analysis</span></a> for more details).</p>
@@ -136,8 +135,9 @@ mailing list</a> to discuss and ask questions.</p>
 <table class="docutils citation" frame="void" id="linke2018" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[Linke2018]</a></td><td>Max Linke, &amp; Oliver Beckstein. (2018, May 11). MDAnalysis/pmda:
-0.1.0 (Version 0.1.0). Zenodo. <a class="reference external" href="http://doi.org/10.5281/zenodo.1245759">http://doi.org/10.5281/zenodo.1245759</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[Linke2018]</a></td><td>Max Linke, &amp; Oliver Beckstein. (2018, June 7). MDAnalysis/pmda:
+0.1.1 (Version 0.1.1). Zenodo.
+<a class="reference external" href="https://doi.org/10.5281/zenodo.1285288">https://doi.org/10.5281/zenodo.1285288</a></td></tr>
 </tbody>
 </table>
 <div class="toctree-wrapper compound">

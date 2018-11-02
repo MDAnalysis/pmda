@@ -13,7 +13,7 @@
 :Date: |today|
 
 Ready to use analysis and buildings blocks to write parallel analysis algorithms
-using MDAnalysis_ with dask_.
+using MDAnalysis_ with Dask_.
 
 .. warning::
    This project is **alpha software** and not API stable. It will and
@@ -36,18 +36,17 @@ For example, run a rmsd analysis on all available cores:
    print(rmsd_ana.rmsd)
 
 
-By default PMDA use the multiprocessing scheduler of dask_. This is sufficient
-if you want to run your simulation on a single machine. If your analysis takes
-a very long time (>30 min) you can also spread it to several nodes using the
-distributed_ scheduler. To do this you can pass a ``scheduler`` keyword
-argument to the :meth:`~pmda.parallel.ParallelAnalysisBase.run` method (see
-:ref:`parallelization` for more details).
+By default PMDA uses the multiprocessing scheduler of Dask_. This is sufficient
+if you want to run your simulation on a single machine although you may use any
+of the `single-machine schedulers`_ that Dask supports. If your analysis takes
+a long time you can also spread it to several nodes using the distributed_
+scheduler (see :ref:`parallelization` for more details).
 
 To write your own parallel algorithms you can subclass the
 :class:`~pmda.parallel.ParallelAnalysisBase` class (see
 :ref:`example-new-parallel-analysis` for more details).
 
-
+     
 License and source code
 =======================
 
@@ -112,12 +111,14 @@ Citation
 
 If you use PMDA in published work please cite [Linke2018]_.
 
-.. [Linke2018] Max Linke, & Oliver Beckstein. (2018, May 11). MDAnalysis/pmda:
-               0.1.0 (Version 0.1.0). Zenodo. http://doi.org/10.5281/zenodo.1245759
-
+.. [Linke2018] Max Linke, & Oliver Beckstein. (2018, June 7). MDAnalysis/pmda:
+               0.1.1 (Version 0.1.1). Zenodo.
+	       https://doi.org/10.5281/zenodo.1285288
 	       
 .. _MDAnalysis: https://www.mdanalysis.org
-.. _dask: https://dask.pydata.org/en/latest/
+.. _Dask: https://dask.org/
+.. _`single-machine schedulers`:
+   https://docs.dask.org/en/latest/setup/single-machine.html
 .. _distributed: https://distributed.readthedocs.io/
 .. _`Issue tracker`: https://github.com/MDAnalysis/pmda/issues
 .. _`PMDA repository`: https://github.com/MDAnalysis/pmda/

@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>1.2. Parallelization &#8212; PMDA 0.1.1+65.gf3bbd13 documentation</title>
+    <title>1.2. Parallelization &#8212; PMDA 0.1.1+66.g38ba7a9 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1+65.gf3bbd13',
+        VERSION:     '0.1.1+66.g38ba7a9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.1.1+65.gf3bbd13 documentation"
+          title="Search within PMDA 0.1.1+66.g38ba7a9 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -49,37 +49,40 @@
             
   <div class="section" id="parallelization">
 <span id="id1"></span><h1>1.2. Parallelization<a class="headerlink" href="#parallelization" title="Permalink to this headline">¶</a></h1>
-<p>Under the hood, <a class="reference external" href="https://dask.pydata.org">Dask</a> is used for the parallelization.</p>
+<p><a class="reference external" href="https://dask.org">Dask</a> is used to parallelize analysis in PMDA. It provides a flexible
+approach to task-based parallelism and can scale from multi-core
+laptops to large compute clusters.</p>
 <div class="section" id="single-machine">
 <h2>1.2.1. Single machine<a class="headerlink" href="#single-machine" title="Permalink to this headline">¶</a></h2>
 <p>By default, all the available cores on the local machine (laptop or
 workstation) are used with the <code class="docutils literal"><span class="pre">n_jobs=-1</span></code> keyword but any number
 can be set, e.g., <code class="docutils literal"><span class="pre">n_jobs=4</span></code> to split the trajectory into 4 blocks.</p>
-<p>Internally, this uses the multiprocessing <a class="reference external" href="https://dask.pydata.org/en/latest/scheduler-overview.html">scheduler</a> of dask. If you
+<p>Internally, this uses the multiprocessing <a class="reference external" href="https://docs.dask.org/en/latest/scheduler-overview.html">scheduler</a> of dask. If you
 want to make use of more advanced scheduler features or scale your
 analysis to multiple nodes, e.g., in an HPC (high performance
 computing) environment, then use the <code class="xref py py-mod docutils literal"><span class="pre">distributed</span></code> scheduler, as
-described next. If <code class="docutils literal"><span class="pre">n_jobs==1</span></code> use a single threaded scheduler.</p>
+described next. If <code class="docutils literal"><span class="pre">n_jobs==1</span></code> a single threaded scheduler is used
+<a class="footnote-reference" href="#threads" id="id2">[1]</a>.</p>
 </div>
 <div class="section" id="dask-distributed">
 <h2>1.2.2. <code class="docutils literal"><span class="pre">dask.distributed</span></code><a class="headerlink" href="#dask-distributed" title="Permalink to this headline">¶</a></h2>
-<p>One can supply a <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> scheduler in the <code class="docutils literal"><span class="pre">scheduler</span></code>
-keyword argument of the
-<a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method. This makes it
-possible to run analysis in a distributed fashion on HPC or ad-hoc
-clusters (see <a class="reference external" href="https://distributed.readthedocs.io/en/latest/setup.html">setting up a dask.distributed network</a>).</p>
+<p>With the <a class="reference external" href="https://distributed.readthedocs.io/">distributed</a> scheduler on can run analysis in a distributed
+fashion on HPC or ad-hoc clusters (see <a class="reference external" href="https://distributed.readthedocs.io/en/latest/setup.html">setting up a dask.distributed
+network</a>) or on a <a class="reference external" href="http://docs.dask.org/en/latest/setup/single-distributed.html">single machine</a>. (In addition, <em>distributed</em> also
+provides <a class="reference external" href="http://docs.dask.org/en/latest/diagnostics-distributed.html">diagnostics</a> in form of a dashboard in the browser and a
+progress bar.)</p>
 <div class="section" id="local-cluster-single-machine">
 <h3>1.2.2.1. Local cluster (single machine)<a class="headerlink" href="#local-cluster-single-machine" title="Permalink to this headline">¶</a></h3>
-<p>You can try out <a class="reference external" href="https://distributed.readthedocs.io/">dask.distributed</a> with a <a class="reference external" href="https://distributed.readthedocs.io/en/latest/local-cluster.html">local cluster</a>, which
+<p>You can try out <a class="reference internal" href="#dask-distributed">dask.distributed</a> with a <a class="reference external" href="https://distributed.readthedocs.io/en/latest/local-cluster.html">local cluster</a>, which
 sets up a scheduler and workers on the local machine.</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
 <span class="n">lc</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">LocalCluster</span><span class="p">(</span><span class="n">n_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">client</span></code> can be passed to the <code class="docutils literal"><span class="pre">scheduler</span></code> argument of the
-<a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method; we continue to
-use the <a class="reference internal" href="pmda_classes.html#example-parallel-rmsd"><span class="std std-ref">RMSD example</span></a>):</p>
+<p>Setting up the <code class="docutils literal"><span class="pre">client</span></code> is sufficient for <a class="reference external" href="https://dask.org">Dask</a> (and PMDA, namely the
+<a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method) to use it. We
+continue to use the <a class="reference internal" href="pmda_classes.html#example-parallel-rmsd"><span class="std std-ref">RMSD example</span></a>:</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -92,14 +95,31 @@ analysis will be parallelized over 8 trajectory segments.</p>
 up a dask.distributed network</a>) one needs to know how to connect to
 the running scheduler (e.g., address and port number or shared state
 file). Assuming that the scheduler is running on 192.168.0.1:8786, one
-would initialize the <a class="reference external" href="https://distributed.readthedocs.io/en/latest/client.html">distributed.Client</a> and pass it to the parallel
-analysis <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase.run" title="pmda.parallel.ParallelAnalysisBase.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method:</p>
+would initialize the <a class="reference external" href="https://distributed.readthedocs.io/en/latest/client.html">distributed.Client</a> and this is enough to use
+<em>distributed</em> for all analysis (it <a class="reference external" href="https://docs.dask.org/en/latest/scheduling.html#configuration">configures the scheduler</a> to be
+<em>distributed</em>):</p>
 <div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">distributed</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">distributed</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s1">&#39;192.168.0.1:8786&#39;</span><span class="p">)</span>
 <span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>In this way one can spread an analysis task over many different nodes.</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="threads" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><p class="first">The <em>single-threaded</em> scheduler is very useful for
+<a class="reference external" href="https://docs.dask.org/en/latest/debugging.html#use-the-single-threaded-scheduler">debugging</a>. By setting <code class="docutils literal"><span class="pre">n_jobs=1</span></code> and not using a
+<em>distributed</em> scheduler, the single threaded scheduler is
+automatically used. Alternatively, set the single
+threaded scheduler with</p>
+<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="s1">&#39;single-threaded&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="last">for any <code class="docutils literal"><span class="pre">n_jobs</span></code>.</p>
+</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
