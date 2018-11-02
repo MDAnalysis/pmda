@@ -6,7 +6,10 @@
  Parallelization
 =================
 
-Under the hood, Dask_ is used for the parallelization.
+Dask_ is used to parallelize analysis in PMDA. It provides a flexible
+approach to task-based parallelism and can scale from multi-core
+laptops to large compute clusters.
+
 
 Single machine
 ==============
@@ -19,26 +22,30 @@ Internally, this uses the multiprocessing `scheduler`_ of dask. If you
 want to make use of more advanced scheduler features or scale your
 analysis to multiple nodes, e.g., in an HPC (high performance
 computing) environment, then use the :mod:`distributed` scheduler, as
-described next. If ``n_jobs==1`` use a single threaded scheduler.
+described next. If ``n_jobs==1`` a single threaded scheduler is used
+[#threads]_.
 
 .. _`scheduler`:
-   https://dask.pydata.org/en/latest/scheduler-overview.html
+   https://docs.dask.org/en/latest/scheduler-overview.html
 
      
 ``dask.distributed``
 ====================
 
-One can supply a `dask.distributed`_ scheduler in the ``scheduler``
-keyword argument of the
-:meth:`~pmda.parallel.ParallelAnalysisBase.run` method. This makes it
-possible to run analysis in a distributed fashion on HPC or ad-hoc
-clusters (see `setting up a dask.distributed network`_).
+With the `distributed`_ scheduler on can run analysis in a distributed
+fashion on HPC or ad-hoc clusters (see `setting up a dask.distributed
+network`_) or on a `single machine`_. (In addition, *distributed* also
+provides `diagnostics`_ in form of a dashboard in the browser and a
+progress bar.)
 
-.. _Dask: https://dask.pydata.org
-.. _`dask.distributed`:  https://distributed.readthedocs.io/
+.. _Dask: https://dask.org
+.. _`distributed`:  https://distributed.readthedocs.io/
 .. _`setting up a dask.distributed network`:
    https://distributed.readthedocs.io/en/latest/setup.html
-
+.. _`single machine`:
+   http://docs.dask.org/en/latest/setup/single-distributed.html
+.. _diagnostics:
+   http://docs.dask.org/en/latest/diagnostics-distributed.html
 
 Local cluster (single machine)
 ------------------------------
@@ -52,9 +59,9 @@ sets up a scheduler and workers on the local machine.
    lc = distributed.LocalCluster(n_workers=8, processes=True)
    client = distributed.Client(lc)
 
-The ``client`` can be passed to the ``scheduler`` argument of the
-:meth:`~pmda.parallel.ParallelAnalysisBase.run` method; we continue to
-use the :ref:`RMSD example<example-parallel-rmsd>`):
+Setting up the ``client`` is sufficient for Dask_ (and PMDA, namely the
+:meth:`~pmda.parallel.ParallelAnalysisBase.run` method) to use it. We
+continue to use the :ref:`RMSD example<example-parallel-rmsd>`:
       
 .. code:: python
 
@@ -71,8 +78,9 @@ In order to run on a larger cluster with multiple nodes (see `setting
 up a dask.distributed network`_) one needs to know how to connect to
 the running scheduler (e.g., address and port number or shared state
 file). Assuming that the scheduler is running on 192.168.0.1:8786, one
-would initialize the `distributed.Client`_ and pass it to the parallel
-analysis :meth:`~pmda.parallel.ParallelAnalysisBase.run` method:
+would initialize the `distributed.Client`_ and this is enough to use
+*distributed* for all analysis (it `configures the scheduler`_ to be
+*distributed*):
 
 .. code:: python
 
@@ -86,5 +94,21 @@ In this way one can spread an analysis task over many different nodes.
    https://distributed.readthedocs.io/en/latest/local-cluster.html
 .. _`distributed.Client`:
    https://distributed.readthedocs.io/en/latest/client.html
+.. _`configures the scheduler`:
+   https://docs.dask.org/en/latest/scheduling.html#configuration
 
-   
+.. rubric:: Footnotes
+.. [#threads] The *single-threaded* scheduler is very useful for
+	      debugging_. By setting ``n_jobs=1`` and not using a
+	      *distributed* scheduler, the single threaded scheduler is
+	      automatically used. Alternatively, set the single
+	      threaded scheduler with
+
+	      .. code:: python
+
+	         dask.config.set(scheduler='single-threaded')
+
+	      for any ``n_jobs``.
+	      
+.. _debugging:
+   https://docs.dask.org/en/latest/debugging.html#use-the-single-threaded-scheduler

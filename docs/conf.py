@@ -248,7 +248,7 @@ texinfo_documents = [
 # and other packages used by MDAnalysis
 intersphinx_mapping = {'https://docs.python.org/': None,
                        'https://www.mdanalysis.org/docs/': None,
-                       'https://dask.pydata.org/en/latest/': None,
+                       'https://docs.dask.org/en/latest/': None,
                        'https://distributed.readthedocs.io/en/latest/': None,
                        }
 
