@@ -13,7 +13,7 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-11/xx/18 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
+11/02/18 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
 
   * 0.2.0
 
@@ -25,7 +25,6 @@ Enhancements
   * add parallel site-specific RDF calculation module pmda.rdf.InterRDF_s
     (Issue #60)
 
-
 Fixes
   * stacking results failed with odd number of frames (Issue #58)
   * always distribute frames over blocks so that no empty blocks are
@@ -36,7 +35,7 @@ Changes
     scheduler (Issue #48)
   * removed the 'scheduler' keyword from the run() method; use
     dask.config.set(scheduler=...) as recommended in the dask docs
-  * uses single-threaaded scheduler if n_jobs=1 (Issue #17)
+  * uses single-threaded scheduler if n_jobs=1 (Issue #17)
   * n_jobs=1 is now the default for run() (used to be n_jobs=-1)
   * dask.distributed is now a dependency
 
