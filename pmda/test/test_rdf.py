@@ -1,24 +1,11 @@
 # -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 fileencoding=utf-8
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 #
-# MDAnalysis --- https://www.mdanalysis.org
-# Copyright (c) 2006-2017 The MDAnalysis Development Team and contributors
+# PMDA
+# Copyright (c) 2017 The MDAnalysis Development Team and contributors
 # (see the file AUTHORS for the full list of names)
 #
 # Released under the GNU Public Licence, v2 or any higher version
-#
-# Please cite your use of MDAnalysis in published work:
-#
-# R. J. Gowers, M. Linke, J. Barnoud, T. J. E. Reddy, M. N. Melo, S. L. Seyler,
-# D. L. Dotson, J. Domanski, S. Buchoux, I. M. Kenney, and O. Beckstein.
-# MDAnalysis: A Python package for the rapid analysis of molecular dynamics
-# simulations. In S. Benthall and S. Rostrup editors, Proceedings of the 15th
-# Python in Science Conference, pages 102-109, Austin, TX, 2016. SciPy.
-#
-# N. Michaud-Agrawal, E. J. Denning, T. B. Woolf, and O. Beckstein.
-# MDAnalysis: A Toolkit for the Analysis of Molecular Dynamics Simulations.
-# J. Comput. Chem. 32 (2011), 2319--2327, doi:10.1002/jcc.21787
-#
 from __future__ import absolute_import
 
 import pytest
@@ -63,7 +50,7 @@ def test_range(u):
     assert rdf.edges[-1] == rmax
 
 
-def test_count_sum(sels):
+def test_count_sum(sels, scheduler):
     # OD1 vs OD2
     # should see 577 comparisons in count
     s1, s2 = sels
@@ -86,11 +73,12 @@ def test_double_run(sels):
     assert len(rdf.count[rdf.count == 3]) == 7
 
 
-def test_same_result(sels):
+@pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
+def test_same_result(sels, n_blocks):
     # should see same results from analysis.rdf and pmda.rdf
     s1, s2 = sels
     nrdf = rdf.InterRDF(s1, s2).run()
-    prdf = InterRDF(s1, s2).run()
+    prdf = InterRDF(s1, s2).run(n_blocks=n_blocks)
     assert_almost_equal(nrdf.count, prdf.count)
     assert_almost_equal(nrdf.rdf, prdf.rdf)
 
