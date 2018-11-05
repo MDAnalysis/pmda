@@ -382,8 +382,7 @@ class ParallelAnalysisBase(object):
     def _dask_helper(self, bslice, pickles, top, traj, anchor):
         """helper function to actually setup dask graph"""
         with timeit() as b_universe:
-            u = mda.Universe(top, traj)
-            u.anchor_name = anchor
+            u = mda.Universe(top, traj, anchor_name=anchor)
             agroups = [pickle.loads(idx) for idx in pickles]
 
         res = []
