@@ -374,9 +374,9 @@ class ParallelAnalysisBase(object):
                 self._conclude()
 
         self.timing = Timing(
-            np.hstack([el.timing_io for el in res]),
-            np.hstack([el.timing_compute for el in res]), total.elapsed,
-            np.array([el.timing_universe for el in res]), time_prepare, conclude.elapsed)
+            np.hstack([el[1] for el in res]),
+            np.hstack([el[2] for el in res]), total.elapsed,
+            np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
         return self
 
     def _dask_helper(self, bslice, pickles, top, traj, anchor):
