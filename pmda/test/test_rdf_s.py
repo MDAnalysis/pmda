@@ -41,17 +41,15 @@ def rdf_s(u, sels, scheduler):
     return InterRDF_s(u, sels).run()
 
 
-def test_nbins(u):
-    ags = sels(u)
-    rdf = InterRDF_s(u, ags, nbins=412).run()
+def test_nbins(u, sels):
+    rdf = InterRDF_s(u, sels, nbins=412).run()
 
     assert len(rdf.bins) == 412
 
 
-def test_range(u):
-    ags = sels(u)
+def test_range(u, sels):
     rmin, rmax = 1.0, 13.0
-    rdf = InterRDF_s(u, ags, range=(rmin, rmax)).run()
+    rdf = InterRDF_s(u, sels, range=(rmin, rmax)).run()
 
     assert rdf.edges[0] == rmin
     assert rdf.edges[-1] == rmax
