@@ -1,29 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>2.2.3. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.2.0+1.gb39ea0e documentation</title>
+    <meta charset="utf-8" />
+    <title>2.2.3. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.2.0+2.gf82e4c6 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.2.0+1.gb39ea0e',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.0+1.gb39ea0e documentation"
+          title="Search within PMDA 0.2.0+2.gf82e4c6 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -36,8 +27,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
@@ -48,12 +38,12 @@
           <div class="body" role="main">
             
   <span class="target" id="module-pmda.rdf"></span><div class="section" id="radial-distribution-functions-pmda-rdf">
-<h1>2.2.3. Radial Distribution Functions — <a class="reference internal" href="#module-pmda.rdf" title="pmda.rdf"><code class="xref py py-mod docutils literal"><span class="pre">pmda.rdf</span></code></a><a class="headerlink" href="#radial-distribution-functions-pmda-rdf" title="Permalink to this headline">¶</a></h1>
+<h1>2.2.3. Radial Distribution Functions — <a class="reference internal" href="#module-pmda.rdf" title="pmda.rdf"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a><a class="headerlink" href="#radial-distribution-functions-pmda-rdf" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rdf</span></code></a>.</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf</span></code></a>.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal"><span class="pre">MDAnalysis.analysis.rdf</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf</span></code></a></p>
 </div>
 <div class="section" id="classes">
 <h2>2.2.3.1. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
@@ -64,55 +54,61 @@
 <dl class="attribute">
 <dt id="pmda.rdf.InterRDF.bins">
 <code class="descname">bins</code><a class="headerlink" href="#pmda.rdf.InterRDF.bins" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array</em> – The distance <span class="math">\(r\)</span> at which the distribution
-function <span class="math">\(g(r)\)</span> is determined; these are calculated as
+<dd><p>The distance <span class="math notranslate nohighlight">\(r\)</span> at which the distribution
+function <span class="math notranslate nohighlight">\(g(r)\)</span> is determined; these are calculated as
 the centers of the bins that were used for histogramming.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pmda.rdf.InterRDF.rdf">
 <code class="descname">rdf</code><a class="headerlink" href="#pmda.rdf.InterRDF.rdf" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array</em> – The value of the pair distribution function <span class="math">\(g(r)\)</span> at
-<span class="math">\(r\)</span>.</p>
+<dd><p>The value of the pair distribution function <span class="math notranslate nohighlight">\(g(r)\)</span> at
+<span class="math notranslate nohighlight">\(r\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>g1</strong> (<em>AtomGroup</em>) – First AtomGroup</li>
-<li><strong>g2</strong> (<em>AtomGroup</em>) – Second AtomGroup</li>
-<li><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Number of bins in the histogram [75]</li>
-<li><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</li>
-<li><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
-array. [None]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>g1</strong> (<em>AtomGroup</em>) – First AtomGroup</p></li>
+<li><p><strong>g2</strong> (<em>AtomGroup</em>) – Second AtomGroup</p></li>
+<li><p><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Number of bins in the histogram [75]</p></li>
+<li><p><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</p></li>
+<li><p><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
+array. [None]</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Example</p>
-<p>First create the <a class="reference internal" href="#pmda.rdf.InterRDF" title="pmda.rdf.InterRDF"><code class="xref py py-class docutils literal"><span class="pre">InterRDF</span></code></a> object, by supplying two
-AtomGroups then use the <a class="reference internal" href="#pmda.rdf.InterRDF.run" title="pmda.rdf.InterRDF.run"><code class="xref py py-meth docutils literal"><span class="pre">run()</span></code></a> method</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rdf</span> <span class="o">=</span> <span class="n">InterRDF</span><span class="p">(</span><span class="n">ag1</span><span class="p">,</span> <span class="n">ag2</span><span class="p">)</span>
+<p>First create the <a class="reference internal" href="#pmda.rdf.InterRDF" title="pmda.rdf.InterRDF"><code class="xref py py-class docutils literal notranslate"><span class="pre">InterRDF</span></code></a> object, by supplying two
+AtomGroups then use the <a class="reference internal" href="#pmda.rdf.InterRDF.run" title="pmda.rdf.InterRDF.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdf</span> <span class="o">=</span> <span class="n">InterRDF</span><span class="p">(</span><span class="n">ag1</span><span class="p">,</span> <span class="n">ag2</span><span class="p">)</span>
 <span class="n">rdf</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Results are available through the <a class="reference internal" href="#pmda.rdf.InterRDF.bins" title="pmda.rdf.InterRDF.bins"><code class="xref py py-attr docutils literal"><span class="pre">bins</span></code></a> and <a class="reference internal" href="#pmda.rdf.InterRDF.rdf" title="pmda.rdf.InterRDF.rdf"><code class="xref py py-attr docutils literal"><span class="pre">rdf</span></code></a>
+<p>Results are available through the <a class="reference internal" href="#pmda.rdf.InterRDF.bins" title="pmda.rdf.InterRDF.bins"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bins</span></code></a> and <a class="reference internal" href="#pmda.rdf.InterRDF.rdf" title="pmda.rdf.InterRDF.rdf"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rdf</span></code></a>
 attributes:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rdf</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span> <span class="n">rdf</span><span class="o">.</span><span class="n">rdf</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rdf</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span> <span class="n">rdf</span><span class="o">.</span><span class="n">rdf</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <cite>exclusion_block</cite> keyword allows the masking of pairs from
 within the same molecule.  For example, if there are 7 of each
 atom in each molecule, the exclusion mask <cite>(7, 7)</cite> can be used.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#MDAnalysis.analysis.rdf.InterRDF" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal"><span class="pre">MDAnalysis.analysis.rdf.InterRDF</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#MDAnalysis.analysis.rdf.InterRDF" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf.InterRDF</span></code></a></p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.2.0.</span></p>
+<p><span class="versionmodified added">New in version 0.2.0.</span></p>
 </div>
 <dl class="method">
 <dt id="pmda.rdf.InterRDF.readonly_attributes">
@@ -120,7 +116,7 @@ atom in each molecule, the exclusion mask <cite>(7, 7)</cite> can be used.</p>
 <dd><p>Set the attributes of this class to be read only</p>
 <p>Useful to avoid the class being modified when passing it around.</p>
 <p>To be used as a context manager:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">analysis</span><span class="o">.</span><span class="n">readonly_attributes</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">analysis</span><span class="o">.</span><span class="n">readonly_attributes</span><span class="p">():</span>
     <span class="n">some_function</span><span class="p">(</span><span class="n">analysis</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -130,24 +126,20 @@ atom in each molecule, the exclusion mask <cite>(7, 7)</cite> can be used.</p>
 <dt id="pmda.rdf.InterRDF.run">
 <code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rdf.InterRDF.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</li>
-<li><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</li>
-<li><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</li>
-<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
-used</li>
-<li><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal"><span class="pre">None</span></code> set equal
-to n_jobs or number of available workers in scheduler.</li>
+used</p></li>
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -185,16 +177,16 @@ to n_jobs or number of available workers in scheduler.</li>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../userguide.html">1. User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="rms.html">2.2.1. RMSD analysis tools — <code class="docutils literal"><span class="pre">pmda.rms</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="contacts.html">2.2.2. Native contacts analysis — <code class="docutils literal"><span class="pre">pmda.contacts</span></code></a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.3. Radial Distribution Functions — <code class="docutils literal"><span class="pre">pmda.rdf</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rms.html">2.2.1. RMSD analysis tools — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="contacts.html">2.2.2. Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.3. Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#classes">2.2.3.1. Classes</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.4. LeafletFinder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.4. LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -217,21 +209,21 @@ to n_jobs or number of available workers in scheduler.</li>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">2. API for <code class="docutils literal"><span class="pre">pmda</span></code></a><ul>
-      <li>Previous: <a href="contacts.html" title="previous chapter">2.2.2. Native contacts analysis — <code class="docutils literal"><span class="pre">pmda.contacts</span></code></a></li>
-      <li>Next: <a href="leaflet.html" title="next chapter">2.2.4. LeafletFinder Analysis tool — <code class="docutils literal"><span class="pre">pmda.leaflet</span></code></a></li>
+  <li><a href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
+      <li>Previous: <a href="contacts.html" title="previous chapter">2.2.2. Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+      <li>Next: <a href="leaflet.html" title="next chapter">2.2.4. LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -242,7 +234,7 @@ to n_jobs or number of available workers in scheduler.</li>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
