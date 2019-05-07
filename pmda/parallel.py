@@ -18,8 +18,8 @@ from __future__ import absolute_import, division
 from contextlib import contextmanager
 import warnings
 
-from six.moves import range
 import time
+from six.moves import range
 import MDAnalysis as mda
 from dask.delayed import delayed
 import dask
@@ -35,7 +35,8 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, universe, prepare, conclude, distr, wait):
+    def __init__(self, io, compute, total, universe, prepare,
+                 conclude, distr, wait):
         self._io = io
         self._compute = compute
         self._total = total
@@ -384,7 +385,7 @@ class ParallelAnalysisBase(object):
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare, 
+            np.array([el[3] for el in res]), time_prepare,
             conclude.elapsed, time_distr,
             np.array([el[4]-blocks_start for el in res]))
         return self

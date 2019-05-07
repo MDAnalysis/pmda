@@ -27,9 +27,9 @@ def test_timeing():
     prepare = 3
     conclude = 6
     distr = 11
-    wait = 12    
+    wait = 12
 
-    timing = parallel.Timing(io, compute, total, 
+    timing = parallel.Timing(io, compute, total,
                              universe, prepare, conclude, distr, wait)
 
     np.testing.assert_equal(timing.io, io)
