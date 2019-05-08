@@ -26,11 +26,10 @@ def test_timeing():
     universe = np.arange(2)
     prepare = 3
     conclude = 6
-    distribute = 11
     wait = 12
 
     timing = parallel.Timing(io, compute, total,
-                             universe, prepare, conclude, distribute, wait)
+                             universe, prepare, conclude, wait)
 
     np.testing.assert_equal(timing.io, io)
     np.testing.assert_equal(timing.compute, compute)
@@ -39,7 +38,6 @@ def test_timeing():
     np.testing.assert_equal(timing.cumulate_time, np.sum(io) + np.sum(compute))
     np.testing.assert_equal(timing.prepare, prepare)
     np.testing.assert_equal(timing.conclude, conclude)
-    np.testing.assert_equal(timing.distr, distribute)
     np.testing.assert_equal(timing.wait, wait)
 
 

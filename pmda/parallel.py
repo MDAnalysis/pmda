@@ -36,7 +36,7 @@ class Timing(object):
     """
 
     def __init__(self, io, compute, total, universe, prepare,
-                 conclude, distr, wait):
+                 conclude, wait):
         self._io = io
         self._compute = compute
         self._total = total
@@ -44,7 +44,6 @@ class Timing(object):
         self._universe = universe
         self._prepare = prepare
         self._conclude = conclude
-        self._distr = distr
         self._wait = wait
 
     @property
@@ -85,11 +84,6 @@ class Timing(object):
     def conclude(self):
         """time to conclude"""
         return self._conclude
-
-    @property
-    def distribute(self):
-        """time to 'map'"""
-        return self._distribute
 
     @property
     def wait(self):
@@ -240,7 +234,7 @@ class ParallelAnalysisBase(object):
         sensible variables.
 
         """
-        pass
+        pass 
 
     def _prepare(self):
         """additional preparation to run"""
@@ -385,7 +379,7 @@ class ParallelAnalysisBase(object):
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
             np.array([el[3] for el in res]), time_prepare,
-            conclude.elapsed, time_distribute,
+            conclude.elapsed,
             # waiting time = wait_end - wait_start
             np.array([el[4]-wait_start for el in res]))
         return self
@@ -414,7 +408,7 @@ class ParallelAnalysisBase(object):
             times_compute.append(b_compute.elapsed)
 
         return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed, block_end
+            times_compute), b_universe.elapsed, wait_end
 
     @staticmethod
     def _reduce(res, result_single_frame):
