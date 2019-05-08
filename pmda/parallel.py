@@ -234,11 +234,11 @@ class ParallelAnalysisBase(object):
         sensible variables.
 
         """
-        pass 
+        pass # pylint: disable=unnecessary-pass
 
     def _prepare(self):
         """additional preparation to run"""
-        pass
+        pass # pylint: disable=unnecessary-pass
 
     def _single_frame(self, ts, atomgroups):
         """Perform computation on a single trajectory frame.
