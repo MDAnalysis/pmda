@@ -87,9 +87,9 @@ class Timing(object):
         return self._conclude
 
     @property
-    def distr(self):
+    def distribute(self):
         """time to 'map'"""
-        return self._distr
+        return self._distribute
 
     @property
     def wait(self):
@@ -360,39 +360,40 @@ class ParallelAnalysisBase(object):
             time_prepare = prepare.elapsed
             blocks = []
             with self.readonly_attributes():
-                with timeit() as distr:
-                    for bslice in slices:
-                        task = delayed(
-                            self._dask_helper, pure=False)(
-                                bslice,
-                                self._indices,
-                                self._top,
-                                self._traj, )
-                        blocks.append(task)
-                    blocks = delayed(blocks)
-                time_distr = distr.elapsed
+                for bslice in slices:
+                    task = delayed(
+                         self._dask_helper, pure=False)(
+                             bslice,
+                             self._indices,
+                             self._top,
+                             self._traj, )
+                    blocks.append(task)
+                blocks = delayed(blocks)
 
-                blocks_start = time.time()
+                # record the time when scheduler starts working
+                wait_start = time.time()
                 res = blocks.compute(**scheduler_kwargs)
             # hack to handle n_frames == 0 in this framework
             if len(res) == 0:
                 # everything else wants list of block tuples
                 res = [([], [], [], 0, 0)]
-            self._results = np.asarray([el[0] for el in res])
             with timeit() as conclude:
+                self._results = np.asarray([el[0] for el in res])
                 self._conclude()
 
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
             np.array([el[3] for el in res]), time_prepare,
-            conclude.elapsed, time_distr,
-            np.array([el[4]-blocks_start for el in res]))
+            conclude.elapsed, time_distribute,
+            # waiting time = wait_end - wait_start
+            np.array([el[4]-wait_start for el in res]))
         return self
 
     def _dask_helper(self, bslice, indices, top, traj):
         """helper function to actually setup dask graph"""
-        block_end = time.time()
+        # wait_end needs to be first line for accurate timing
+        wait_end = time.time()
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
             agroups = [u.atoms[idx] for idx in indices]
