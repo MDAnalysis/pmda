@@ -13,12 +13,19 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
+**/**/** VOD555
+
+  * 0.2.*
+
+Enhancements
+  * add timer for the time to start the workers
+
 11/02/18 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
 
   * 0.2.0
 
 Enhancements
-  * add add timing for _conclude and _prepare (Issue #49)
+  * add timing for _conclude and _prepare (Issue #49)
   * add parallel particle-particle RDF calculation module pmda.rdf (Issue #41)
   * add readonly_attributes context manager to ParallelAnalysisBase
   * add parallel implementation of Leaflet Finder (Issue #47)
