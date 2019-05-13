@@ -36,7 +36,7 @@ class Timing(object):
     """
 
     def __init__(self, io, compute, total, universe, prepare,
-                 conclude, wait):
+                 conclude, wait=None):
         self._io = io
         self._compute = compute
         self._total = total
