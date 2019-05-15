@@ -83,7 +83,7 @@ def _test_make_balanced_slices(n_blocks, start, stop, step, scale):
     if n_frames >= n_blocks:
         assert np.all(block_sizes > 0)
         minsize = n_frames // n_blocks
-        assert not np.setdiff1d(block_sizes, [minsize, minsize+1]), \
+        assert len(np.setdiff1d(block_sizes, [minsize, minsize+1])) == 0, \
             "For n_blocks <= n_frames, block sizes are not balanced"
     else:
         # pathological case; we will have blocks with length 0
@@ -91,7 +91,7 @@ def _test_make_balanced_slices(n_blocks, start, stop, step, scale):
         zero_blocks = block_sizes == 0
         assert np.sum(zero_blocks) == n_blocks - n_frames
         assert np.sum(~zero_blocks) == n_frames
-        assert not np.setdiff1d(block_sizes[~zero_blocks], [1]), \
+        assert len(np.setdiff1d(block_sizes[~zero_blocks], [1])) == 0, \
             "For n_blocks>n_frames, some blocks contain != 1 frame"
 
 
