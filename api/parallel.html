@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.2.0+8.gaa1fd21 documentation</title>
+    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.2.0+21.g9da8872 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.0+8.gaa1fd21 documentation"
+          title="Search within PMDA 0.2.0+21.g9da8872 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -176,7 +176,7 @@ to n_jobs or number of available workers in scheduler.</p></li>
 
 <dl class="class">
 <dt id="pmda.parallel.Timing">
-<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">Timing</code><span class="sig-paren">(</span><em>io</em>, <em>compute</em>, <em>total</em>, <em>universe</em>, <em>prepare</em>, <em>conclude</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">Timing</code><span class="sig-paren">(</span><em>io</em>, <em>compute</em>, <em>total</em>, <em>universe</em>, <em>prepare</em>, <em>conclude</em>, <em>wait=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
 <dd><p>store various timeing results of obtained during a parallel analysis run</p>
 <dl class="attribute">
 <dt id="pmda.parallel.Timing.compute">
@@ -220,6 +220,12 @@ overhead</p>
 <dt id="pmda.parallel.Timing.universe">
 <code class="descname">universe</code><a class="headerlink" href="#pmda.parallel.Timing.universe" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to create a universe for each block</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pmda.parallel.Timing.wait">
+<code class="descname">wait</code><a class="headerlink" href="#pmda.parallel.Timing.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>time for blocks to start working</p>
 </dd></dl>
 
 </dd></dl>

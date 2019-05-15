@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.parallel &#8212; PMDA 0.2.0+8.gaa1fd21 documentation</title>
+    <title>pmda.parallel &#8212; PMDA 0.2.0+21.g9da8872 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.0+8.gaa1fd21 documentation"
+          title="Search within PMDA 0.2.0+21.g9da8872 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -56,8 +56,8 @@
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="nb">range</span>
-
 <span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">dask.delayed</span> <span class="k">import</span> <span class="n">delayed</span>
 <span class="kn">import</span> <span class="nn">dask</span>
@@ -73,7 +73,8 @@
 <span class="sd">    store various timeing results of obtained during a parallel analysis run</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">io</span><span class="p">,</span> <span class="n">compute</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">universe</span><span class="p">,</span> <span class="n">prepare</span><span class="p">,</span> <span class="n">conclude</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">io</span><span class="p">,</span> <span class="n">compute</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">universe</span><span class="p">,</span> <span class="n">prepare</span><span class="p">,</span>
+                 <span class="n">conclude</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_io</span> <span class="o">=</span> <span class="n">io</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute</span> <span class="o">=</span> <span class="n">compute</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total</span> <span class="o">=</span> <span class="n">total</span>
@@ -81,6 +82,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_universe</span> <span class="o">=</span> <span class="n">universe</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span> <span class="o">=</span> <span class="n">prepare</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span> <span class="o">=</span> <span class="n">conclude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait</span> <span class="o">=</span> <span class="n">wait</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">io</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -119,7 +121,12 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;time to conclude&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;time for blocks to start working&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait</span></div>
 
 
 <div class="viewcode-block" id="ParallelAnalysisBase"><a class="viewcode-back" href="../../api/parallel.html#pmda.contacts.ParallelAnalysisBase">[docs]</a><span class="k">class</span> <span class="nc">ParallelAnalysisBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -387,30 +394,38 @@
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">readonly_attributes</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">bslice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
                     <span class="n">task</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_dask_helper</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span>
-                            <span class="n">bslice</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_top</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_traj</span><span class="p">,</span> <span class="p">)</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">_dask_helper</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span>
+                             <span class="n">bslice</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">_top</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">_traj</span><span class="p">,</span> <span class="p">)</span>
                     <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
                 <span class="n">blocks</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+
+                <span class="c1"># record the time when scheduler starts working</span>
+                <span class="n">wait_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">scheduler_kwargs</span><span class="p">)</span>
             <span class="c1"># hack to handle n_frames == 0 in this framework</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># everything else wants list of block tuples</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="p">[([],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">)]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="p">[([],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
             <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">conclude</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_conclude</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">timing</span> <span class="o">=</span> <span class="n">Timing</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">total</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">time_prepare</span><span class="p">,</span> <span class="n">conclude</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">time_prepare</span><span class="p">,</span>
+            <span class="n">conclude</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span>
+            <span class="c1"># waiting time = wait_end - wait_start</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">-</span><span class="n">wait_start</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">_dask_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bslice</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;helper function to actually setup dask graph&quot;&quot;&quot;</span>
+        <span class="c1"># wait_end needs to be first line for accurate timing</span>
+        <span class="n">wait_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">timeit</span><span class="p">()</span> <span class="k">as</span> <span class="n">b_universe</span><span class="p">:</span>
             <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
             <span class="n">agroups</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
@@ -431,7 +446,7 @@
             <span class="n">times_compute</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_compute</span><span class="o">.</span><span class="n">elapsed</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times_io</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-            <span class="n">times_compute</span><span class="p">),</span> <span class="n">b_universe</span><span class="o">.</span><span class="n">elapsed</span>
+            <span class="n">times_compute</span><span class="p">),</span> <span class="n">b_universe</span><span class="o">.</span><span class="n">elapsed</span><span class="p">,</span> <span class="n">wait_end</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
