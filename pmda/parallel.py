@@ -18,8 +18,8 @@ from __future__ import absolute_import, division
 from contextlib import contextmanager
 import warnings
 
+import time
 from six.moves import range
-
 import MDAnalysis as mda
 from dask.delayed import delayed
 import dask
@@ -35,7 +35,8 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, universe, prepare, conclude):
+    def __init__(self, io, compute, total, universe, prepare,
+                 conclude, wait=None):
         self._io = io
         self._compute = compute
         self._total = total
@@ -43,6 +44,7 @@ class Timing(object):
         self._universe = universe
         self._prepare = prepare
         self._conclude = conclude
+        self._wait = wait
 
     @property
     def io(self):
@@ -82,6 +84,11 @@ class Timing(object):
     def conclude(self):
         """time to conclude"""
         return self._conclude
+
+    @property
+    def wait(self):
+        """time for blocks to start working"""
+        return self._wait
 
 
 class ParallelAnalysisBase(object):
@@ -227,11 +234,11 @@ class ParallelAnalysisBase(object):
         sensible variables.
 
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     def _prepare(self):
         """additional preparation to run"""
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     def _single_frame(self, ts, atomgroups):
         """Perform computation on a single trajectory frame.
@@ -349,30 +356,38 @@ class ParallelAnalysisBase(object):
             with self.readonly_attributes():
                 for bslice in slices:
                     task = delayed(
-                        self._dask_helper, pure=False)(
-                            bslice,
-                            self._indices,
-                            self._top,
-                            self._traj, )
+                         self._dask_helper, pure=False)(
+                             bslice,
+                             self._indices,
+                             self._top,
+                             self._traj, )
                     blocks.append(task)
                 blocks = delayed(blocks)
+
+                # record the time when scheduler starts working
+                wait_start = time.time()
                 res = blocks.compute(**scheduler_kwargs)
             # hack to handle n_frames == 0 in this framework
             if len(res) == 0:
                 # everything else wants list of block tuples
-                res = [([], [], [], 0)]
-            self._results = np.asarray([el[0] for el in res])
+                res = [([], [], [], 0, 0)]
             with timeit() as conclude:
+                self._results = np.asarray([el[0] for el in res])
                 self._conclude()
 
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare, conclude.elapsed)
+            np.array([el[3] for el in res]), time_prepare,
+            conclude.elapsed,
+            # waiting time = wait_end - wait_start
+            np.array([el[4]-wait_start for el in res]))
         return self
 
     def _dask_helper(self, bslice, indices, top, traj):
         """helper function to actually setup dask graph"""
+        # wait_end needs to be first line for accurate timing
+        wait_end = time.time()
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
             agroups = [u.atoms[idx] for idx in indices]
@@ -393,7 +408,7 @@ class ParallelAnalysisBase(object):
             times_compute.append(b_compute.elapsed)
 
         return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed
+            times_compute), b_universe.elapsed, wait_end
 
     @staticmethod
     def _reduce(res, result_single_frame):

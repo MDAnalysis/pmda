@@ -2,7 +2,7 @@
   PMDA - Parallel Molecular Dynamics Analysis
 ==============================================
 
-|build| |cov| |PRwelcome| |zenodo|
+|build| |cov| |PRwelcome| |zenodo| |conda|
 
 Ready to use analysis and buildings blocks to write parallel analysis algorithms
 using MDAnalysis_ with dask_.
@@ -128,6 +128,10 @@ If you use PMDA in published work please cite [Linke2018]_.
 .. |zenodo| image:: https://zenodo.org/badge/106346721.svg
    :alt: DOI
    :target: https://zenodo.org/badge/latestdoi/106346721
+
+.. |conda| image:: https://anaconda.org/conda-forge/pmda/badges/version.svg
+   :alt: conda release
+   :target: https://anaconda.org/conda-forge/pmda
 
 .. |PRwelcome| image:: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
    :alt: PRs welcome

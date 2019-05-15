@@ -39,10 +39,12 @@ class TestLeafLet(object):
         return [np.arange(1, 2150, 12), np.arange(2521, 4670, 12)]
 
     # XFAIL for 2 jobs needs to be fixed!
-    @pytest.mark.parametrize('n_jobs', (pytest.mark.xfail(-1),
-                                        1,
-                                        pytest.mark.xfail(2)))
-    def test_leaflet(self, universe, correct_values, n_jobs, scheduler):
+    @pytest.mark.parametrize('n_jobs', [
+        pytest.param(-1, marks=pytest.mark.xfail),
+        1,
+        pytest.param(2, marks=pytest.mark.xfail),
+    ])
+    def test_leaflet(self, universe, correct_values, n_jobs):
         lipid_heads = universe.select_atoms("name P and resname POPG")
         universe.trajectory.rewind()
         leaflets = leaflet.LeafletFinder(universe, lipid_heads)
