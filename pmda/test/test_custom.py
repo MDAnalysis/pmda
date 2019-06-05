@@ -17,27 +17,35 @@ from numpy.testing import assert_equal
 
 from pmda import custom
 
+@pytest.fixture
+def universe():
+    return mda.Universe(PSF, DCD)
 
-def custom_function(mobile):
+def custom_function_vector(mobile):
     return mobile.center_of_geometry()
 
+def custom_function_scalar(ag):
+    return ag.radius_of_gyration()
 
-def test_AnalysisFromFunction(scheduler):
-    u = mda.Universe(PSF, DCD)
-    step = 2
-    ana1 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
+@pytest.mark.parametrize('custom_function', [
+    custom_function_vector,
+    custom_function_scalar,
+    ])
+@pytest.mark.parametrize('step', [None, 1, 2, 3, 7, 33])
+def test_AnalysisFromFunction(scheduler, universe, custom_function, step):
+    ana1 = custom.AnalysisFromFunction(custom_function, universe, universe.atoms).run(
         step=step
     )
-    ana2 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
+    ana2 = custom.AnalysisFromFunction(custom_function, universe, universe.atoms).run(
         step=step
     )
-    ana3 = custom.AnalysisFromFunction(custom_function, u, u.atoms).run(
+    ana3 = custom.AnalysisFromFunction(custom_function, universe, universe.atoms).run(
         step=step
     )
 
     results = []
-    for ts in u.trajectory[::step]:
-        results.append(custom_function(u.atoms))
+    for ts in universe.trajectory[::step]:
+        results.append(custom_function(universe.atoms))
     results = np.asarray(results)
 
     for ana in (ana1, ana2, ana3):
@@ -47,34 +55,30 @@ def test_AnalysisFromFunction(scheduler):
 def custom_function_2(mobile, ref, ref2):
     return mobile.centroid() - ref.centroid() + 2 * ref2.centroid()
 
-
-def test_AnalysisFromFunction_otherAgs():
-    u = mda.Universe(PSF, DCD)
-    u2 = mda.Universe(PSF, DCD)
-    u3 = mda.Universe(PSF, DCD)
-    step = 2
+def test_AnalysisFromFunction_otherAgs(universe, step=2):
+    u1 = universe
+    u2 = universe.copy()
+    u3 = universe.copy()
     ana = custom.AnalysisFromFunction(
-        custom_function_2, u, u.atoms, u2.atoms, u3.atoms
+        custom_function_2, u1, u1.atoms, u2.atoms, u3.atoms
     ).run(step=step)
 
     results = []
-    for ts in u.trajectory[::step]:
-        results.append(custom_function_2(u.atoms, u2.atoms, u3.atoms))
+    for ts in u1.trajectory[::step]:
+        results.append(custom_function_2(u1.atoms, u2.atoms, u3.atoms))
     results = np.asarray(results)
     assert_equal(results, ana.results)
 
 
-def test_analysis_class():
+def test_analysis_class(universe, step=2):
     ana_class = custom.analysis_class(custom_function)
     assert issubclass(ana_class, custom.AnalysisFromFunction)
 
-    u = mda.Universe(PSF, DCD)
-    step = 2
-    ana = ana_class(u, u.atoms).run(step=step)
+    ana = ana_class(universe, universe.atoms).run(step=step)
 
     results = []
-    for ts in u.trajectory[::step]:
-        results.append(custom_function(u.atoms))
+    for ts in universe.trajectory[::step]:
+        results.append(custom_function(universe.atoms))
     results = np.asarray(results)
 
     assert_equal(results, ana.results)
