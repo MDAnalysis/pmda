@@ -17,15 +17,19 @@ from numpy.testing import assert_equal
 
 from pmda import custom
 
+
 @pytest.fixture
 def universe():
     return mda.Universe(PSF, DCD)
 
+
 def custom_function_vector(mobile):
     return mobile.center_of_geometry()
 
+
 def custom_function_scalar(ag):
     return ag.radius_of_gyration()
+
 
 @pytest.mark.parametrize('custom_function', [
     custom_function_vector,
@@ -33,15 +37,15 @@ def custom_function_scalar(ag):
     ])
 @pytest.mark.parametrize('step', [None, 1, 2, 3, 7, 33])
 def test_AnalysisFromFunction(scheduler, universe, custom_function, step):
-    ana1 = custom.AnalysisFromFunction(custom_function, universe, universe.atoms).run(
-        step=step
-    )
-    ana2 = custom.AnalysisFromFunction(custom_function, universe, universe.atoms).run(
-        step=step
-    )
-    ana3 = custom.AnalysisFromFunction(custom_function, universe, universe.atoms).run(
-        step=step
-    )
+    ana1 = custom.AnalysisFromFunction(
+        custom_function, universe, universe.atoms).run(
+        step=step)
+    ana2 = custom.AnalysisFromFunction(
+        custom_function, universe, universe.atoms).run(
+        step=step)
+    ana3 = custom.AnalysisFromFunction(
+        custom_function, universe, universe.atoms).run(
+        step=step)
 
     results = []
     for ts in universe.trajectory[::step]:
@@ -54,6 +58,7 @@ def test_AnalysisFromFunction(scheduler, universe, custom_function, step):
 
 def custom_function_2(mobile, ref, ref2):
     return mobile.centroid() - ref.centroid() + 2 * ref2.centroid()
+
 
 def test_AnalysisFromFunction_otherAgs(universe, step=2):
     u1 = universe
@@ -68,6 +73,7 @@ def test_AnalysisFromFunction_otherAgs(universe, step=2):
         results.append(custom_function_2(u1.atoms, u2.atoms, u3.atoms))
     results = np.asarray(results)
     assert_equal(results, ana.results)
+
 
 @pytest.mark.parametrize('custom_function', [
     custom_function_vector,
