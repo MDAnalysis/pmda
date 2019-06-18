@@ -69,8 +69,11 @@ def test_AnalysisFromFunction_otherAgs(universe, step=2):
     results = np.asarray(results)
     assert_equal(results, ana.results)
 
-
-def test_analysis_class(universe, step=2):
+@pytest.mark.parametrize('custom_function', [
+    custom_function_vector,
+    custom_function_scalar,
+    ])
+def test_analysis_class(universe, custom_function, step=2):
     ana_class = custom.analysis_class(custom_function)
     assert issubclass(ana_class, custom.AnalysisFromFunction)
 
