@@ -31,9 +31,14 @@ def custom_function_scalar(ag):
     return ag.radius_of_gyration()
 
 
+def custom_function_tensor(ag):
+    return ag.moment_of_inertia()
+
+
 @pytest.mark.parametrize('custom_function', [
     custom_function_vector,
     custom_function_scalar,
+    custom_function_tensor,
     ])
 @pytest.mark.parametrize('step', [None, 1, 2, 3, 7, 33])
 def test_AnalysisFromFunction(scheduler, universe, custom_function, step):
@@ -78,6 +83,7 @@ def test_AnalysisFromFunction_otherAgs(universe, step=2):
 @pytest.mark.parametrize('custom_function', [
     custom_function_vector,
     custom_function_scalar,
+    custom_function_tensor,
     ])
 def test_analysis_class(universe, custom_function, step=2):
     ana_class = custom.analysis_class(custom_function)
