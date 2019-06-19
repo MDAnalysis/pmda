@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.4. LeafletFinder Analysis tool — pmda.leaflet &#8212; PMDA 0.2.1 documentation</title>
+    <title>2.2.4. LeafletFinder Analysis tool — pmda.leaflet &#8212; PMDA 0.2.1+8.g93c53a7 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1 documentation"
+          title="Search within PMDA 0.2.1+8.g93c53a7 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -43,7 +43,7 @@
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#module-MDAnalysis.analysis.leaflet" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.leaflet</span></code></a>.</p>
 <dl class="class">
 <dt id="pmda.leaflet.LeafletFinder">
-<em class="property">class </em><code class="descclassname">pmda.leaflet.</code><code class="descname">LeafletFinder</code><span class="sig-paren">(</span><em>universe</em>, <em>atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.leaflet.</code><code class="sig-name descname">LeafletFinder</code><span class="sig-paren">(</span><em class="sig-param">universe</em>, <em class="sig-param">atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parallel Leaflet Finder analysis.</p>
 <p>Identify atoms in the same leaflet of a lipid bilayer.
 This class implements and parallelizes the <em>LeafletFinder</em> algorithm
@@ -71,7 +71,7 @@ at the moment, no parallelization over trajectory blocks is performed.</p>
 </div>
 <dl class="method">
 <dt id="pmda.leaflet.LeafletFinder.readonly_attributes">
-<code class="descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.leaflet.LeafletFinder.readonly_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.leaflet.LeafletFinder.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
 <p>Useful to avoid the class being modified when passing it around.</p>
 <p>To be used as a context manager:</p>
@@ -83,7 +83,7 @@ at the moment, no parallelization over trajectory blocks is performed.</p>
 
 <dl class="method">
 <dt id="pmda.leaflet.LeafletFinder.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=-1</em>, <em>cutoff=15.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=-1</em>, <em class="sig-param">cutoff=15.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -170,10 +170,10 @@ used</p></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -187,7 +187,7 @@ used</p></li>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

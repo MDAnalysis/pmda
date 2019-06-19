@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.1.3. Utility functions — pmda.util &#8212; PMDA 0.2.1 documentation</title>
+    <title>2.1.3. Utility functions — pmda.util &#8212; PMDA 0.2.1+8.g93c53a7 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1 documentation"
+          title="Search within PMDA 0.2.1+8.g93c53a7 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -43,7 +43,7 @@
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code>.</p>
 <dl class="function">
 <dt id="pmda.util.make_balanced_slices">
-<code class="descclassname">pmda.util.</code><code class="descname">make_balanced_slices</code><span class="sig-paren">(</span><em>n_frames</em>, <em>n_blocks</em>, <em>start=None</em>, <em>stop=None</em>, <em>step=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/util.html#make_balanced_slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.util.make_balanced_slices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pmda.util.</code><code class="sig-name descname">make_balanced_slices</code><span class="sig-paren">(</span><em class="sig-param">n_frames</em>, <em class="sig-param">n_blocks</em>, <em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/util.html#make_balanced_slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.util.make_balanced_slices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Divide <cite>n_frames</cite> into <cite>n_blocks</cite> balanced blocks.</p>
 <p>The blocks are generated in such a way that they contain equal numbers of
 frames when possible, but there are also no empty blocks (which can happen
@@ -118,14 +118,14 @@ never go beyond the original <cite>stop</cite> if a value was provided.</p>
 
 <dl class="class">
 <dt id="pmda.util.timeit">
-<em class="property">class </em><code class="descclassname">pmda.util.</code><code class="descname">timeit</code><a class="reference internal" href="../_modules/pmda/util.html#timeit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.util.timeit" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.util.</code><code class="sig-name descname">timeit</code><a class="reference internal" href="../_modules/pmda/util.html#timeit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.util.timeit" title="Permalink to this definition">¶</a></dt>
 <dd><p>measure time spend in context</p>
 <p><a class="reference internal" href="#pmda.util.timeit" title="pmda.util.timeit"><code class="xref py py-class docutils literal notranslate"><span class="pre">timeit</span></code></a> is a context manager (to be used with the <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html#with" title="(in Python v3.7)"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">with</span></code></a>
 statement) that records the execution time for the enclosed context block
 in <a class="reference internal" href="#pmda.util.timeit.elapsed" title="pmda.util.timeit.elapsed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elapsed</span></code></a>.</p>
 <dl class="attribute">
 <dt id="pmda.util.timeit.elapsed">
-<code class="descname">elapsed</code><a class="headerlink" href="#pmda.util.timeit.elapsed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">elapsed</code><a class="headerlink" href="#pmda.util.timeit.elapsed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time in seconds that elapsed between entering
 and exiting the context.</p>
 <dl class="field-list simple">
@@ -217,10 +217,10 @@ and exiting the context.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -234,7 +234,7 @@ and exiting the context.</p>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

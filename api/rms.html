@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.1. RMSD analysis tools — pmda.rms &#8212; PMDA 0.2.1 documentation</title>
+    <title>2.2.1. RMSD analysis tools — pmda.rms &#8212; PMDA 0.2.1+8.g93c53a7 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1 documentation"
+          title="Search within PMDA 0.2.1+8.g93c53a7 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -43,7 +43,7 @@
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
 <dl class="class">
 <dt id="pmda.rms.RMSD">
-<em class="property">class </em><code class="descclassname">pmda.rms.</code><code class="descname">RMSD</code><span class="sig-paren">(</span><em>mobile</em>, <em>ref</em>, <em>superposition=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms.html#RMSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.RMSD" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.rms.</code><code class="sig-name descname">RMSD</code><span class="sig-paren">(</span><em class="sig-param">mobile</em>, <em class="sig-param">ref</em>, <em class="sig-param">superposition=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms.html#RMSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.RMSD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parallel RMSD analysis.</p>
 <p>Optimally superimpose the coordinates in the
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
@@ -53,7 +53,7 @@ series of the RMSD. The single frame calculation is performed with
 by default).</p>
 <dl class="attribute">
 <dt id="pmda.rms.RMSD.rmsd">
-<code class="descname">rmsd</code><a class="headerlink" href="#pmda.rms.RMSD.rmsd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rmsd</code><a class="headerlink" href="#pmda.rms.RMSD.rmsd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Result as a Nx3 array where each row contains
 <cite>[frame, time (ps), RMSD (Å)]</cite>.</p>
 <dl class="field-list simple">
@@ -82,7 +82,7 @@ version <a class="reference external" href="https://www.mdanalysis.org/docs/docu
 </div>
 <dl class="method">
 <dt id="pmda.rms.RMSD.readonly_attributes">
-<code class="descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.readonly_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
 <p>Useful to avoid the class being modified when passing it around.</p>
 <p>To be used as a context manager:</p>
@@ -94,7 +94,7 @@ version <a class="reference external" href="https://www.mdanalysis.org/docs/docu
 
 <dl class="method">
 <dt id="pmda.rms.RMSD.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=1</em>, <em class="sig-param">n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rms.RMSD.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -183,10 +183,10 @@ to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -200,7 +200,7 @@ to n_jobs or number of available workers in scheduler.</p></li>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

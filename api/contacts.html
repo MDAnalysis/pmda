@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.2. Native contacts analysis — pmda.contacts &#8212; PMDA 0.2.1 documentation</title>
+    <title>2.2.2. Native contacts analysis — pmda.contacts &#8212; PMDA 0.2.1+8.g93c53a7 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1 documentation"
+          title="Search within PMDA 0.2.1+8.g93c53a7 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -183,7 +183,7 @@ analysis:</p>
 <h2>2.2.2.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="pmda.contacts.q1q2">
-<code class="descclassname">pmda.contacts.</code><code class="descname">q1q2</code><span class="sig-paren">(</span><em>atomgroup</em>, <em>radius=4.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#q1q2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.q1q2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">q1q2</code><span class="sig-paren">(</span><em class="sig-param">atomgroup</em>, <em class="sig-param">radius=4.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#q1q2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.q1q2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a q1-q2 analysis.</p>
 <p>Compares native contacts between the starting structure and final structure
 of a trajectory <a class="reference internal" href="#franklin2007" id="id3"><span>[Franklin2007]</span></a>.</p>
@@ -218,7 +218,7 @@ doi: <a class="reference external" href="http://doi.org/10.1093/nar/gkm342">10.1
 <h2>2.2.2.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pmda.contacts.Contacts">
-<em class="property">class </em><code class="descclassname">pmda.contacts.</code><code class="descname">Contacts</code><span class="sig-paren">(</span><em>mobiles</em>, <em>refs</em>, <em>method='hard_cut'</em>, <em>radius=4.5</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#Contacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.Contacts" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">Contacts</code><span class="sig-paren">(</span><em class="sig-param">mobiles</em>, <em class="sig-param">refs</em>, <em class="sig-param">method='hard_cut'</em>, <em class="sig-param">radius=4.5</em>, <em class="sig-param">kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#Contacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.Contacts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate contacts based observables.</p>
 <p>The standard methods used in this class calculate the fraction of native
 contacts <em>Q</em> from a trajectory.</p>
@@ -229,7 +229,7 @@ signature <code class="docutils literal notranslate"><span class="pre">func(r,</
 argument <cite>method</cite>.</p>
 <dl class="attribute">
 <dt id="pmda.contacts.Contacts.timeseries">
-<code class="descname">timeseries</code><a class="headerlink" href="#pmda.contacts.Contacts.timeseries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">timeseries</code><a class="headerlink" href="#pmda.contacts.Contacts.timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>list containing <em>Q</em> for all refgroup pairs and analyzed frames</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -254,7 +254,7 @@ respective functions for reasonable values.</p></li>
 </dl>
 <dl class="method">
 <dt id="pmda.contacts.Contacts.readonly_attributes">
-<code class="descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.readonly_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
 <p>Useful to avoid the class being modified when passing it around.</p>
 <p>To be used as a context manager:</p>
@@ -266,7 +266,7 @@ respective functions for reasonable values.</p></li>
 
 <dl class="method">
 <dt id="pmda.contacts.Contacts.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=1</em>, <em class="sig-param">n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -361,10 +361,10 @@ to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -378,7 +378,7 @@ to n_jobs or number of available workers in scheduler.</p></li>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

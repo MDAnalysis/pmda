@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.2.1 documentation</title>
+    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.2.1+8.g93c53a7 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1 documentation"
+          title="Search within PMDA 0.2.1+8.g93c53a7 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -43,7 +43,7 @@
 classes.</p>
 <dl class="class">
 <dt id="pmda.parallel.ParallelAnalysisBase">
-<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em>universe</em>, <em>atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.parallel.</code><code class="sig-name descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em class="sig-param">universe</em>, <em class="sig-param">atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for defining parallel multi frame analysis</p>
 <p>The class it is designed as a template for creating multiframe analyses.
 This class will automatically take care of setting up the trajectory
@@ -129,7 +129,7 @@ for custom reduce operation on the work blocks. See the example below.</p>
 </dl>
 <dl class="attribute">
 <dt id="pmda.parallel.ParallelAnalysisBase._results">
-<code class="descname">_results</code><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase._results" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">_results</code><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase._results" title="Permalink to this definition">¶</a></dt>
 <dd><p>The raw data from each process are stored as a list of
 lists, with each sublist containing the return values from
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
@@ -142,7 +142,7 @@ lists, with each sublist containing the return values from
 
 <dl class="method">
 <dt id="pmda.parallel.ParallelAnalysisBase.readonly_attributes">
-<code class="descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.readonly_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.readonly_attributes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.readonly_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
 <p>Useful to avoid the class being modified when passing it around.</p>
 <p>To be used as a context manager:</p>
@@ -154,7 +154,7 @@ lists, with each sublist containing the return values from
 
 <dl class="method">
 <dt id="pmda.parallel.ParallelAnalysisBase.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em>, <em>step=None</em>, <em>n_jobs=1</em>, <em>n_blocks=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=1</em>, <em class="sig-param">n_blocks=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -176,55 +176,55 @@ to n_jobs or number of available workers in scheduler.</p></li>
 
 <dl class="class">
 <dt id="pmda.parallel.Timing">
-<em class="property">class </em><code class="descclassname">pmda.parallel.</code><code class="descname">Timing</code><span class="sig-paren">(</span><em>io</em>, <em>compute</em>, <em>total</em>, <em>universe</em>, <em>prepare</em>, <em>conclude</em>, <em>wait=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.parallel.</code><code class="sig-name descname">Timing</code><span class="sig-paren">(</span><em class="sig-param">io</em>, <em class="sig-param">compute</em>, <em class="sig-param">total</em>, <em class="sig-param">universe</em>, <em class="sig-param">prepare</em>, <em class="sig-param">conclude</em>, <em class="sig-param">wait=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
 <dd><p>store various timeing results of obtained during a parallel analysis run</p>
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.compute">
-<code class="descname">compute</code><a class="headerlink" href="#pmda.parallel.Timing.compute" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">compute</code><a class="headerlink" href="#pmda.parallel.Timing.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>compute time per frame</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.conclude">
-<code class="descname">conclude</code><a class="headerlink" href="#pmda.parallel.Timing.conclude" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">conclude</code><a class="headerlink" href="#pmda.parallel.Timing.conclude" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to conclude</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.cumulate_time">
-<code class="descname">cumulate_time</code><a class="headerlink" href="#pmda.parallel.Timing.cumulate_time" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">cumulate_time</code><a class="headerlink" href="#pmda.parallel.Timing.cumulate_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>cumulative time of io and compute for each frame. This isn’t equal to
 <cite>self.total / n_jobs</cite> because <cite>self.total</cite> also includes the scheduler
 overhead</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.io">
-<code class="descname">io</code><a class="headerlink" href="#pmda.parallel.Timing.io" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">io</code><a class="headerlink" href="#pmda.parallel.Timing.io" title="Permalink to this definition">¶</a></dt>
 <dd><p>io time per frame</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.prepare">
-<code class="descname">prepare</code><a class="headerlink" href="#pmda.parallel.Timing.prepare" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">prepare</code><a class="headerlink" href="#pmda.parallel.Timing.prepare" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to prepare</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.total">
-<code class="descname">total</code><a class="headerlink" href="#pmda.parallel.Timing.total" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">total</code><a class="headerlink" href="#pmda.parallel.Timing.total" title="Permalink to this definition">¶</a></dt>
 <dd><p>wall time</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.universe">
-<code class="descname">universe</code><a class="headerlink" href="#pmda.parallel.Timing.universe" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">universe</code><a class="headerlink" href="#pmda.parallel.Timing.universe" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to create a universe for each block</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="pmda.parallel.Timing.wait">
-<code class="descname">wait</code><a class="headerlink" href="#pmda.parallel.Timing.wait" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">wait</code><a class="headerlink" href="#pmda.parallel.Timing.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>time for blocks to start working</p>
 </dd></dl>
 
@@ -298,10 +298,10 @@ overhead</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -315,7 +315,7 @@ overhead</p>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
