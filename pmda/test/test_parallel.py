@@ -27,9 +27,12 @@ def test_timeing():
     prepare = 3
     conclude = 6
     wait = 12
+    io_block = np.sum(io)
+    compute_block = np.sum(compute)
 
     timing = parallel.Timing(io, compute, total,
-                             universe, prepare, conclude, wait)
+                             universe, prepare, conclude, wait,
+                             io_block, compute_block,)
 
     np.testing.assert_equal(timing.io, io)
     np.testing.assert_equal(timing.compute, compute)
@@ -39,6 +42,8 @@ def test_timeing():
     np.testing.assert_equal(timing.prepare, prepare)
     np.testing.assert_equal(timing.conclude, conclude)
     np.testing.assert_equal(timing.wait, wait)
+    np.testing.assert_equal(timing.io_block, io_block)
+    np.testing.assert_equal(timing.compute_block, compute_block)
 
 
 class NoneAnalysis(parallel.ParallelAnalysisBase):
@@ -86,6 +91,9 @@ def test_no_frames(analysis, n_jobs):
     np.testing.assert_equal(analysis.res, [])
     np.testing.assert_equal(analysis.timing.compute, [])
     np.testing.assert_equal(analysis.timing.io, [])
+    np.testing.assert_equal(analysis.timing.io_block, [0])
+    np.testing.assert_equal(analysis.timing.compute_block, [0])
+    np.testing.assert_equal(analysis.timing.wait, [0])
     assert analysis.timing.universe == 0
 
 
