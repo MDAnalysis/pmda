@@ -36,9 +36,12 @@ class Timing(object):
     """
 
     def __init__(self, io, compute, total, universe, prepare,
-                 conclude, wait=None):
+                 conclude, wait=None, io_block=None,
+                 compute_block=None):
         self._io = io
+        self._io_block = io_block
         self._compute = compute
+        self._compute_block = compute_block
         self._total = total
         self._cumulate = np.sum(io) + np.sum(compute)
         self._universe = universe
@@ -52,9 +55,19 @@ class Timing(object):
         return self._io
 
     @property
+    def io_block(self):
+        """io time per block"""
+        return self._io_block
+
+    @property
     def compute(self):
         """compute time per frame"""
         return self._compute
+
+    @property
+    def compute_block(self):
+        """compute time per block"""
+        return self._compute_block
 
     @property
     def total(self):
@@ -370,7 +383,7 @@ class ParallelAnalysisBase(object):
             # hack to handle n_frames == 0 in this framework
             if len(res) == 0:
                 # everything else wants list of block tuples
-                res = [([], [], [], 0, 0)]
+                res = [([], [], [], 0, wait_start, 0, 0)]
             with timeit() as conclude:
                 self._results = np.asarray([el[0] for el in res])
                 self._conclude()
@@ -381,7 +394,9 @@ class ParallelAnalysisBase(object):
             np.array([el[3] for el in res]), time_prepare,
             conclude.elapsed,
             # waiting time = wait_end - wait_start
-            np.array([el[4]-wait_start for el in res]))
+            np.array([el[4]-wait_start for el in res]),
+            np.array([el[5] for el in res]),
+            np.array([el[6] for el in res]))
         return self
 
     def _dask_helper(self, bslice, indices, top, traj):
@@ -408,7 +423,8 @@ class ParallelAnalysisBase(object):
             times_compute.append(b_compute.elapsed)
 
         return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed, wait_end
+            times_compute), b_universe.elapsed, wait_end, np.sum(
+            times_io), np.sum(times_compute)
 
     @staticmethod
     def _reduce(res, result_single_frame):

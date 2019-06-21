@@ -13,12 +13,21 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-**/**/** VOD555
+2019/**/** VOD555
 
-  * 0.2.*
+  * 0.2.2
 
-Enhancements
+Fixes
+  * default _conclude() in pmda.custom.AnalysisFromFunction fails with
+    scalar per frame data (Issue #87)
+
+2019/05/23 VOD555
+
+  * 0.2.1
+
+Enhancements (internal)
   * add timer for the time to start the workers
+
 
 11/02/18 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
 
