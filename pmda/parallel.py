@@ -424,7 +424,7 @@ class ParallelAnalysisBase(object):
 
         return np.asarray(res), np.asarray(times_io), np.asarray(
             times_compute), b_universe.elapsed, wait_end, np.sum(
-            np.asarray(times_io)), np.sum(np.asarray(times_compute))
+            times_io), np.sum(times_compute)
 
     @staticmethod
     def _reduce(res, result_single_frame):
