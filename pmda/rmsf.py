@@ -1,8 +1,12 @@
 import numpy as np
 import MDAnalysis as mda
-# from mda.parallel import ParallelAnalysisBase
-
-u = mda.Universe("trajectories/YiiP_system.pdb", "trajectories/YiiP_system_9ns_center.xtc")
+import pmda
+import dask
+from dask.delayed import delayed
+import time
+from joblib import cpu_count
+from pmda.parallel import ParallelAnalysisBase
+from pmda.util import timeit
 
 class RMSF(ParallelAnalysisBase):
     """Parallel RMSF analysis.
@@ -17,61 +21,138 @@ class RMSF(ParallelAnalysisBase):
     At the moment, this class doesn't do anything.
     """
 
-    def __init__(self, atomgroup, parameter):
-        self._ag = atomgroup
-        super(NewAnalysis, self).__init__(atomgroup.universe,
-                                          self._ag)
+    def __init__(self, atomgroup):
+        u = atomgroup.universe
+        super(RMSF, self).__init__(u, (atomgroup,))
+        self._atomgroup = atomgroup
+        self._top = u.filename
+        self._traj = u.trajectory.filename
 
-    def _single_frame(self, ts, agroups):
-        """REQUIRED
+    def _prepare(self):
+        self.sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
+        self.mean = np.zeros((self._atomgroup.n_atoms, 3))
+
+    def _single_frame(self, ts, agroups, frame_index, sumsquares, mean):
+        """
         Called for every frame.
 
         Parameters
         ----------
-        ``self``        -
-        ``ts``          -contains the current time step
-        ``agroups``     -is a tuple of atomgroups that are updated to the current frame.
+        ts : int
+            current time step
+        agroups :
+            tuple of atomgroups that are updated to the current frame
 
-        Return result of `some_function` for a single frame.
+        Returns result of RMSF function for a single frame.
         """
-        def RMSF_calc():
-            raise NotImplementedError
-        return RMSF_calc(agroups[0], self._parameter)
+        k = frame_index
+        # self.sumsquares += (k / (k+1)) * (self.atomgroup.positions - self.mean) ** 2
+        sumsquares += (k / (k+1)) * (agroups.positions - mean) ** 2
+        mean = (k * mean + agroups.positions) / (k + 1)
+        return sumsquares, mean
+
+    def run(self,
+                start=None,
+                stop=None,
+                step=None,
+                n_jobs=-1,
+                n_blocks=1,
+                cutoff=15.0):
+            """Perform the calculation
+            Parameters
+            ----------
+            start : int, optional
+                start frame of analysis
+            stop : int, optional
+                stop frame of analysis
+            step : int, optional
+                number of frames to skip between each analysed frame
+            n_jobs : int, optional
+                number of tasks to start, if `-1` use number of logical cpu cores.
+                This argument will be ignored when the distributed scheduler is
+                used
+            """
+            # are we using a distributed scheduler or should we use
+            # multiprocessing?
+            scheduler = dask.config.get('scheduler', None)
+            if scheduler is None:
+                # maybe we can grab a global worker
+                try:
+                    scheduler = dask.distributed.worker.get_client()
+                except ValueError:
+                    pass
+
+            if n_jobs == -1:
+                n_jobs = cpu_count()
+
+            # we could not find a global scheduler to use and we ask for a single
+            # job. Therefore we run this on the single threaded scheduler for
+            # debugging.
+            if scheduler is None and n_jobs == 1:
+                scheduler = 'single-threaded'
+
+            # fall back to multiprocessing, we tried everything
+            if scheduler is None:
+                scheduler = 'multiprocessing'
+
+            scheduler_kwargs = {'scheduler': scheduler}
+            if scheduler == 'multiprocessing':
+                scheduler_kwargs['num_workers'] = n_jobs
+
+            self._indices = self._atomgroup.indices
+            self._ind_slices = np.array_split(self._indices, n_blocks)
+
+            with timeit() as total:
+                with timeit() as prepare:
+                    self._prepare()
+            start, stop, step = self._trajectory.check_slice_indices(
+                start, stop, step)
+            self._frames = range(start, stop, step)
+            blocks = []
+            for ind_slice in self._ind_slices:
+                task = delayed(
+                    self._dask_helper, pure=False)(
+                             ind_slice,
+                             self._top,
+                             self._traj,
+                             self._frames)
+                blocks.append(task)
+            blocks = delayed(blocks)
+            res = blocks.compute(**scheduler_kwargs)
+            self._results = res
+            self.sumsquares = res[0][0]
+            self.mean = res[0][1]
+            with timeit() as conclude:
+                self._conclude()
+            # self.timing = Timing(times_io,
+            #                      np.hstack(timings), total.elapsed,
+            #                      b_universe.elapsed, prepare.elapsed,
+            #                      conclude.elapsed)
+            return self
 
     def _conclude(self):
-        # REQUIRED
         # Called once iteration on the trajectory is finished. Results
         # for each frame are stored in ``self._results`` in a per block
         # basis. Here those results should be moved and reshaped into a
         # sensible new variable.
-        self.results = np.hstack(self._results)
-        # Apply normalisation and averaging to results here if wanted.
-        self.results /= np.sum(self.results
-
-    @staticmethod
-    def _reduce(res, result_single_frame):
-        # NOT REQUIRED
-        # Called for every frame. ``res`` contains all the results
-        # before current time step, and ``result_single_frame`` is the
-        # result of self._single_frame for the current time step. The
-        # return value is the updated ``res``. The default is to append
-        # results to a python list. This approach is sufficient for
-        # time-series data.
-        res.append(results_single_frame)
-        # This is not suitable for every analysis. To add results over
-        # multiple frames this function can be overwritten. The default
-        # value for ``res`` is an empty list. Here we change the type to
-        # the return type of `self._single_frame`. Afterwards we can
-        # safely use addition to accumulate the results.
-        if res == []:
-            res = result_single_frame
-        else:
-            res += result_single_frame
-        # If you overwrite this function *always* return the updated
-        # ``res`` at the end.
-        return res
+        # Apply normalization and averaging to results here if wanted.
+        k = len(self._frames)
+        self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / k)
 
 
-run(start=None, stop=None, step=None, n_jobs=1, n_blocks=None)
-na = NewAnalysis(u.select_atoms('name CA'), 35).run()
-print(na.result)
+    def _dask_helper(self, ind_slice, top, traj, frames):
+        """helper function to actually setup dask graph"""
+        # wait_end needs to be first line for accurate timing
+        wait_end = time.time()
+        with timeit() as b_universe:
+            u = mda.Universe(top, traj)
+            agroups = u.atoms[ind_slice]
+
+        sumsquares = np.zeros((agroups.n_atoms, 3))
+        mean = np.zeros((agroups.n_atoms, 3))
+        for i, frame in enumerate(frames):
+            with timeit() as b_io:
+                ts = u.trajectory[frame]
+                frame_index = i
+                sumsquares, mean = self._single_frame(ts, agroups, frame_index, sumsquares, mean)
+        return sumsquares, mean
