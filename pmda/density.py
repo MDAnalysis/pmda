@@ -1,27 +1,74 @@
 import numpy as np
 import MDAnalysis as mda
-import dask
-from dask.delayed import delayed
 import time
-from MDAnalysis.lib.util import fixedwidth_bins, iterable, asiterable
+from MDAnalysis.lib.util import fixedwidth_bins
 from MDAnalysis.analysis.density import Density
 from .parallel import ParallelAnalysisBase
-from .util import timeit, make_balanced_slices
 
 class pDensity(ParallelAnalysisBase):
     """Parallel density analysis.
 
-    Attributes
-    ----------
     Parameters
     ----------
+    universe : MDAnalysis.Universe
+            :class:`MDAnalysis.Universe` object with a trajectory
+    atomselection : str (optional)
+            selection string (MDAnalysis syntax) for the species to be analyzed
+            ["name OH2"]
+    delta : float (optional)
+            bin size for the density grid in Angstroem (same in x,y,z) [1.0]
+    start : int (optional)
+    stop : int (optional)
+    step : int (optional)
+            Slice the trajectory as "trajectory[start:stop:step]"; default
+            is to read the whole trajectory.
+    metadata : dict. optional
+            `dict` of additional data to be saved with the object; the meta data
+            are passed through as they are.
+    padding : float (optional)
+            increase histogram dimensions by padding (on top of initial box size)
+            in Angstroem. Padding is ignored when setting a user defined grid. [2.0]
+    soluteselection : str (optional)
+            MDAnalysis selection for the solute, e.g. "protein" ["None"]
+    cutoff : float (optional)
+            With `cutoff`, select "<atomsel> NOT WITHIN <cutoff> OF <soluteselection>"
+            (Special routines that are faster than the standard "AROUND" selection);
+            any value that evaluates to "False" (such as the default 0) disables this
+            special selection.
+    update_selection : bool (optional)
+            Should the selection of atoms be updated for every step? ["False"]
+            - "True": atom selection is updated for each frame, can be slow
+            - "False": atoms are only selected at the beginning
+    verbose : bool (optional)
+            Print status update to the screen for every *interval* frame? ["True"]
+            - "False": no status updates when a new frame is processed
+            - "True": status update every frame (including number of atoms
+              processed, which is interesting with "update_selection=True")
+    interval : int (optional)
+           Show status update every `interval` frame [1]
+    parameters : dict (optional)
+            `dict` with some special parameters for :class:`Density` (see docs)
+    gridcenter : numpy ndarray, float32 (optional)
+            3 element numpy array detailing the x, y and z coordinates of the
+            center of a user defined grid box in Angstroem ["None"]
+    xdim : float (optional)
+            User defined x dimension box edge in ångström; ignored if
+            gridcenter is "None"
+    ydim : float (optional)
+            User defined y dimension box edge in ångström; ignored if
+            gridcenter is "None"
+    zdim : float (optional)
+            User defined z dimension box edge in ångström; ignored if
+            gridcenter is "None"
 
-    Notes
-    -----
+    Returns
+    -------
+    :class:`Density`
+            A :class:`Density` instance with the histogrammed data together
+            with associated metadata.
+    """"
 
-    """
-
-    def __init__(self, atomgroup, delta=1.0, atomselection='name OH2', start=None,
+    def __init__(self, atomgroup, delta=1.0, atomselection="name OH2", start=None,
                 stop=None, step=None, metadata=None, padding=2.0, cutoff=0,
                 soluteselection=None, use_kdtree=True, update_selection=False,
                 verbose=False, interval=1, quiet=None, parameters=None,
@@ -76,11 +123,9 @@ class pDensity(ParallelAnalysisBase):
             # rotates due to RMS fitting.
             smin = np.min(coord, axis=0) - padding
             smax = np.max(coord, axis=0) + padding
-
             BINS = fixedwidth_bins(delta, smin, smax)
             arange = np.transpose(np.vstack((BINS['min'], BINS['max'])))
             bins = BINS['Nbins']
-
             # create empty grid with the right dimensions (and get the edges)
             grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins, range=arange, normed=False)
             grid *= 0.0
@@ -140,7 +185,7 @@ class pDensity(ParallelAnalysisBase):
         try:
             metadata['trajectory_skip'] = self._trajectory.skip_timestep  # frames
         except AttributeError:
-            metadata['trajectory_skip'] = 1  # seems to not be used..
+            metadata['trajectory_skip'] = 1
         try:
             metadata['trajectory_delta'] = self._trajectory.delta  # in native units
         except AttributeError:
@@ -160,7 +205,6 @@ class pDensity(ParallelAnalysisBase):
     @staticmethod
     def _reduce(res, result_single_frame):
         """ 'append' action for a time series"""
-        # print(result_single_frame[0])
         if isinstance(res, list) and len(res) == 0:
             res = result_single_frame
         else:
