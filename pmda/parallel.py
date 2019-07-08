@@ -348,8 +348,8 @@ class ParallelAnalysisBase(object):
         if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
 
-        start, stop, step = self._trajectory.check_slice_indices(
-            start, stop, step)
+        start, stop, step = self._trajectory.check_slice_indices(start,
+                                                                 stop, step)
         n_frames = len(range(start, stop, step))
 
         if n_frames == 0:
@@ -377,7 +377,7 @@ class ParallelAnalysisBase(object):
                              self._traj, )
                     blocks.append(task)
                     _blocks.append(range(bslice.start,
-                                    bslice.stop, bslice.step))
+                                   bslice.stop, bslice.step))
                 blocks = delayed(blocks)
 
                 # record the time when scheduler starts working
