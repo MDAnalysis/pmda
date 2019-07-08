@@ -376,7 +376,8 @@ class ParallelAnalysisBase(object):
                              self._top,
                              self._traj, )
                     blocks.append(task)
-                    _blocks.append(range(bslice.start, bslice.stop, bslice.step))
+                    _blocks.append(range(bslice.start,
+                                    bslice.stop, bslice.step))
                 blocks = delayed(blocks)
 
                 # record the time when scheduler starts working
