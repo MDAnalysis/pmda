@@ -366,6 +366,7 @@ class ParallelAnalysisBase(object):
                 self._prepare()
             time_prepare = prepare.elapsed
             blocks = []
+            _blocks = []
             with self.readonly_attributes():
                 for bslice in slices:
                     task = delayed(
@@ -375,6 +376,7 @@ class ParallelAnalysisBase(object):
                              self._top,
                              self._traj, )
                     blocks.append(task)
+                    _blocks.append(range(bslice.start, bslice.stop, bslice.step))
                 blocks = delayed(blocks)
 
                 # record the time when scheduler starts working
@@ -387,6 +389,7 @@ class ParallelAnalysisBase(object):
             with timeit() as conclude:
                 self._results = np.asarray([el[0] for el in res])
                 self._conclude()
+                self._blocks = _blocks
 
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
