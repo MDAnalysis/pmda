@@ -18,7 +18,8 @@ from MDAnalysis.analysis.density import density_from_Universe
 u9 = mda.Universe("/nfs/homes/nawtrey/Documents/PMDA/trajectories/YiiP_system.pdb", "/nfs/homes/nawtrey/Documents/PMDA/trajectories/YiiP_system_9ns_center.xtc")
 OH2 = u9.select_atoms('name OH2')
 pmda_density = pmda.density.DensityAnalysis(OH2)
-pmda_density.run(n_blocks=8, n_jobs=8)
+core_number = 2
+pmda_density.run(n_blocks=core_number, n_jobs=core_number)
 
 #%%
 

@@ -22,12 +22,13 @@ class DensityAnalysis(ParallelAnalysisBase):
     step : int (optional)
             Slice the trajectory as "trajectory[start:stop:step]"; default
             is to read the whole trajectory.
-    metadata : dict. optional
+    metadata : dict. (optional)
             `dict` of additional data to be saved with the object; the meta data
             are passed through as they are.
     padding : float (optional)
-            increase histogram dimensions by padding (on top of initial box size)
-            in Angstroem. Padding is ignored when setting a user defined grid. [2.0]
+            increase histogram dimensions by padding (on top of initial box
+            size) in Angstroem. Padding is ignored when setting a user defined
+            grid. [2.0]
     update_selection : bool (optional)
             Should the selection of atoms be updated for every step? ["False"]
             - "True": atom selection is updated for each frame, can be slow
@@ -46,92 +47,70 @@ class DensityAnalysis(ParallelAnalysisBase):
     zdim : float (optional)
             User defined z dimension box edge in ångström; ignored if
             gridcenter is "None"
-
-    Returns
-    -------
-    :class:`Density`
-            A :class:`Density` instance with the histogrammed data together
-            with associated metadata.
-    """"
-    def __init__(self, atomgroup, delta=1.0, atomselection="name OH2", start=None,
-                stop=None, step=None, metadata=None, padding=2.0,
-                update_selection=False, parameters=None,
-                gridcenter=None, xdim=None, ydim=None, zdim=None):
-        """
-        Parameters
-        ----------
-        atomgroup : AtomGroup
-            atom groups that are iterated over in parallel
-        """
+    """
+    def __init__(self, atomgroup, delta=1.0, atomselection="name OH2",
+                start=None, stop=None, step=None, metadata=None, padding=2.0,
+                update_selection=False, parameters=None, gridcenter=None,
+                xdim=None, ydim=None, zdim=None):
         u = atomgroup.universe
         super(DensityAnalysis, self).__init__(u, (atomgroup, ))
         self._atomgroup = atomgroup
-        self._trajectory = u.trajectory
+        self._delta = delta
         self._atomselection = atomselection
-        self._update_selection = update_selection
-        self._padding = padding
         self._metadata = metadata
+        self._padding = padding
+        self._update_selection = update_selection
         self._parameters = parameters
+        self._gridcenter = gridcenter
+        self._xdim = xdim
+        self._ydim = ydim
+        self._zdim = zdim
+        self._trajectory = u.trajectory
         self._n_frames = u.trajectory.n_frames
-        coord = self.current_coordinates(atomgroup, atomselection, update_selection)
-        box, angles = self._trajectory.ts.dimensions[:3], self._trajectory.ts.dimensions[3:]
-        if gridcenter is not None:
+
+    def _prepare(self):
+        coord = self.current_coordinates(self._atomgroup, self._atomselection,
+        self._update_selection)
+        box, angles = self._trajectory.ts.dimensions[:3],
+        self._trajectory.ts.dimensions[3:]
+        if self._gridcenter is not None:
             # Generate a copy of smin/smax from coords to later check if the
             # defined box might be too small for the selection
             smin = np.min(coord, axis=0)
             smax = np.max(coord, axis=0)
             # Overwrite smin/smax with user defined values
-            smin, smax = _set_user_grid(gridcenter, xdim, ydim, zdim, smin, smax)
+            smin, smax = _set_user_grid(self._gridcenter, self._xdim,
+                                        self._ydim, self._zdim, smin, smax)
         else:
             # Make the box bigger to avoid as much as possible 'outlier'. This
             # is important if the sites are defined at a high density: in this
             # case the bulk regions don't have to be close to 1 * n0 but can
             # be less. It's much more difficult to deal with outliers.  The
             # ideal solution would use images: implement 'looking across the
-            # periodic boundaries' but that gets complicate when the box
+            # periodic boundaries' but that gets complicated when the box
             # rotates due to RMS fitting.
-            smin = np.min(coord, axis=0) - padding
-            smax = np.max(coord, axis=0) + padding
-            BINS = fixedwidth_bins(delta, smin, smax)
+            smin = np.min(coord, axis=0) - self._padding
+            smax = np.max(coord, axis=0) + self._padding
+            BINS = fixedwidth_bins(self._delta, smin, smax)
             arange = np.transpose(np.vstack((BINS['min'], BINS['max'])))
             bins = BINS['Nbins']
             # create empty grid with the right dimensions (and get the edges)
-            grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins, range=arange, normed=False)
+            grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins,
+            range=arange, normed=False)
             grid *= 0.0
         self._grid = grid
         self._edges = edges
-        h = grid.copy()
         self._arange = arange
         self._bins = bins
 
-    def _prepare(self):
-        """
-        Additional preparation to run
-        """
-
     def _single_frame(self, ts, atomgroups):
-        """
-        Performs computation on single trajectory frame. Creates a histogram of
-        positions of atoms in an atom group for a single frame.
-
-        Parameters
-        ----------
-        ts : int
-            current time step
-        atomgroups : AtomGroup
-            atom group for current block
-
-        Returns
-        -------
-        """
-        coord = self.current_coordinates(atomgroups[0], self._atomselection, self._update_selection)
-        h, edges = np.histogramdd(coord, bins=self._bins, range=self._arange, normed=False)
-        h = np.array(h)
-        return h, edges
+        coord = self.current_coordinates(atomgroups[0], self._atomselection,
+                                         self._update_selection)
+        h, edges = np.histogramdd(coord, bins=self._bins, range=self._arange,
+                                  normed=False)
+        return [h, edges]
 
     def _conclude(self):
-        """
-        """
         self._edges = self._results[0, 1]
         self._grid = self._results[:, 0].sum(axis=0)
         self._grid /= float(self._n_frames)
@@ -145,10 +124,12 @@ class DensityAnalysis(ParallelAnalysisBase):
         metadata['time_unit'] = mda.core.flags['time_unit']
         parameters = self._parameters if self._parameters is not None else {}
         parameters['isDensity'] = False  # must override
-        g = Density(grid=self._grid, edges=self._edges, units={'length': mda.core.flags['length_unit']},
-                    parameters=parameters, metadata=metadata)
-        g.make_density()
-        self.g = g
+        density = Density(grid=self._grid, edges=self._edges,
+                          units={'length': "Angstrom"},
+                          parameters=parameters,
+                          metadata=metadata)
+        density.make_density()
+        self.density = density
 
     @staticmethod
     def _reduce(res, result_single_frame):
@@ -158,6 +139,8 @@ class DensityAnalysis(ParallelAnalysisBase):
         else:
             res[0] += result_single_frame[0]
         return res
+
     @staticmethod
     def current_coordinates(atomgroup, atomselection, update_selection):
-        return atomgroup.universe.select_atoms(atomselection, updating=update_selection).positions
+        return atomgroup.universe.select_atoms(atomselection,
+                                               updating=update_selection).positions
