@@ -66,6 +66,10 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._zdim = zdim
         self._trajectory = u.trajectory
         self._n_frames = u.trajectory.n_frames
+        if updating and atomselection is None:
+           raise ValueError("updating=True requires a atomselection string")
+        elif not updating and atomselection is not None:
+           raise ValueError("With updating=False, the atomselection='{}' is not used and should be None".format(atomselection))
 
     def _prepare(self):
         coord = self.current_coordinates(self._atomgroup, self._atomselection, self._updating)
