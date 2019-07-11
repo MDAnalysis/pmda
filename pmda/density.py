@@ -10,16 +10,15 @@ class DensityAnalysis(ParallelAnalysisBase):
 
     Parameters
     ----------
-    universe : MDAnalysis.Universe
-            :class:`MDAnalysis.Universe` object with a trajectory
+    atomgroup : AtomGroup
+            Group of atoms (such as all the water oxygen atoms) being analyzed.
+            If this is an updating AtomGroup then you need to set
+            'atomselection' and also 'updating=True'.
     atomselection : str (optional)
             selection string (MDAnalysis syntax) for the species to be analyzed
             ["name OH2"]
     delta : float (optional)
             bin size for the density grid in Angstroem (same in x,y,z) [1.0]
-    start : int (optional)
-    stop : int (optional)
-    step : int (optional)
             Slice the trajectory as "trajectory[start:stop:step]"; default
             is to read the whole trajectory.
     metadata : dict. (optional)
@@ -29,7 +28,7 @@ class DensityAnalysis(ParallelAnalysisBase):
             increase histogram dimensions by padding (on top of initial box
             size) in Angstroem. Padding is ignored when setting a user defined
             grid. [2.0]
-    update_selection : bool (optional)
+    updating : bool (optional)
             Should the selection of atoms be updated for every step? ["False"]
             - "True": atom selection is updated for each frame, can be slow
             - "False": atoms are only selected at the beginning
@@ -48,10 +47,10 @@ class DensityAnalysis(ParallelAnalysisBase):
             User defined z dimension box edge in ångström; ignored if
             gridcenter is "None"
     """
-    def __init__(self, atomgroup, delta=1.0, atomselection="name OH2",
-                start=None, stop=None, step=None, metadata=None, padding=2.0,
-                update_selection=False, parameters=None, gridcenter=None,
-                xdim=None, ydim=None, zdim=None):
+    def __init__(self, atomgroup, delta=1.0, atomselection=None,
+                 metadata=None, padding=2.0, updating=False,
+                 parameters=None, gridcenter=None, xdim=None, ydim=None,
+                 zdim=None):
         u = atomgroup.universe
         super(DensityAnalysis, self).__init__(u, (atomgroup, ))
         self._atomgroup = atomgroup
@@ -59,7 +58,7 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._atomselection = atomselection
         self._metadata = metadata
         self._padding = padding
-        self._update_selection = update_selection
+        self._updating = updating
         self._parameters = parameters
         self._gridcenter = gridcenter
         self._xdim = xdim
@@ -69,10 +68,8 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._n_frames = u.trajectory.n_frames
 
     def _prepare(self):
-        coord = self.current_coordinates(self._atomgroup, self._atomselection,
-        self._update_selection)
-        box, angles = self._trajectory.ts.dimensions[:3],
-        self._trajectory.ts.dimensions[3:]
+        coord = self.current_coordinates(self, self._atomgroup, self._atomselection)
+        box, angles = self._trajectory.ts.dimensions[:3], self._trajectory.ts.dimensions[3:]
         if self._gridcenter is not None:
             # Generate a copy of smin/smax from coords to later check if the
             # defined box might be too small for the selection
@@ -96,7 +93,7 @@ class DensityAnalysis(ParallelAnalysisBase):
             bins = BINS['Nbins']
             # create empty grid with the right dimensions (and get the edges)
             grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins,
-            range=arange, normed=False)
+                                         range=arange, normed=False)
             grid *= 0.0
         self._grid = grid
         self._edges = edges
@@ -104,15 +101,13 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._bins = bins
 
     def _single_frame(self, ts, atomgroups):
-        coord = self.current_coordinates(atomgroups[0], self._atomselection,
-                                         self._update_selection)
+        coord = self.current_coordinates(self, atomgroups[0], self._atomselection)
         h, edges = np.histogramdd(coord, bins=self._bins, range=self._arange,
                                   normed=False)
-        return [h, edges]
+        return h
 
     def _conclude(self):
-        self._edges = self._results[0, 1]
-        self._grid = self._results[:, 0].sum(axis=0)
+        self._grid = self._results[:].sum(axis=0)
         self._grid /= float(self._n_frames)
         metadata = self._metadata if self._metadata is not None else {}
         metadata['psf'] = self._atomgroup.universe.filename
@@ -133,14 +128,17 @@ class DensityAnalysis(ParallelAnalysisBase):
 
     @staticmethod
     def _reduce(res, result_single_frame):
-        """ 'append' action for a time series"""
+        """ 'accumulate' action for a time series"""
         if isinstance(res, list) and len(res) == 0:
             res = result_single_frame
         else:
-            res[0] += result_single_frame[0]
+            res += result_single_frame
         return res
 
     @staticmethod
-    def current_coordinates(atomgroup, atomselection, update_selection):
-        return atomgroup.universe.select_atoms(atomselection,
-                                               updating=update_selection).positions
+    def current_coordinates(self, atomgroup, atomselection):
+        """Retrieves the current coordinates of all atoms in the chosen atom
+        selection.
+        Note: currently required to allow for updating selections"""
+        ag = atomgroup if not self._updating else atomgroup.select_atoms(atomselection)
+        return ag.positions

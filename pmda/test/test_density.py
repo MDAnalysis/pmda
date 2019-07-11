@@ -21,19 +21,21 @@ pmda_density = pmda.density.DensityAnalysis(OH2)
 core_number = 2
 pmda_density.run(n_blocks=core_number, n_jobs=core_number)
 
+
 #%%
 
 
-# mda_density = mda.analysis.density.density_from_Universe(u9, 1, atomselection='name OH2')
-# np.sum(mda_density.grid)
-# print(np.sum(pmda_density.g.grid))
-# from numpy.testing import assert_almost_equal
-# assert_almost_equal(mda_density.grid, pmda_density.g.grid)
+mda_density = mda.analysis.density.density_from_Universe(u9, 1, atomselection='name OH2')
+np.sum(mda_density.grid) == np.sum(pmda_density.density.grid)
+from numpy.testing import assert_almost_equal
+assert_almost_equal(mda_density.grid, pmda_density.density.grid)
 
 #=======================================================================================================
 #%%== Tests ============================================================================================
 #=======================================================================================================
 
+raise NotImplementedError
+#
 # mda = {
 #         100 : mda100,
 #         1000 : mda1000,
@@ -44,7 +46,7 @@ pmda_density.run(n_blocks=core_number, n_jobs=core_number)
 #         50000 : mda50000,
 #         65000 : mda65000
 #         }
-#
+
 # pmda = {
 #         100 : pmda100,
 #         1000 : pmda1000,
