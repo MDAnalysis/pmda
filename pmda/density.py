@@ -68,7 +68,7 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._n_frames = u.trajectory.n_frames
 
     def _prepare(self):
-        coord = self.current_coordinates(self, self._atomgroup, self._atomselection)
+        coord = self.current_coordinates(self._atomgroup, self._atomselection, self._updating)
         box, angles = self._trajectory.ts.dimensions[:3], self._trajectory.ts.dimensions[3:]
         if self._gridcenter is not None:
             # Generate a copy of smin/smax from coords to later check if the
@@ -101,7 +101,7 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._bins = bins
 
     def _single_frame(self, ts, atomgroups):
-        coord = self.current_coordinates(self, atomgroups[0], self._atomselection)
+        coord = self.current_coordinates(atomgroups[0], self._atomselection, self._updating)
         h, edges = np.histogramdd(coord, bins=self._bins, range=self._arange,
                                   normed=False)
         return h
@@ -136,9 +136,9 @@ class DensityAnalysis(ParallelAnalysisBase):
         return res
 
     @staticmethod
-    def current_coordinates(self, atomgroup, atomselection):
+    def current_coordinates(atomgroup, atomselection, updating):
         """Retrieves the current coordinates of all atoms in the chosen atom
         selection.
         Note: currently required to allow for updating selections"""
-        ag = atomgroup if not self._updating else atomgroup.select_atoms(atomselection)
+        ag = atomgroup if not updating else atomgroup.select_atoms(atomselection)
         return ag.positions
