@@ -70,8 +70,7 @@ class DensityAnalysis(ParallelAnalysisBase):
         if updating and atomselection is None:
             raise ValueError("updating=True requires a atomselection string")
         elif not updating and atomselection is not None:
-            raise ValueError("With updating=False, the atomselection='{}' is not
-            used and should be None".format(atomselection))
+            raise ValueError("With updating=False, the atomselection='{}' is not used and should be None".format(atomselection))
 
     def _prepare(self):
         coord = self.current_coordinates(self._atomgroup, self._atomselection,
