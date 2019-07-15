@@ -5,6 +5,7 @@ from MDAnalysis.lib.util import fixedwidth_bins
 from MDAnalysis.analysis.density import Density
 from .parallel import ParallelAnalysisBase
 
+
 class DensityAnalysis(ParallelAnalysisBase):
     """Parallel density analysis.
 
@@ -22,8 +23,8 @@ class DensityAnalysis(ParallelAnalysisBase):
             Slice the trajectory as "trajectory[start:stop:step]"; default
             is to read the whole trajectory.
     metadata : dict. (optional)
-            `dict` of additional data to be saved with the object; the meta data
-            are passed through as they are.
+            `dict` of additional data to be saved with the object; the meta
+            data are passed through as they are.
     padding : float (optional)
             increase histogram dimensions by padding (on top of initial box
             size) in Angstroem. Padding is ignored when setting a user defined
@@ -67,13 +68,16 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._trajectory = u.trajectory
         self._n_frames = u.trajectory.n_frames
         if updating and atomselection is None:
-           raise ValueError("updating=True requires a atomselection string")
+            raise ValueError("updating=True requires a atomselection string")
         elif not updating and atomselection is not None:
-           raise ValueError("With updating=False, the atomselection='{}' is not used and should be None".format(atomselection))
+            raise ValueError("With updating=False, the atomselection='{}' is not
+            used and should be None".format(atomselection))
 
     def _prepare(self):
-        coord = self.current_coordinates(self._atomgroup, self._atomselection, self._updating)
-        box, angles = self._trajectory.ts.dimensions[:3], self._trajectory.ts.dimensions[3:]
+        coord = self.current_coordinates(self._atomgroup, self._atomselection,
+                                         self._updating)
+        box, angles = (self._trajectory.ts.dimensions[:3],
+                       self._trajectory.ts.dimensions[3:])
         if self._gridcenter is not None:
             # Generate a copy of smin/smax from coords to later check if the
             # defined box might be too small for the selection
@@ -105,7 +109,8 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._bins = bins
 
     def _single_frame(self, ts, atomgroups):
-        coord = self.current_coordinates(atomgroups[0], self._atomselection, self._updating)
+        coord = self.current_coordinates(atomgroups[0], self._atomselection,
+                                         self._updating)
         h, edges = np.histogramdd(coord, bins=self._bins, range=self._arange,
                                   normed=False)
         return h
@@ -144,5 +149,6 @@ class DensityAnalysis(ParallelAnalysisBase):
         """Retrieves the current coordinates of all atoms in the chosen atom
         selection.
         Note: currently required to allow for updating selections"""
-        ag = atomgroup if not updating else atomgroup.select_atoms(atomselection)
+        ag = (atomgroup if not updating else
+        atomgroup.select_atoms(atomselection))
         return ag.positions
