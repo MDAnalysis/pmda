@@ -16,12 +16,12 @@ def u():
 
 
 def test_density(u):
-    pmda = pmda.density.DensityAnalysis(u.atoms, atomselection='name OD1',
-                                        updating=True)
+    pdensity = pmda.density.DensityAnalysis(u.atoms, atomselection='name OD1',
+                                            updating=True)
     core_number = 2
-    pmda.run(n_blocks=core_number, n_jobs=core_number)
-    mda = mda.analysis.density.density_from_Universe(u,
-                                                     atomselection='name OD1',
-                                                     update_selection=True)
-    assert np.sum(mda.grid) == np.sum(pmda.density.grid)
-    assert_almost_equal(mda.grid, pmda.density.grid)
+    pdensity.run(n_blocks=core_number, n_jobs=core_number)
+    dens = mda.analysis.density.density_from_Universe(u,
+                                                      atomselection='name OD1',
+                                                      update_selection=True)
+    assert np.sum(dens.grid) == np.sum(pdensity.density.grid)
+    assert_almost_equal(dens.grid, pdensity.density.grid)

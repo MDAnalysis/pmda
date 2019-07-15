@@ -148,6 +148,5 @@ class DensityAnalysis(ParallelAnalysisBase):
         """Retrieves the current coordinates of all atoms in the chosen atom
         selection.
         Note: currently required to allow for updating selections"""
-        ag = (atomgroup if not updating else
-        atomgroup.select_atoms(atomselection))
+        ag = atomgroup if not updating else atomgroup.select_atoms(atomselection)
         return ag.positions
