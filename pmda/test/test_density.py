@@ -49,10 +49,10 @@ def test_atomselection(u):
 
 def test_gridcenter(u):
     aselect = 'name OD1'
-    gridcenter=np.array([10, 10, 10])
-    xdim=190
-    ydim=200
-    zdim=210
+    gridcenter = np.array([10, 10, 10])
+    xdim = 190
+    ydim = 200
+    zdim = 210
     dens = mda.analysis.density.density_from_Universe(u,
                                                       atomselection=aselect,
                                                       update_selection=True,
