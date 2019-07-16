@@ -1,6 +1,10 @@
+'''
+
+'''
+
+from __future__ import absolute_import
 import numpy as np
 import MDAnalysis as mda
-import time
 from MDAnalysis.lib.util import fixedwidth_bins
 from MDAnalysis.analysis.density import Density
 from .parallel import ParallelAnalysisBase
