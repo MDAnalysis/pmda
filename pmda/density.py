@@ -1,12 +1,34 @@
-'''
+"""
+Generating Densities from Trajectories --- :mod:`pmda.density`
+==============================================================
 
-'''
+This module contains parallel versions of analysis tasks in
+:mod:`MDAnalysis.analysis.density`.
+
+See Also
+--------
+MDAnalysis.analysis.density
+
+Classes
+-------
+.. autoclass:: DensityAnalysis
+   :members:
+   :inherited-members:
+
+"""
 
 from __future__ import absolute_import
+
 import numpy as np
+
 import MDAnalysis as mda
+
 from MDAnalysis.lib.util import fixedwidth_bins
+
 from MDAnalysis.analysis.density import Density
+
+from MDAnalysis.analysis.density import _set_user_grid
+
 from .parallel import ParallelAnalysisBase
 
 
@@ -80,8 +102,6 @@ class DensityAnalysis(ParallelAnalysisBase):
     def _prepare(self):
         coord = self.current_coordinates(self._atomgroup, self._atomselection,
                                          self._updating)
-        box, angles = (self._trajectory.ts.dimensions[:3],
-                       self._trajectory.ts.dimensions[3:])
         if self._gridcenter is not None:
             # Generate a copy of smin/smax from coords to later check if the
             # defined box might be too small for the selection
@@ -100,13 +120,13 @@ class DensityAnalysis(ParallelAnalysisBase):
             # rotates due to RMS fitting.
             smin = np.min(coord, axis=0) - self._padding
             smax = np.max(coord, axis=0) + self._padding
-            BINS = fixedwidth_bins(self._delta, smin, smax)
-            arange = np.transpose(np.vstack((BINS['min'], BINS['max'])))
-            bins = BINS['Nbins']
-            # create empty grid with the right dimensions (and get the edges)
-            grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins,
-                                         range=arange, normed=False)
-            grid *= 0.0
+        BINS = fixedwidth_bins(self._delta, smin, smax)
+        arange = np.transpose(np.vstack((BINS['min'], BINS['max'])))
+        bins = BINS['Nbins']
+        # create empty grid with the right dimensions (and get the edges)
+        grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins,
+                                     range=arange, normed=False)
+        grid *= 0.0
         self._grid = grid
         self._edges = edges
         self._arange = arange
@@ -115,9 +135,9 @@ class DensityAnalysis(ParallelAnalysisBase):
     def _single_frame(self, ts, atomgroups):
         coord = self.current_coordinates(atomgroups[0], self._atomselection,
                                          self._updating)
-        h, edges = np.histogramdd(coord, bins=self._bins, range=self._arange,
-                                  normed=False)
-        return h
+        result = np.histogramdd(coord, bins=self._bins, range=self._arange,
+                                normed=False)
+        return result[0]
 
     def _conclude(self):
         self._grid = self._results[:].sum(axis=0)
@@ -154,5 +174,5 @@ class DensityAnalysis(ParallelAnalysisBase):
         selection.
         Note: currently required to allow for updating selections"""
         ag = atomgroup if not updating else atomgroup.select_atoms(
-                                                                atomselection)
+                                                            atomselection)
         return ag.positions
