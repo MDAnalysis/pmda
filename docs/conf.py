@@ -58,7 +58,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'PMDA'
 # Author order: chronological as in AUTHORS
-author = u'Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht'
+author = u'Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey'
 copyright = u'2018, ' + author
 
 
