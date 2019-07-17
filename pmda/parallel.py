@@ -348,8 +348,8 @@ class ParallelAnalysisBase(object):
         if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
 
-        start, stop, step = self._trajectory.check_slice_indices(
-            start, stop, step)
+        start, stop, step = self._trajectory.check_slice_indices(start,
+                                                                 stop, step)
         n_frames = len(range(start, stop, step))
 
         if n_frames == 0:
@@ -361,11 +361,14 @@ class ParallelAnalysisBase(object):
         slices = make_balanced_slices(n_frames, n_blocks,
                                       start=start, stop=stop, step=step)
 
+        # record total time
         with timeit() as total:
+            # record prepare time
             with timeit() as prepare:
                 self._prepare()
             time_prepare = prepare.elapsed
             blocks = []
+            _blocks = []
             with self.readonly_attributes():
                 for bslice in slices:
                     task = delayed(
@@ -375,6 +378,9 @@ class ParallelAnalysisBase(object):
                              self._top,
                              self._traj, )
                     blocks.append(task)
+                    # save the frame numbers for each block
+                    _blocks.append(range(bslice.start,
+                                   bslice.stop, bslice.step))
                 blocks = delayed(blocks)
 
                 # record the time when scheduler starts working
@@ -384,10 +390,13 @@ class ParallelAnalysisBase(object):
             if len(res) == 0:
                 # everything else wants list of block tuples
                 res = [([], [], [], 0, wait_start, 0, 0)]
+            # record conclude time
             with timeit() as conclude:
                 self._results = np.asarray([el[0] for el in res])
                 self._conclude()
-
+                # save the frame numbers for all blocks
+                self._blocks = _blocks
+        # put all time information into the timing object
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
@@ -403,6 +412,7 @@ class ParallelAnalysisBase(object):
         """helper function to actually setup dask graph"""
         # wait_end needs to be first line for accurate timing
         wait_end = time.time()
+        # record time to generate universe and atom groups
         with timeit() as b_universe:
             u = mda.Universe(top, traj)
             agroups = [u.atoms[idx] for idx in indices]
@@ -413,15 +423,18 @@ class ParallelAnalysisBase(object):
         # NOTE: bslice.stop cannot be None! Always make sure
         #       that it comes from  _trajectory.check_slice_indices()!
         for i in range(bslice.start, bslice.stop, bslice.step):
+            # record io time per frame
             with timeit() as b_io:
                 # explicit instead of 'for ts in u.trajectory[bslice]'
                 # so that we can get accurate timing.
                 ts = u.trajectory[i]
+            # record compute time per frame
             with timeit() as b_compute:
                 res = self._reduce(res, self._single_frame(ts, agroups))
             times_io.append(b_io.elapsed)
             times_compute.append(b_compute.elapsed)
 
+        # calculate io and compute time per block
         return np.asarray(res), np.asarray(times_io), np.asarray(
             times_compute), b_universe.elapsed, wait_end, np.sum(
             times_io), np.sum(times_compute)
