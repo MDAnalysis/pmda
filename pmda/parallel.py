@@ -434,10 +434,10 @@ class ParallelAnalysisBase(object):
             times_io.append(b_io.elapsed)
             times_compute.append(b_compute.elapsed)
 
+        # calculate io and compute time per block
         return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed, wait_end,
-            # calculate io and compute time per block
-            np.sum(times_io), np.sum(times_compute)
+            times_compute), b_universe.elapsed, wait_end, np.sum(
+            times_io), np.sum(times_compute)
 
     @staticmethod
     def _reduce(res, result_single_frame):
