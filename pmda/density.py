@@ -7,7 +7,7 @@ This module contains parallel versions of analysis tasks in
 
 See Also
 --------
-MDAnalysis.analysis.density
+MDAnalysis.analysis.density.density_from_Universe
 
 Classes
 -------
@@ -34,6 +34,9 @@ from .parallel import ParallelAnalysisBase
 
 class DensityAnalysis(ParallelAnalysisBase):
     """Parallel density analysis.
+
+    The trajectory is read, frame by frame, and the atoms selected with
+    `atomselection` are histogrammed on a grid with spacing `delta`.
 
     Parameters
     ----------
@@ -73,6 +76,71 @@ class DensityAnalysis(ParallelAnalysisBase):
     zdim : float (optional)
             User defined z dimension box edge in ångström; ignored if
             gridcenter is "None"
+
+    Notes
+    -----
+    By default, the `atomselection` is static, i.e., atoms are only selected
+    once at the beginning. If you want *dynamically changing selections*
+    (such as "name OW and around 4.0 (protein and not name H*)", i.e., the
+    water oxygen atoms that are within 4 Å of the protein heavy atoms) then
+    set ``update_selection=True``.
+
+    Examples
+    --------
+    First create the :class:`DensityAnalysis` object by supplying an
+    AtomGroup. Then use the :meth:`run` method ::
+
+      D = DensityAnalysis(AtomGroup)
+      D.run()
+
+    Results are available through the :attr:`density` attribute ::,
+    which has the :attr:`grid` attribute that contains the histogrammed
+    density data.
+
+    Basic use for creating a water density (just using the water oxygen
+    atoms "OW")::
+
+      D = DensityAnalysis(universe.atoms, atomselection='name OW')
+
+    If you are only interested in water within a certain region, e.g., within
+    a vicinity around a binding site, you can use a selection that updates
+    every step by setting the `updating` keyword argument::
+
+      atomselection = 'name OW and around 5 (resid 156 157 305)'
+      D_site = DensityAnalysis(universe.atoms, atomselection=atomselection,
+                               updating=True)
+
+    If you are interested in explicitly setting a grid box of a given edge
+    size and origin, you can use the gridcenter and x/y/zdim arguments.
+    For example to plot the density of waters within 5 Å of a ligand (in this
+    case the ligand has been assigned the residue name "LIG") in a cubic grid
+    with 20 Å edges which is centered on the centre of mass (COM) of the
+    ligand::
+
+      # Create a selection based on the ligand
+      ligand_selection = universe.select_atoms("resname LIG")
+
+      # Extract the COM of the ligand
+      ligand_COM = ligand_selection.center_of_mass()
+
+      # Create a density of waters on a cubic grid centered on the ligand COM
+      # In this case, we update the atom selection as shown above.
+      D_water = DensityAnalysis(universe.atoms, delta=1.0,
+                                atomselection='name OW around 5 resname LIG',
+                                updating=True,
+                                gridcenter=ligand_COM,
+                                xdim=20, ydim=20, zdim=20)
+
+      (It should be noted that the `padding` keyword is not used when a user
+      defined grid is assigned).
+
+    See Also
+    --------
+    MDAnalysis.analysis.density.density_from_Universe
+
+
+    .. versionadded::
+
     """
     def __init__(self, atomgroup, delta=1.0, atomselection=None,
                  metadata=None, padding=2.0, updating=False,
