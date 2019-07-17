@@ -1,3 +1,11 @@
+# -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+#
+# PMDA
+# Copyright (c) 2019 The MDAnalysis Development Team and contributors
+# (see the file AUTHORS for the full list of names)
+#
+# Released under the GNU Public Licence, v2 or any higher version
 """
 Generating Densities from Trajectories --- :mod:`pmda.density`
 ==============================================================
@@ -88,14 +96,24 @@ class DensityAnalysis(ParallelAnalysisBase):
     Examples
     --------
     First create the :class:`DensityAnalysis` object by supplying an
-    AtomGroup. Then use the :meth:`run` method ::
+    AtomGroup, then use the :meth:`run` method :: In the following example,
+    all water oxygen atoms are used:
 
-      D = DensityAnalysis(AtomGroup)
+      ow = u.select_atoms("name OW")
+      D = DensityAnalysis(ow)
       D.run()
 
     Results are available through the :attr:`density` attribute ::,
     which has the :attr:`grid` attribute that contains the histogrammed
-    density data.
+    density data. The :attr:`DensityAnalysis.density` is a
+    :class:`gridData.core.Grid` object. In particular, its contents can be
+    `exported to different formats
+    <https://www.mdanalysis.org/GridDataFormats/gridData/formats.html>`_.
+    For example, to `write a DX file
+    <https://www.mdanalysis.org/GridDataFormats/gridData/basic.html#writing-out-data>`_
+    ``density.dx`` that can be read with VMD, PyMOL, or Chimera::
+
+      D.density.export("density.dx", type="double")
 
     Basic use for creating a water density (just using the water oxygen
     atoms "OW")::
@@ -139,7 +157,7 @@ class DensityAnalysis(ParallelAnalysisBase):
     MDAnalysis.analysis.density.density_from_Universe
 
 
-    .. versionadded::
+    .. versionadded:: 0.3.0
 
     """
     def __init__(self, atomgroup, delta=1.0, atomselection=None,
