@@ -17,6 +17,7 @@ import joblib
 import dask
 
 from pmda import parallel
+from pmda.util import make_balanced_slices
 
 
 def test_timeing():
@@ -119,6 +120,20 @@ def test_guess_nblocks(analysis):
     with dask.config.set(scheduler='multiprocessing'):
         analysis.run(n_jobs=-1)
     assert len(analysis._results) == joblib.cpu_count()
+
+
+@pytest.mark.parametrize('n_blocks', np.arange(1, 11))
+def test_blocks(analysis, n_blocks):
+    analysis.run(n_blocks=n_blocks)
+    u = mda.Universe(analysis._top, analysis._traj)
+    n_frames = u.trajectory.n_frames
+    start, stop, step = u.trajectory.check_slice_indices(
+                            None, None, None)
+    slices = make_balanced_slices(n_frames, n_blocks, start, stop, step)
+    blocks = [
+        range(bslice.start, bslice.stop, bslice.step) for bslice in slices
+        ]
+    assert analysis._blocks == blocks
 
 
 def test_attrlock():
