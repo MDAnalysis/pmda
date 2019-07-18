@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>pmda.density &#8212; PMDA 0.2.1+12.g943ed2b documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.2.1+12.g943ed2b documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pmda.density</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
+<span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
+<span class="c1">#</span>
+<span class="c1"># PMDA</span>
+<span class="c1"># Copyright (c) 2019 The MDAnalysis Development Team and contributors</span>
+<span class="c1"># (see the file AUTHORS for the full list of names)</span>
+<span class="c1">#</span>
+<span class="c1"># Released under the GNU Public Licence, v2 or any higher version</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generating Densities from Trajectories --- :mod:`pmda.density`</span>
+<span class="sd">===============================================================</span>
+
+<span class="sd">This module contains parallel versions of analysis tasks in</span>
+<span class="sd">:mod:`MDAnalysis.analysis.density`.</span>
+
+<span class="sd">.. autoclass:: DensityAnalysis</span>
+<span class="sd">   :members:</span>
+<span class="sd">   :undoc-members:</span>
+<span class="sd">   :inherited-members:</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">MDAnalysis.analysis.density.density_from_Universe</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
+
+<span class="kn">from</span> <span class="nn">MDAnalysis.lib.util</span> <span class="k">import</span> <span class="n">fixedwidth_bins</span>
+
+<span class="kn">from</span> <span class="nn">MDAnalysis.analysis.density</span> <span class="k">import</span> <span class="n">Density</span>
+
+<span class="kn">from</span> <span class="nn">MDAnalysis.analysis.density</span> <span class="k">import</span> <span class="n">_set_user_grid</span>
+
+<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+
+
+<div class="viewcode-block" id="DensityAnalysis"><a class="viewcode-back" href="../../api/density.html#pmda.density.DensityAnalysis">[docs]</a><span class="k">class</span> <span class="nc">DensityAnalysis</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parallel density analysis.</span>
+
+<span class="sd">    The trajectory is read, frame by frame, and the atoms selected with</span>
+<span class="sd">    `atomselection` are histogrammed on a grid with spacing `delta`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atomgroup : AtomGroup</span>
+<span class="sd">            Group of atoms (such as all the water oxygen atoms) being analyzed.</span>
+<span class="sd">            If this is an updating AtomGroup then you need to set</span>
+<span class="sd">            &#39;atomselection&#39; and also &#39;updating=True&#39;.</span>
+<span class="sd">    atomselection : str (optional)</span>
+<span class="sd">            Selection string (MDAnalysis syntax) for the species to be analyzed</span>
+<span class="sd">            [&quot;name OH2&quot;]</span>
+<span class="sd">    delta : float (optional)</span>
+<span class="sd">            Bin size for the density grid in ångström (same in x,y,z).</span>
+<span class="sd">            Slice the trajectory as &quot;trajectory[start:stop:step]&quot;; default</span>
+<span class="sd">            is to read the whole trajectory.</span>
+<span class="sd">    metadata : dict (optional)</span>
+<span class="sd">            `dict` of additional data to be saved with the object; the meta</span>
+<span class="sd">            data are passed through as they are.</span>
+<span class="sd">    padding : float (optional)</span>
+<span class="sd">            Increase histogram dimensions by padding (on top of initial box</span>
+<span class="sd">            size) in ångström. Padding is ignored when setting a user defined</span>
+<span class="sd">            grid.</span>
+<span class="sd">    updating : bool (optional)</span>
+<span class="sd">            Should the selection of atoms be updated for every step? [&quot;False&quot;]</span>
+<span class="sd">            - &quot;True&quot;: atom selection is updated for each frame, can be slow</span>
+<span class="sd">            - &quot;False&quot;: atoms are only selected at the beginning</span>
+<span class="sd">    parameters : dict (optional)</span>
+<span class="sd">            `dict` with some special parameters for :class:`Density` (see docs)</span>
+<span class="sd">    gridcenter : numpy ndarray, float32 (optional)</span>
+<span class="sd">            3 element numpy array detailing the x, y and z coordinates of the</span>
+<span class="sd">            center of a user defined grid box in ångström.</span>
+<span class="sd">    xdim : float (optional)</span>
+<span class="sd">            User defined x dimension box edge in ångström; ignored if</span>
+<span class="sd">            gridcenter is &quot;None&quot;.</span>
+<span class="sd">    ydim : float (optional)</span>
+<span class="sd">            User defined y dimension box edge in ångström; ignored if</span>
+<span class="sd">            gridcenter is &quot;None&quot;.</span>
+<span class="sd">    zdim : float (optional)</span>
+<span class="sd">            User defined z dimension box edge in ångström; ignored if</span>
+<span class="sd">            gridcenter is &quot;None&quot;.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    By default, the `atomselection` is static, i.e., atoms are only selected</span>
+<span class="sd">    once at the beginning. If you want *dynamically changing selections*</span>
+<span class="sd">    (such as &quot;name OW and around 4.0 (protein and not name H*)&quot;, i.e., the</span>
+<span class="sd">    water oxygen atoms that are within 4 Å of the protein heavy atoms) then</span>
+<span class="sd">    set ``update_selection=True``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    First create the :class:`DensityAnalysis` object by supplying an</span>
+<span class="sd">    AtomGroup, then use the :meth:`run` method :: In the following example,</span>
+<span class="sd">    all water oxygen atoms are used::</span>
+
+<span class="sd">      ow = u.select_atoms(&quot;name OW&quot;)</span>
+<span class="sd">      D = DensityAnalysis(ow)</span>
+<span class="sd">      D.run()</span>
+
+<span class="sd">    Results are available through the :attr:`density` attribute,</span>
+<span class="sd">    which has the :attr:`grid` attribute that contains the histogrammed</span>
+<span class="sd">    density data. :attr:`DensityAnalysis.density` is a</span>
+<span class="sd">    :class:`gridData.core.Grid` object. In particular, its contents can be</span>
+<span class="sd">    `exported to different formats</span>
+<span class="sd">    &lt;https://www.mdanalysis.org/GridDataFormats/gridData/formats.html&gt;`_.</span>
+<span class="sd">    For example, to `write a DX file</span>
+<span class="sd">    &lt;https://www.mdanalysis.org/GridDataFormats/gridData/basic.html#writing-out-data&gt;`_</span>
+<span class="sd">    ``density.dx`` that can be read with VMD, PyMOL, or Chimera::</span>
+
+<span class="sd">      D.density.export(&quot;density.dx&quot;, type=&quot;double&quot;)</span>
+
+<span class="sd">    Basic use for creating a water density (just using the water oxygen</span>
+<span class="sd">    atoms &quot;OW&quot;)::</span>
+
+<span class="sd">      D = DensityAnalysis(universe.atoms, atomselection=&#39;name OW&#39;)</span>
+
+<span class="sd">    If you are only interested in water within a certain region, e.g., within</span>
+<span class="sd">    a vicinity around a binding site, you can use a selection that updates</span>
+<span class="sd">    every step by setting the `updating` keyword argument::</span>
+
+<span class="sd">      atomselection = &#39;name OW and around 5 (resid 156 157 305)&#39;</span>
+<span class="sd">      D_site = DensityAnalysis(universe.atoms, atomselection=atomselection,</span>
+<span class="sd">                               updating=True)</span>
+
+<span class="sd">    If you are interested in explicitly setting a grid box of a given edge</span>
+<span class="sd">    size and origin, you can use the gridcenter and x/y/zdim arguments.</span>
+<span class="sd">    For example to plot the density of waters within 5 Å of a ligand (in this</span>
+<span class="sd">    case the ligand has been assigned the residue name &quot;LIG&quot;) in a cubic grid</span>
+<span class="sd">    with 20 Å edges which is centered on the center of mass (COM) of the</span>
+<span class="sd">    ligand::</span>
+
+<span class="sd">      # Create a selection based on the ligand</span>
+<span class="sd">      ligand_selection = universe.select_atoms(&quot;resname LIG&quot;)</span>
+
+<span class="sd">      # Extract the COM of the ligand</span>
+<span class="sd">      ligand_COM = ligand_selection.center_of_mass()</span>
+
+<span class="sd">      # Create a density of waters on a cubic grid centered on the ligand COM</span>
+<span class="sd">      # In this case, we update the atom selection as shown above.</span>
+<span class="sd">      D_water = DensityAnalysis(universe.atoms, delta=1.0,</span>
+<span class="sd">                                atomselection=&#39;name OW around 5 resname LIG&#39;,</span>
+<span class="sd">                                updating=True,</span>
+<span class="sd">                                gridcenter=ligand_COM,</span>
+<span class="sd">                                xdim=20, ydim=20, zdim=20)</span>
+
+<span class="sd">      (It should be noted that the `padding` keyword is not used when a user</span>
+<span class="sd">      defined grid is assigned).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MDAnalysis.analysis.density.density_from_Universe</span>
+
+
+<span class="sd">    .. versionadded:: 0.3.0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atomgroup</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">atomselection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">updating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gridcenter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xdim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">zdim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">atomgroup</span><span class="o">.</span><span class="n">universe</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DensityAnalysis</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="p">(</span><span class="n">atomgroup</span><span class="p">,</span> <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span> <span class="o">=</span> <span class="n">atomgroup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atomselection</span> <span class="o">=</span> <span class="n">atomselection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_padding</span> <span class="o">=</span> <span class="n">padding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_updating</span> <span class="o">=</span> <span class="n">updating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gridcenter</span> <span class="o">=</span> <span class="n">gridcenter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xdim</span> <span class="o">=</span> <span class="n">xdim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydim</span> <span class="o">=</span> <span class="n">ydim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zdim</span> <span class="o">=</span> <span class="n">zdim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_frames</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">n_frames</span>
+        <span class="k">if</span> <span class="n">updating</span> <span class="ow">and</span> <span class="n">atomselection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;updating=True requires a atomselection string&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">updating</span> <span class="ow">and</span> <span class="n">atomselection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;With updating=False, the atomselection=&#39;</span><span class="si">{}</span><span class="s2">&#39; is</span>
+<span class="s2">                        not used and should be None&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomselection</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomselection</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_updating</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gridcenter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Generate a copy of smin/smax from coords to later check if the</span>
+            <span class="c1"># defined box might be too small for the selection</span>
+            <span class="n">smin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">smax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Overwrite smin/smax with user defined values</span>
+            <span class="n">smin</span><span class="p">,</span> <span class="n">smax</span> <span class="o">=</span> <span class="n">_set_user_grid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gridcenter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xdim</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_ydim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zdim</span><span class="p">,</span> <span class="n">smin</span><span class="p">,</span> <span class="n">smax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Make the box bigger to avoid as much as possible &#39;outlier&#39;. This</span>
+            <span class="c1"># is important if the sites are defined at a high density: in this</span>
+            <span class="c1"># case the bulk regions don&#39;t have to be close to 1 * n0 but can</span>
+            <span class="c1"># be less. It&#39;s much more difficult to deal with outliers.  The</span>
+            <span class="c1"># ideal solution would use images: implement &#39;looking across the</span>
+            <span class="c1"># periodic boundaries&#39; but that gets complicated when the box</span>
+            <span class="c1"># rotates due to RMS fitting.</span>
+            <span class="n">smin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padding</span>
+            <span class="n">smax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padding</span>
+        <span class="n">BINS</span> <span class="o">=</span> <span class="n">fixedwidth_bins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">,</span> <span class="n">smin</span><span class="p">,</span> <span class="n">smax</span><span class="p">)</span>
+        <span class="n">arange</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">BINS</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">],</span> <span class="n">BINS</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">])))</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">BINS</span><span class="p">[</span><span class="s1">&#39;Nbins&#39;</span><span class="p">]</span>
+        <span class="c1"># create empty grid with the right dimensions (and get the edges)</span>
+        <span class="n">grid</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogramdd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+                                     <span class="nb">range</span><span class="o">=</span><span class="n">arange</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">*=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span> <span class="o">=</span> <span class="n">grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edges</span> <span class="o">=</span> <span class="n">edges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arange</span> <span class="o">=</span> <span class="n">arange</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bins</span> <span class="o">=</span> <span class="n">bins</span>
+
+    <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">):</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_coordinates</span><span class="p">(</span><span class="n">atomgroups</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomselection</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_updating</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogramdd</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_arange</span><span class="p">,</span>
+                                <span class="n">normed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_grid</span> <span class="o">/=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_frames</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;psf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;dcd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;atomselection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomselection</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;n_frames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_frames</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;totaltime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span><span class="o">.</span><span class="n">universe</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">totaltime</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory</span><span class="o">.</span><span class="n">dt</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;time_unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s1">&#39;time_unit&#39;</span><span class="p">]</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;isDensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># must override</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="n">Density</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_grid</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">,</span>
+                          <span class="n">units</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="s2">&quot;Angstrom&quot;</span><span class="p">},</span>
+                          <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+                          <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">density</span><span class="o">.</span><span class="n">make_density</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="n">density</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &#39;accumulate&#39; action for a time series&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">result_single_frame</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">result_single_frame</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="DensityAnalysis.current_coordinates"><a class="viewcode-back" href="../../api/density.html#pmda.density.DensityAnalysis.current_coordinates">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">current_coordinates</span><span class="p">(</span><span class="n">atomgroup</span><span class="p">,</span> <span class="n">atomselection</span><span class="p">,</span> <span class="n">updating</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves the current coordinates of all atoms in the chosen atom</span>
+<span class="sd">        selection.</span>
+<span class="sd">        Note: currently required to allow for updating selections&quot;&quot;&quot;</span>
+        <span class="n">ag</span> <span class="o">=</span> <span class="n">atomgroup</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">updating</span> <span class="k">else</span> <span class="n">atomgroup</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span>
+                                                            <span class="n">atomselection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ag</span><span class="o">.</span><span class="n">positions</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
