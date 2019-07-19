@@ -129,7 +129,7 @@ class RMSF(ParallelAnalysisBase):
 
     See Also
     --------
-    MDAnalysis.analysis.density.density_from_Universe
+    MDAnalysis.analysis.rms.RMSF
 
 
     .. versionadded:: 0.3.0
@@ -145,8 +145,6 @@ class RMSF(ParallelAnalysisBase):
     def _prepare(self):
         self.sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
         self.mean = self.sumsquares.copy()
-        # print("Sum of squares array: ", self.sumsquares)
-        # print("Mean array: ", self.mean)
 
     def _single_frame(self, ts, agroups):
         k = self._trajectory.frame
@@ -174,14 +172,6 @@ class RMSF(ParallelAnalysisBase):
         """
         res.append(result_single_frame)
         return res
-
-    # def _reduce(res, result_single_frame):
-    #     res.append(results_single_frame)
-    #     if res == []:
-    #         res = result_single_frame
-    #     else:
-    #         res += result_single_frame
-    #     return res
 
     @staticmethod
     def pair_wise_rmsf(mu1, mu2, t1, t2, M1, M2):
