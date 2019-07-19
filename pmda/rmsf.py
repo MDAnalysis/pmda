@@ -136,37 +136,55 @@ class RMSF(ParallelAnalysisBase):
 
     """
     def __init__(self, atomgroup):
-        self._ag = atomgroup
-        super(RMSF, self).__init__(atomgroup.universe, self._ag)
+        u = atomgroup.universe
+        super(RMSF, self).__init__(u, (atomgroup, ))
+        self._atomgroup = atomgroup
+        self._top = u.filename
+        self._traj = u.trajectory.filename
 
     def _prepare(self):
-        self.sumsquares = np.zeros((self.atomgroup.n_atoms, 3))
+        self.sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
         self.mean = self.sumsquares.copy()
+        # print("Sum of squares array: ", self.sumsquares)
+        # print("Mean array: ", self.mean)
 
-    def _single_frame(self):
-        k = self._frame_index
-        self.sumsquares += (k / (k+1.0)) * (self.atomgroup.positions - self.mean) ** 2
-        self.mean = (k * self.mean + self.atomgroup.positions) / (k + 1)
+    def _single_frame(self, ts, agroups):
+        k = self._trajectory.frame
+        self.sumsquares += (k / (k + 1)) * (agroups[0].positions - self.mean) ** 2
+        self.mean = (k * self.mean + agroups[0].positions) / (k + 1)
 
     def _conclude(self):
-        k = self._frame_index
-        self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / (k + 1))
-        
+        """
+        self._results : Array
+            (n_blocks x ts x 2 x N x 3) array
+            (1 x 901 x 2 x 10 x 3)
+        """
+        k = len(self._trajectory)
+        self.sumsquares = self._results[0, :, 0]
+        self.mean = self._results[0, :, 1]
+        self.rmsf = np.sqrt(self.sumsquares.sum(axis=0) / k)
         if not (self.rmsf >= 0).all():
             raise ValueError("Some RMSF values negative; overflow " +
                              "or underflow occurred")
 
     @staticmethod
     def _reduce(res, result_single_frame):
-        res.append(results_single_frame)
-        if res == []:
-            res = result_single_frame
-        else:
-            res += result_single_frame
+        """
+        'append' action for a time series
+        """
+        res.append(result_single_frame)
         return res
 
+    # def _reduce(res, result_single_frame):
+    #     res.append(results_single_frame)
+    #     if res == []:
+    #         res = result_single_frame
+    #     else:
+    #         res += result_single_frame
+    #     return res
+
     @staticmethod
-    def pair_wise_rmsf(mu1, mu2, n1, n2, T, M1, M2):
+    def pair_wise_rmsf(mu1, mu2, t1, t2, M1, M2):
         """
         Calculates the total RMSF pair-wise. Takes in two separate blocks with
         after the RMSF calculation has been concluded and combines their results
@@ -180,9 +198,9 @@ class RMSF(ParallelAnalysisBase):
         mu2 : (N x 3) NumPy array
             Array of mean positions for each atom in the given atom selection
             and trajectory slice for block 2
-        n1 : int
+        t1 : int
             Number of time steps in trajectory slice 1
-        n2 : int
+        t2 : int
             Number of time steps in trajectory slice 2
         T : int
             Total number of time steps for trajectory
@@ -193,5 +211,6 @@ class RMSF(ParallelAnalysisBase):
             Array of sum of squares for each atom in the given atom selection
             and trajectory slice for block 2
         """
-        d_squared = (mu2 - mu1)**2
-        return np.sqrt((M1 + M2 + (n1 * n2 * d_squared/T)).sum(axis=1)/T)
+        T = t1 + t2
+        M = M1 + M2 + t1 * t2 * (mu2 - mu1)**2/T
+        return np.sqrt(M.sum(axis=1)/T)
