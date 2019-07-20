@@ -178,7 +178,8 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
 
     return slices
 
-def pair_wise_rmsf(mu1, mu2, t1, t2, S1, S2):
+
+def pair_wise_rmsf(mu1, mu2, t1, t2, sos1, sos2):
     """
     Calculates the total RMSF pair-wise. Takes in data from two separate
     blocks after the RMSF calculation has been concluded and combines their

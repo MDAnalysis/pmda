@@ -67,7 +67,8 @@ class RMSF(ParallelAnalysisBase):
     The root mean square fluctuation of an atom :math:`i` is computed as the
     time average
     .. math::
-    \rho_i = \sqrt{\left\langle (\mathbf{x}_i - \langle\mathbf{x}_i\rangle)^2 \right\rangle}
+    \rho_i = \sqrt{\left\langle (\mathbf{x}_i -
+                                 \langle\mathbf{x}_i\rangle)^2 \right\rangle}
     No mass weighting is performed.
     This method implements an algorithm for computing sums of squares while
     avoiding overflows and underflows [Welford1962]_.
@@ -77,6 +78,10 @@ class RMSF(ParallelAnalysisBase):
     .. [Welford1962] B. P. Welford (1962). "Note on a Method for
     Calculating Corrected Sums of Squares and Products." Technometrics
     4(3):419-420.
+    .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. "Updating
+    formulae and a pairwise algorithm for computing sample variances."
+    Technical Report STAN-CS-79-773, Stanford University, Department of
+    Computer Science, 1979.
 
     Examples
     --------
@@ -107,7 +112,8 @@ class RMSF(ParallelAnalysisBase):
                                     in_memory=True).run()
        # 3) ref = average structure
        ref_coordinates = u.trajectory.timeseries(asel=protein).mean(axis=1)
-       # make a reference structure (need to reshape into a 1-frame "trajectory")
+       # make a reference structure (need to reshape into
+       # a 1-frame "trajectory")
        ref = mda.Merge(protein).load_new(ref_coordinates[:, None, :],
                                          order="afc")
 
@@ -156,7 +162,7 @@ class RMSF(ParallelAnalysisBase):
     def _conclude(self):
         """
         self._results : Array
-            (n_blocks x ts x 2 x N x 3) array
+            (n_blocks x 2 x N x 3) array
         """
         k = len(self._trajectory)
         self.sumsquares = self._results[0, 0]
