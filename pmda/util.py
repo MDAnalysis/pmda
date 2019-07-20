@@ -177,3 +177,39 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
     slices[-1] = slice(last.start, last_stop, last.step)
 
     return slices
+
+def pair_wise_rmsf(mu1, mu2, t1, t2, S1, S2):
+    """
+    Calculates the total RMSF pair-wise. Takes in data from two separate
+    blocks after the RMSF calculation has been concluded and combines their
+    results into a single, total RMSF for the combined trajectory slices.
+
+    Parameters
+    ----------
+    mu1 : Array
+        (N x 3) array of mean positions for each atom in the given atom
+        selection (and trajectory slice) for block 1
+    mu2 : Array
+        (N x 3) array of mean positions for each atom in the given atom
+        selection (and trajectory slice) for block 2
+    t1 : int
+        Number of time steps in trajectory slice 1
+    t2 : int
+        Number of time steps in trajectory slice 2
+    sos1 : Array
+        (N x 3) array of sum of squares for each atom in the given atom
+        selection (and trajectory slice) for block 1
+    sos2 : Array
+        (N x 3) array of sum of squares for each atom in the given atom
+        selection (and trajectory slice) for block 2
+
+    Returns
+    -------
+    rms_fluctuations : Array
+        (N x 1) array of the combined-RMSF value for each atom in the
+        given atom selection
+    """
+    T = t1 + t2
+    M = sos1 + sos2 + (t1 * t2/T) * (mu2 - mu1)**2
+    rms_fluctuations = np.sqrt(M.sum(axis=1)/T)
+    return rms_fluctuations

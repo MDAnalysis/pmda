@@ -29,9 +29,9 @@ from __future__ import absolute_import
 
 import numpy as np
 
-import MDAnalysis as mda
-
 from .parallel import ParallelAnalysisBase
+
+from .util import pair_wise_rmsf
 
 
 class RMSF(ParallelAnalysisBase):
@@ -47,8 +47,12 @@ class RMSF(ParallelAnalysisBase):
     Raises
     ------
     ValueError
-         raised if negative values are calculated, which indicates that a
-         numerical overflow or underflow occured
+    raised if negative values are calculated, which indicates that a
+    numerical overflow or underflow occured
+
+    See Also
+    --------
+    MDAnalysis.analysis.rms.RMSF
 
     Notes
     -----
@@ -63,10 +67,16 @@ class RMSF(ParallelAnalysisBase):
     The root mean square fluctuation of an atom :math:`i` is computed as the
     time average
     .. math::
-      \rho_i = \sqrt{\left\langle (\mathbf{x}_i - \langle\mathbf{x}_i\rangle)^2 \right\rangle}
+    \rho_i = \sqrt{\left\langle (\mathbf{x}_i - \langle\mathbf{x}_i\rangle)^2 \right\rangle}
     No mass weighting is performed.
     This method implements an algorithm for computing sums of squares while
     avoiding overflows and underflows [Welford1962]_.
+
+    References
+    ----------
+    .. [Welford1962] B. P. Welford (1962). "Note on a Method for
+    Calculating Corrected Sums of Squares and Products." Technometrics
+    4(3):419-420.
 
     Examples
     --------
@@ -121,16 +131,6 @@ class RMSF(ParallelAnalysisBase):
        import matplotlib.pyplot as plt
        plt.plot(calphas.resnums, rmsfer.rmsf)
 
-    References
-    ----------
-    .. [Welford1962] B. P. Welford (1962). "Note on a Method for
-       Calculating Corrected Sums of Squares and Products." Technometrics
-       4(3):419-420.
-
-    See Also
-    --------
-    MDAnalysis.analysis.rms.RMSF
-
 
     .. versionadded:: 0.3.0
 
@@ -147,60 +147,41 @@ class RMSF(ParallelAnalysisBase):
         self.mean = self.sumsquares.copy()
 
     def _single_frame(self, ts, agroups):
-        k = self._trajectory.frame
-        self.sumsquares += (k / (k + 1)) * (agroups[0].positions - self.mean) ** 2
-        self.mean = (k * self.mean + agroups[0].positions) / (k + 1)
+        k = ts.frame
+        sumsquares = self.sumsquares
+        mean = self.mean
+        agroups = agroups[0]
+        return k, agroups, sumsquares, mean
 
     def _conclude(self):
         """
         self._results : Array
             (n_blocks x ts x 2 x N x 3) array
-            (1 x 901 x 2 x 10 x 3)
         """
         k = len(self._trajectory)
-        self.sumsquares = self._results[0, :, 0]
-        self.mean = self._results[0, :, 1]
-        self.rmsf = np.sqrt(self.sumsquares.sum(axis=0) / k)
+        self.sumsquares = self._results[0, 0]
+        self.mean = self._results[0, 1]
+        self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / k)
         if not (self.rmsf >= 0).all():
             raise ValueError("Some RMSF values negative; overflow " +
                              "or underflow occurred")
 
     @staticmethod
-    def _reduce(res, result_single_frame):
+    def _reduce(res, frame_result):
         """
         'append' action for a time series
         """
-        res.append(result_single_frame)
+        n = frame_result[0]
+        positions = frame_result[1].positions
+        # for initial time step
+        if n == 0:
+            # assign inital mean and sum of squares zero-arrays to res
+            res.append(frame_result[2])
+            res.append(frame_result[3])
+        else:
+            # retrieve mean from previous time step
+            mean = res[1]
+            # update mean and sum of squares
+            res[0] += (n / (n + 1)) * (positions - mean) ** 2
+            res[1] = (n * mean + positions) / (n + 1)
         return res
-
-    @staticmethod
-    def pair_wise_rmsf(mu1, mu2, t1, t2, M1, M2):
-        """
-        Calculates the total RMSF pair-wise. Takes in two separate blocks with
-        after the RMSF calculation has been concluded and combines their results
-        into a single, total RMSF for the combined trajectory slices.
-
-        Parameters
-        ----------
-        mu1 : (N x 3) NumPy array
-            Array of mean positions for each atom in the given atom selection
-            and trajectory slice for block 1
-        mu2 : (N x 3) NumPy array
-            Array of mean positions for each atom in the given atom selection
-            and trajectory slice for block 2
-        t1 : int
-            Number of time steps in trajectory slice 1
-        t2 : int
-            Number of time steps in trajectory slice 2
-        T : int
-            Total number of time steps for trajectory
-        M1 : (N x 3) NumPy array
-            Array of sum of squares for each atom in the given atom selection
-            and trajectory slice for block 1
-        M2 : (N x 3) NumPy array
-            Array of sum of squares for each atom in the given atom selection
-            and trajectory slice for block 2
-        """
-        T = t1 + t2
-        M = M1 + M2 + t1 * t2 * (mu2 - mu1)**2/T
-        return np.sqrt(M.sum(axis=1)/T)
