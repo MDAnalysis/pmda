@@ -8,20 +8,19 @@
 # Released under the GNU Public Licence, v2 or any higher version
 """
 Generating Densities from Trajectories --- :mod:`pmda.density`
-==============================================================
+===============================================================
 
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.density`.
 
+.. autoclass:: DensityAnalysis
+   :members:
+   :undoc-members:
+   :inherited-members:
+
 See Also
 --------
 MDAnalysis.analysis.density.density_from_Universe
-
-Classes
--------
-.. autoclass:: DensityAnalysis
-   :members:
-   :inherited-members:
 
 """
 
@@ -53,19 +52,19 @@ class DensityAnalysis(ParallelAnalysisBase):
             If this is an updating AtomGroup then you need to set
             'atomselection' and also 'updating=True'.
     atomselection : str (optional)
-            selection string (MDAnalysis syntax) for the species to be analyzed
+            Selection string (MDAnalysis syntax) for the species to be analyzed
             ["name OH2"]
     delta : float (optional)
-            bin size for the density grid in Angstroem (same in x,y,z) [1.0]
+            Bin size for the density grid in ångström (same in x,y,z).
             Slice the trajectory as "trajectory[start:stop:step]"; default
             is to read the whole trajectory.
-    metadata : dict. (optional)
+    metadata : dict (optional)
             `dict` of additional data to be saved with the object; the meta
             data are passed through as they are.
     padding : float (optional)
-            increase histogram dimensions by padding (on top of initial box
-            size) in Angstroem. Padding is ignored when setting a user defined
-            grid. [2.0]
+            Increase histogram dimensions by padding (on top of initial box
+            size) in ångström. Padding is ignored when setting a user defined
+            grid.
     updating : bool (optional)
             Should the selection of atoms be updated for every step? ["False"]
             - "True": atom selection is updated for each frame, can be slow
@@ -74,16 +73,16 @@ class DensityAnalysis(ParallelAnalysisBase):
             `dict` with some special parameters for :class:`Density` (see docs)
     gridcenter : numpy ndarray, float32 (optional)
             3 element numpy array detailing the x, y and z coordinates of the
-            center of a user defined grid box in Angstroem ["None"]
+            center of a user defined grid box in ångström.
     xdim : float (optional)
             User defined x dimension box edge in ångström; ignored if
-            gridcenter is "None"
+            gridcenter is "None".
     ydim : float (optional)
             User defined y dimension box edge in ångström; ignored if
-            gridcenter is "None"
+            gridcenter is "None".
     zdim : float (optional)
             User defined z dimension box edge in ångström; ignored if
-            gridcenter is "None"
+            gridcenter is "None".
 
     Notes
     -----
@@ -97,15 +96,15 @@ class DensityAnalysis(ParallelAnalysisBase):
     --------
     First create the :class:`DensityAnalysis` object by supplying an
     AtomGroup, then use the :meth:`run` method :: In the following example,
-    all water oxygen atoms are used:
+    all water oxygen atoms are used::
 
       ow = u.select_atoms("name OW")
       D = DensityAnalysis(ow)
       D.run()
 
-    Results are available through the :attr:`density` attribute ::,
+    Results are available through the :attr:`density` attribute,
     which has the :attr:`grid` attribute that contains the histogrammed
-    density data. The :attr:`DensityAnalysis.density` is a
+    density data. :attr:`DensityAnalysis.density` is a
     :class:`gridData.core.Grid` object. In particular, its contents can be
     `exported to different formats
     <https://www.mdanalysis.org/GridDataFormats/gridData/formats.html>`_.
@@ -132,7 +131,7 @@ class DensityAnalysis(ParallelAnalysisBase):
     size and origin, you can use the gridcenter and x/y/zdim arguments.
     For example to plot the density of waters within 5 Å of a ligand (in this
     case the ligand has been assigned the residue name "LIG") in a cubic grid
-    with 20 Å edges which is centered on the centre of mass (COM) of the
+    with 20 Å edges which is centered on the center of mass (COM) of the
     ligand::
 
       # Create a selection based on the ligand
