@@ -156,15 +156,15 @@ class RMSF(ParallelAnalysisBase):
         k = ts.frame
         sumsquares = self.sumsquares
         mean = self.mean
-        agroups = agroups[0]
-        return k, agroups, sumsquares, mean
+        agroup = agroups[0]
+        return k, agroup, sumsquares, mean
 
     def _conclude(self):
         """
         self._results : Array
             (n_blocks x 2 x N x 3) array
         """
-        k = len(self._trajectory)
+        k = len(self._blocks[0])
         self.sumsquares = self._results[0, 0]
         self.mean = self._results[0, 1]
         self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / k)
@@ -175,19 +175,29 @@ class RMSF(ParallelAnalysisBase):
     @staticmethod
     def _reduce(res, frame_result):
         """
-        'append' action for a time series
+        'sum' action for time series
+
+        Returns
+        -------
+        res : list
+            2 element list, where the first element is the 'running mean'
+            and the second is the sum of squares. For each time step, the
+            mean and sum of squares are updated.
+        # res[0]  sum of squares
+        # res[1]  mean
         """
-        n = frame_result[0]
-        positions = frame_result[1].positions
-        # for initial time step
-        if n == 0:
-            # assign inital mean and sum of squares zero-arrays to res
+        k = frame_result[0]
+        position = frame_result[1].positions
+        # initial time step case
+        if k == 0:
+            # assign initial (sum of squares and mean) zero-arrays to res
             res.append(frame_result[2])
             res.append(frame_result[3])
+            # initial positions = initial mean positions
+            res[1] = position
         else:
-            # retrieve mean from previous time step
-            mean = res[1]
-            # update mean and sum of squares
-            res[0] += (n / (n + 1)) * (positions - mean) ** 2
-            res[1] = (n * mean + positions) / (n + 1)
+            # update sum of squares
+            res[0] += (k / (k + 1)) * (position - res[1]) ** 2
+            # update mean
+            res[1] = (k * res[1] + position) / (k + 1)
         return res
