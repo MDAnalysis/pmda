@@ -164,6 +164,7 @@ class RMSF(ParallelAnalysisBase):
         self._results : Array
             (n_blocks x 2 x N x 3) array
         """
+        # get length of trajectory slice
         k = len(self._blocks[0])
         self.sumsquares = self._results[0, 0]
         self.mean = self._results[0, 1]
@@ -173,7 +174,7 @@ class RMSF(ParallelAnalysisBase):
                              "or underflow occurred")
 
     @staticmethod
-    def _reduce(res, frame_result):
+    def _reduce(res, result_single_frame):
         """
         'sum' action for time series
 
@@ -186,13 +187,13 @@ class RMSF(ParallelAnalysisBase):
         # res[0]  sum of squares
         # res[1]  mean
         """
-        k = frame_result[0]
-        position = frame_result[1].positions
+        k = result_single_frame[0]
+        position = np.float64(result_single_frame[1].positions)
         # initial time step case
-        if k == 0:
+        if len(res) == 0:
             # assign initial (sum of squares and mean) zero-arrays to res
-            res.append(frame_result[2])
-            res.append(frame_result[3])
+            res.append(result_single_frame[2])
+            res.append(result_single_frame[3])
             # initial positions = initial mean positions
             res[1] = position
         else:

@@ -211,6 +211,7 @@ def pair_wise_rmsf(mu1, mu2, t1, t2, sos1, sos2):
         given atom selection
     """
     T = t1 + t2
-    M = sos1 + sos2 + (t1 * t2/T) * (mu2 - mu1)**2
+    mean = (mu1 + mu2)/2
+    sos = sos1 + sos2 + (t1 * t2/T) * (mu2 - mu1)**2
     rms_fluctuations = np.sqrt(M.sum(axis=1)/T)
-    return rms_fluctuations
+    return mean, sos, rms_fluctuations
