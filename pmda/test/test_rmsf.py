@@ -31,18 +31,13 @@ def test_rmsf_values(u):
     assert_almost_equal(MDA.rmsf, PMDA.rmsf)
 
 
-@pytest.fixture
-def setup(tmpdir):
-    newdir = tmpdir.mkdir('resources')
-    return newdir.dirname
-
-
 def test_nottmp():
     filepath = os.path.join(os.path.realpath(pmda.__file__))
     assert os.path.exists(filepath)
 
 
-def test_tmpdir(setup):
-    os.chdir(setup)
+def test_tmpdir(tmpdir):
+    newdir = tmpdir.mkdir('resources')
+    os.chdir(newdir.dirname)
     filepath = os.path.join(os.path.realpath(pmda.__file__))
     assert os.path.exists(filepath)
