@@ -155,11 +155,10 @@ class RMSF(ParallelAnalysisBase):
         self.mean = self.sumsquares.copy()
 
     def _single_frame(self, ts, agroups):
-        k = ts.frame
         sumsquares = self.sumsquares
         mean = self.mean
         agroup = agroups[0]
-        return k, agroup, mean, sumsquares
+        return agroup, mean, sumsquares
 
     def _conclude(self):
         """
@@ -198,17 +197,23 @@ class RMSF(ParallelAnalysisBase):
         """
         'sum' action for time series
         """
-        k, atoms, mean, sumsq = result_single_frame
+        atoms, mean, sumsq = result_single_frame
         positions = atoms.positions.astype(np.float64)
         # initial time step case
         if len(res) == 0:
+            # set initial time step for each block to zero
+            k = 0
             # assign initial (sum of squares and mean) zero-arrays to res
-            res = [mean, sumsq]
+            res = [mean, sumsq, k]
             # initial positions = initial mean positions
-            res[0] = positions
+            res[0] = (k * res[0] + positions) / (k + 1)
         else:
+            # update time step
+            k = int(res[2] + 1)
             # update sum of squares
             res[1] += (k / (k + 1)) * (positions - res[0]) ** 2
             # update mean
             res[0] = (k * res[0] + positions) / (k + 1)
+            # update time step in res
+            res[2] = k
         return res

@@ -186,12 +186,13 @@ def second_order_moments(S1, S2):
     Parameters
     ----------
     S1 : Array
-        
+
     S2 : Array
 
     Returns
     -------
     S : Array
+
     References
     ----------
     .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. "Updating
