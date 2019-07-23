@@ -178,40 +178,29 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
 
     return slices
 
-
-def pair_wise_rmsf(mu1, mu2, t1, t2, sos1, sos2):
+def second_order_moments(S1, S2):
     """
-    Calculates the total RMSF pair-wise. Takes in data from two separate
-    blocks after the RMSF calculation has been concluded and combines their
-    results into a single, total RMSF for the combined trajectory slices.
+    Given the partial centered moments of two partitions (S1 and S2) of a data
+    set S, calculates the second order moments of S = S1 ∪ S2.
 
     Parameters
     ----------
-    mu1 : Array
-        (N x 3) array of mean positions for each atom in the given atom
-        selection (and trajectory slice) for block 1
-    mu2 : Array
-        (N x 3) array of mean positions for each atom in the given atom
-        selection (and trajectory slice) for block 2
-    t1 : int
-        Number of time steps in trajectory slice 1
-    t2 : int
-        Number of time steps in trajectory slice 2
-    sos1 : Array
-        (N x 3) array of sum of squares for each atom in the given atom
-        selection (and trajectory slice) for block 1
-    sos2 : Array
-        (N x 3) array of sum of squares for each atom in the given atom
-        selection (and trajectory slice) for block 2
+    S1 : Array
+        
+    S2 : Array
 
     Returns
     -------
-    rms_fluctuations : Array
-        (N x 1) array of the combined-RMSF value for each atom in the
-        given atom selection
+    S : Array
+    References
+    ----------
+    .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. "Updating
+    formulae and a pairwise algorithm for computing sample variances."
+    Technical Report STAN-CS-79-773, Stanford University, Department of
+    Computer Science, 1979.
     """
-    T = t1 + t2
-    mean = (mu1 + mu2)/2
-    sos = sos1 + sos2 + (t1 * t2/T) * (mu2 - mu1)**2
-    rms_fluctuations = np.sqrt(M.sum(axis=1)/T)
-    return mean, sos, rms_fluctuations
+    T = S1[0] + S2[0]
+    mu = (S1[1] + S2[1])/2
+    M = S1[2] + S2[2] + (S1[0] * S2[0]/T) * (S2[1] - S1[1])**2
+    S = [T, mu, M]
+    return S

@@ -29,9 +29,11 @@ from __future__ import absolute_import
 
 import numpy as np
 
+import functools
+
 from .parallel import ParallelAnalysisBase
 
-from .util import pair_wise_rmsf
+from .util import second_order_moments
 
 
 class RMSF(ParallelAnalysisBase):
@@ -157,48 +159,56 @@ class RMSF(ParallelAnalysisBase):
         sumsquares = self.sumsquares
         mean = self.mean
         agroup = agroups[0]
-        return k, agroup, sumsquares, mean
+        return k, agroup, mean, sumsquares
 
     def _conclude(self):
         """
         self._results : Array
             (n_blocks x 2 x N x 3) array
         """
-        # get length of trajectory slice
-        k = len(self._blocks[0])
-        self.sumsquares = self._results[0, 0]
-        self.mean = self._results[0, 1]
-        self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / k)
+        n_blocks = len(self._results)
+        # serial case
+        if n_blocks == 1:
+            # get length of trajectory slice
+            k = len(self._blocks[0])
+            self.mean = self._results[0, 0]
+            self.sumsquares = self._results[0, 1]
+            self.rmsf = np.sqrt(self.sumsquares.sum(axis=0) / k)
+        # parallel case
+        else:
+            mean = self._results[:, 0]
+            sos = self._results[:, 1]
+            # create list of [timesteps, mean, sumsq] lists for each block
+            vals = []
+            for i in range(n_blocks):
+                vals.append([len(self._blocks[i]), mean[i], sos[i]])
+            # combine block results using folding method
+            results = functools.reduce(second_order_moments, vals[:])
+            self.totalts = results[0]
+            self.mean = results[1]
+            self.sumsquares = results[2]
+            self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.totalts)
         if not (self.rmsf >= 0).all():
             raise ValueError("Some RMSF values negative; overflow " +
                              "or underflow occurred")
+
 
     @staticmethod
     def _reduce(res, result_single_frame):
         """
         'sum' action for time series
-
-        Returns
-        -------
-        res : list
-            2 element list, where the first element is the 'running mean'
-            and the second is the sum of squares. For each time step, the
-            mean and sum of squares are updated.
-        # res[0]  sum of squares
-        # res[1]  mean
         """
-        k = result_single_frame[0]
-        position = np.float64(result_single_frame[1].positions)
+        k, atoms, mean, sumsq = result_single_frame
+        positions = atoms.positions.astype(np.float64)
         # initial time step case
         if len(res) == 0:
             # assign initial (sum of squares and mean) zero-arrays to res
-            res.append(result_single_frame[2])
-            res.append(result_single_frame[3])
+            res = [mean, sumsq]
             # initial positions = initial mean positions
-            res[1] = position
+            res[0] = positions
         else:
             # update sum of squares
-            res[0] += (k / (k + 1)) * (position - res[1]) ** 2
+            res[1] += (k / (k + 1)) * (positions - res[0]) ** 2
             # update mean
-            res[1] = (k * res[1] + position) / (k + 1)
+            res[0] = (k * res[0] + positions) / (k + 1)
         return res
