@@ -1,5 +1,5 @@
 .. -*- coding: utf-8 -*-
-   
+
 =====================
  API for :mod:`pmda`
 =====================
@@ -44,3 +44,4 @@ also function as examples for how to implement your own functions with
    api/contacts
    api/rdf
    api/leaflet
+   api/density
