@@ -83,7 +83,7 @@ def test_same_result(sels, n_blocks):
     assert_almost_equal(nrdf.rdf, prdf.rdf)
 
 
-def test_cdf(sels)
+def test_cdf(sels):
     s1, s2 = sels
     rdf = InterRDF(s1, s2).run()
     rdf.get_cdf()
