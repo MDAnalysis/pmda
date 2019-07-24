@@ -161,6 +161,21 @@ class InterRDF(ParallelAnalysisBase):
         rdf = self.count / (density * vol * self.nf)
         self.rdf = rdf
 
+    def get_cdf(self):
+        """Calculate the cumulative distribution functions (CDF).
+        Note that this is the actual count within a given radius, i.e.,
+        :math:`N(r)`.
+
+        Returns
+        -------
+              cdf : numpy array
+                      a numpy array with the same structure as :attr:`rdf`
+        """
+        cdf = np.cumsum(self.count) / self.nf
+        self.cdf = cdf
+
+        return cdf
+
     @staticmethod
     def _reduce(res, result_single_frame):
         """ 'add' action for an accumulator"""
