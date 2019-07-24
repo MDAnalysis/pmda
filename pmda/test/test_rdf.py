@@ -88,7 +88,7 @@ def test_cdf(sels)
     rdf = InterRDF(s1, s2).run()
     rdf.get_cdf()
     cdf = np.cumsum(rdf.count) / rdf.nf
-    assert rdf.cdf[-1] == rdf_s.count.sum()/rdf_s.nf
+    assert rdf.cdf[-1] == rdf.count.sum()/rdf.nf
     assert_almost_equal(rdf.cdf, cdf)
 
 
