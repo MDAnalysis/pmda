@@ -85,7 +85,8 @@ def test_double_run(rdf_s):
 
 
 def test_cdf(rdf_s):
-    assert_almost_equal(rdf_s.cdf[0][0][0][-1], rdf_s.count[0][0][0].sum()/rdf_s.nf)
+    assert_almost_equal(rdf_s.cdf[0][0][0][-1],
+                        rdf_s.count[0][0][0].sum()/rdf_s.nf)
 
 
 def test_reduce(rdf_s):

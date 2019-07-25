@@ -332,7 +332,7 @@ class InterRDF_s(ParallelAnalysisBase):
                 rdf.append(self.count[i] / (vol * self.nf))
 
         self.rdf = rdf
-    
+
     @property
     def cdf(self):
         """Calculate the cumulative distribution functions (CDF) for all sites.
