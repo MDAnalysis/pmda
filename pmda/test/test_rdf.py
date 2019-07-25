@@ -86,9 +86,8 @@ def test_same_result(sels, n_blocks):
 def test_cdf(sels):
     s1, s2 = sels
     rdf = InterRDF(s1, s2).run()
-    rdf.get_cdf()
     cdf = np.cumsum(rdf.count) / rdf.nf
-    assert rdf.cdf[-1] == rdf.count.sum()/rdf.nf
+    assert_almost_equal(rdf.cdf[-1], rdf.count.sum()/rdf.nf)
     assert_almost_equal(rdf.cdf, cdf)
 
 

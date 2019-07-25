@@ -161,7 +161,8 @@ class InterRDF(ParallelAnalysisBase):
         rdf = self.count / (density * vol * self.nf)
         self.rdf = rdf
 
-    def get_cdf(self):
+    @property
+    def cdf(self):
         """Calculate the cumulative distribution functions (CDF).
         Note that this is the actual count within a given radius, i.e.,
         :math:`N(r)`.
@@ -172,7 +173,6 @@ class InterRDF(ParallelAnalysisBase):
                       a numpy array with the same structure as :attr:`rdf`
         """
         cdf = np.cumsum(self.count) / self.nf
-        self.cdf = cdf
 
         return cdf
 
@@ -332,8 +332,9 @@ class InterRDF_s(ParallelAnalysisBase):
                 rdf.append(self.count[i] / (vol * self.nf))
 
         self.rdf = rdf
-
-    def get_cdf(self):
+    
+    @property
+    def cdf(self):
         """Calculate the cumulative distribution functions (CDF) for all sites.
         Note that this is the actual count within a given radius, i.e.,
         :math:`N(r)`.
@@ -347,12 +348,9 @@ class InterRDF_s(ParallelAnalysisBase):
         # Empty list to restore CDF
         cdf = []
 
+        # cdf is a list of cdf between pairs of AtomGroups in ags
         for count in self.count:
             cdf.append(np.cumsum(count, axis=2) / self.nf)
-
-        # Results stored in self.cdf
-        # self.cdf is a list of cdf between pairs of AtomGroups in ags
-        self.cdf = cdf
 
         return cdf
 
