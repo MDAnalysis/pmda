@@ -45,3 +45,11 @@
                       (ICPP 2018). doi: `10.1145/3225058.3225128`_.
 
 .. _`10.1145/3225058.3225128` : https://doi.org/10.1145/3225058.3225128
+
+.. [Fan2019] Shujie Fan, Max Linke, Ioannis Paraskevakos, Richard J. Gowers,
+	     Michael Gecht, and Oliver Beckstein. PMDA - Parallel Molecular Dynamics
+	     Analysis. In Chris Calloway, David Lippa, Dillon Niederhut, and David Shupe,
+	     editors, Proceedings of the 18th Python in Science Conference,pages 134 – 142,
+	     Austin, TX, 2019. doi:`10.25080/Majora-7ddc1dd1-013`_.
+
+.. _`10.25080/Majora-7ddc1dd1-013` : https://doi.org/10.25080/Majora-7ddc1dd1-013
