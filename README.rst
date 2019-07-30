@@ -100,10 +100,14 @@ To contribute code, submit a *pull request* against the master branch in the
 Citation
 ========
 
-If you use PMDA in published work please cite [Linke2018]_.
+If you use PMDA in published work please cite [Fan2019]_.
 
-.. [Linke2018] Max Linke, & Oliver Beckstein. (2018, May 11). MDAnalysis/pmda:
-               0.1.0 (Version 0.1.0). Zenodo. http://doi.org/10.5281/zenodo.1245759
+.. [Fan2019] Shujie Fan, Max Linke, Ioannis Paraskevakos, Richard J. Gowers,
+	     Michael Gecht, and Oliver Beckstein. PMDA - Parallel Molecular Dynamics
+	     Analysis. In Chris Calloway, David Lippa, Dillon Niederhut, and David Shupe,
+	     editors, Proceedings of the 18th Python in Science Conference,
+	     pages 134 – 142, Austin, TX, 2019.
+	     doi: 10.25080/Majora-7ddc1dd1-013
 
 	       
 .. _MDAnalysis: https://www.mdanalysis.org
