@@ -15,8 +15,9 @@ import pytest
 import time
 import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
+from functools import reduce
 
-from pmda.util import timeit, make_balanced_slices
+from pmda.util import timeit, make_balanced_slices, second_order_moments, sumofsquares
 
 
 def test_timeit():
@@ -130,3 +131,55 @@ def test_make_balanced_slices_ValueError(n_frames, n_blocks,
     with pytest.raises(ValueError):
         make_balanced_slices(n_frames, n_blocks,
                              start=start, stop=stop, step=step)
+
+
+@pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
+def test_second_order_moments(n_frames):
+    # generate array of random positions in range [-100, 100] for 100 time steps
+    pos = 200*(np.random.random(size=(n_frames, 1000, 3)) - 0.5)
+    # random splitting point
+    isplit = (np.random.randint(1, n_frames-1))
+    # split into two partitions; should be fixed to split by n_blocks partitions
+    p1, p2 = pos[:isplit], pos[isplit:]
+    # create [t, mu, M] lists
+    S1 = [len(p1), p1.mean(axis=0), sumofsquares(p1)]
+    S2 = [len(p2), p2.mean(axis=0), sumofsquares(p2)]
+    # run lists through second_order_moments
+    result = second_order_moments(S1, S2)
+    # compare result to calculations over entire pos array
+    assert result[0] == len(pos)
+    assert_almost_equal(result[1], pos.mean(axis=0))
+    assert_almost_equal(result[2], sumofsquares(pos))
+
+
+@pytest.mark.parametrize('n_blocks', [2, 3, 4, 5, 10, 100, 500])
+@pytest.mark.parametrize('n_frames', [1000, 10000, 50000, 100000])
+def test_reduce(n_frames, n_blocks):
+    # generate array of random positions in range [-100, 100] for 100 time steps
+    pos = 200*(np.random.random(size=(n_frames, 1000, 3)) - 0.5).astype(np.float64)
+    # generate array of indices to split pos by
+    split = []
+    for i in range(n_blocks):
+        split.append(np.random.randint(1, n_frames-1))
+    # remove reduntant indices and sort
+    split = np.sort(np.unique(split))
+    # generate list of block slices
+    split_pos = []
+    for i in range(len(split)):
+        if i == 0:
+            split_pos.append(pos[0:split[i]])
+        elif not i == 0 and not i == len(split)-1:
+            split_pos.append(pos[split[i-1]:split[i]])
+        else:
+            split_pos.append(pos[split[-2]:split[-1]])
+            split_pos.append(pos[split[-1]:n_frames])
+    # create list of [t, mu, M] lists
+    S = []
+    for i in range(len(split_pos)):
+        S.append([len(split_pos[i]), split_pos[i].mean(axis=0, dtype=np.float64), sumofsquares(split_pos[i])])
+    # combine block results using fold method
+    results = reduce(second_order_moments, S)
+    # compare result to calculations over entire pos array
+    assert results[0] == len(pos)
+    assert_almost_equal(results[1], pos.mean(axis=0, dtype=np.float64))
+    assert_almost_equal(results[2], sumofsquares(pos), decimal=5)

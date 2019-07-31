@@ -165,6 +165,11 @@ class RMSF(ParallelAnalysisBase):
         self._results : Array
             (n_blocks x 2 x N x 3) array
         """
+        def my_reduce(func, seq):
+            first = seq[0]
+            for i in seq[1:]:
+                first = func(first, i)
+            return first
         n_blocks = len(self._results)
         # serial case
         if n_blocks == 1:
@@ -181,8 +186,8 @@ class RMSF(ParallelAnalysisBase):
             vals = []
             for i in range(n_blocks):
                 vals.append([len(self._blocks[i]), mean[i], sos[i]])
-            # combine block results using folding method
-            results = functools.reduce(second_order_moments, vals[:])
+            # combine block results using fold method
+            results = my_reduce(second_order_moments, vals)
             self.totalts = results[0]
             self.mean = results[1]
             self.sumsquares = results[2]
@@ -206,7 +211,7 @@ class RMSF(ParallelAnalysisBase):
             # assign initial (sum of squares and mean) zero-arrays to res
             res = [mean, sumsq, k]
             # initial positions = initial mean positions
-            res[0] = (k * res[0] + positions) / (k + 1)
+            res[0] = positions
         else:
             # update time step
             k = int(res[2] + 1)

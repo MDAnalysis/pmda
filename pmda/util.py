@@ -185,13 +185,25 @@ def second_order_moments(S1, S2):
 
     Parameters
     ----------
-    S1 : Array
-
-    S2 : Array
+    S1 : array
+        Contains `[T1, mu1, M1]` where `T1` is an integer (number of elements
+        in the partition, e.g., the number of time frames), `mu1` is an
+        `n x m` array of the means for `n` atoms (and for example, `m=3` for
+        the center of geometry), `M1` is also an `n x m` array of the sum of
+        squares.
+    S2 : array
+        Contains `[T2, mu2, M2]` where `T2` is an integer (number of elements
+        in the partition, e.g., the number of time frames), `mu2` is an
+        `n x m` array of the means for `n` atoms (and for example, `m=3` for
+        the center of geometry), `M2` is also an `n x m` array of the sum of
+        squares.
 
     Returns
     -------
-    S : Array
+    S : [T, mu, M]
+        The returned list contains the total number of elements in the
+        partition `T`, the mean `mu` and the "second moment" `M` (sum of
+        squares) for the combined data.
 
     References
     ----------
@@ -199,9 +211,18 @@ def second_order_moments(S1, S2):
     formulae and a pairwise algorithm for computing sample variances."
     Technical Report STAN-CS-79-773, Stanford University, Department of
     Computer Science, 1979.
+
+    .. [Pebay2008] P. Pebay, "Formulas for robust one-pass parallel
+    computation of co-variances and arbitrary-order statistical moments",
+    Technical Report SAND2008-6212, 2008.
     """
     T = S1[0] + S2[0]
-    mu = (S1[1] + S2[1])/2
+    mu = (S1[0]*S1[1] + S2[0]*S2[1])/T
     M = S1[2] + S2[2] + (S1[0] * S2[0]/T) * (S2[1] - S1[1])**2
     S = [T, mu, M]
     return S
+
+
+def sumofsquares(array):
+    """Calculates the sum of squares"""
+    return np.sum((array - array.mean(axis=0))**2, axis=0)
