@@ -140,13 +140,7 @@ To contribute code, submit a *pull request* against the master branch in the
 Citation
 ========
 
-If you use PMDA in published work please cite [Linke2018]_.
-
-.. [Linke2018] Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers,
-               Ioannis Paraskevakos, Michael Gecht. (2018, November
-               2). MDAnalysis/pmda: 0.2.0 (Version 0.2.0). Zenodo.
-               doi: `10.5281/zenodo.1244323
-	       <https://doi.org/10.5281/zenodo.1244323>`_
+If you use PMDA in published work please cite [Fan2019]_.
 	       
 	       
 .. _MDAnalysis: https://www.mdanalysis.org
