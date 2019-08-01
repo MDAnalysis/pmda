@@ -152,8 +152,8 @@ def test_second_order_moments(n_frames):
     assert_almost_equal(result[2], sumofsquares(pos))
 
 
-@pytest.mark.parametrize('n_blocks', [2, 3, 4, 5, 10, 100, 500])
 @pytest.mark.parametrize('n_frames', [1000, 10000, 50000, 100000])
+@pytest.mark.parametrize('n_blocks', [2, 3, 4, 5, 10, 100, 500])
 def test_reduce(n_frames, n_blocks):
     # generate array of random positions in range [-100, 100] for 100 time steps
     pos = 200*(np.random.random(size=(n_frames, 1000, 3)) - 0.5).astype(np.float64)
@@ -181,5 +181,10 @@ def test_reduce(n_frames, n_blocks):
     results = reduce(second_order_moments, S)
     # compare result to calculations over entire pos array
     assert results[0] == len(pos)
+    # check that the mean of the original pos array is equal to the collected mean array from reduce()
     assert_almost_equal(results[1], pos.mean(axis=0, dtype=np.float64))
+    # check that the sum of square arrays are equal
+    # Note: 'decimal' was changed from the default '7' to '5' because the
+    # absolute error for large trajectory lengths (n_frames > 1e4) is not
+    # almost equal to 7 decimal places
     assert_almost_equal(results[2], sumofsquares(pos), decimal=5)

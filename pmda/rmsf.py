@@ -29,7 +29,7 @@ from __future__ import absolute_import
 
 import numpy as np
 
-import functools
+from functools import reduce
 
 from .parallel import ParallelAnalysisBase
 
@@ -165,11 +165,6 @@ class RMSF(ParallelAnalysisBase):
         self._results : Array
             (n_blocks x 2 x N x 3) array
         """
-        def my_reduce(func, seq):
-            first = seq[0]
-            for i in seq[1:]:
-                first = func(first, i)
-            return first
         n_blocks = len(self._results)
         # serial case
         if n_blocks == 1:
@@ -187,7 +182,7 @@ class RMSF(ParallelAnalysisBase):
             for i in range(n_blocks):
                 vals.append([len(self._blocks[i]), mean[i], sos[i]])
             # combine block results using fold method
-            results = my_reduce(second_order_moments, vals)
+            results = reduce(second_order_moments, vals)
             self.totalts = results[0]
             self.mean = results[1]
             self.sumsquares = results[2]
