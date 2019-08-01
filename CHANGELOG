@@ -26,6 +26,10 @@ Fixes
   * default _conclude() in pmda.custom.AnalysisFromFunction fails with
     scalar per frame data (Issue #87)
 
+Changes
+  * Update all docs with the SciPy paper reference (Issue #98)
+
+
 2019/05/23 VOD555
 
   * 0.2.1
