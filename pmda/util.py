@@ -18,6 +18,8 @@ from __future__ import absolute_import, division
 
 import time
 
+import functools
+
 import numpy as np
 
 
@@ -178,6 +180,7 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
 
     return slices
 
+
 def second_order_moments(S1, S2):
     """
     Given the partial centered moments of two partitions (S1 and S2) of a data
@@ -205,6 +208,36 @@ def second_order_moments(S1, S2):
         partition `T`, the mean `mu` and the "second moment" `M` (sum of
         squares) for the combined data.
 
+    Notes
+    -----
+    The variance and sum of squares, otherwise known as the first and second
+    order moments, respectively, are defined as
+
+    M_{1, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})
+
+    and
+
+    M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2,
+
+    where \bar{x} is the time average of x_{t}. In order to calculate the
+    combined mean and second order moments, the following formulae were used:
+
+    \mu = \frac{T_{1}\mu_{1} + T_{2}\mu_{2}}{T}
+
+    and
+
+    M_{2, S} = M_{2, S_{1}} + M_{2, S_{1}} + \
+    \frac{T_{1}T_{2}}{T}(\mu_{2} - \mu_{1})^{2},
+
+    where T, T_{1}, and T_{2} are the respective cardinalities of S, S_{1},
+    and S_{2}, \mu, \mu_{1}, and \mu_{2} are the respective means of S, S_{1},
+    and S_{2}, and M_{2, S}, M_{2, S_{1}}, and M_{2, S_{2}} are the respective
+    second order moments (sum of squares) of S, S_{1}, and S_{2}. With a
+    combined sum of squares and mean, one can take this result and calculate
+    the root-mean-square fluctuations:
+
+    f_{i} = \sqrt{\frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2}
+
     References
     ----------
     .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. "Updating
@@ -223,6 +256,19 @@ def second_order_moments(S1, S2):
     return S
 
 
-def sumofsquares(array):
-    """Calculates the sum of squares"""
-    return np.sum((array - array.mean(axis=0))**2, axis=0)
+def fold_second_order_moments(*args):
+    """
+    'Fold' action for second_order_moments calculation.
+
+    Notes
+    -----
+    Example reduce function:
+
+    def example_reduce(function, arglist):
+        first = arglist[0]
+        for n_block in arglist[1:]:
+            first = function(first, n_block)
+            print(first[0])
+        return first
+    """
+    return functools.reduce(second_order_moments, *args)

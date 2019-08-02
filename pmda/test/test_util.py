@@ -8,16 +8,16 @@
 # Released under the GNU Public Licence, v2 or any higher version
 from __future__ import absolute_import
 
-from six.moves import range
+from six.moves import range, zip
 
 import pytest
 
 import time
+import functools
 import numpy as np
 from numpy.testing import assert_almost_equal, assert_equal
-from functools import reduce
 
-from pmda.util import timeit, make_balanced_slices, second_order_moments, sumofsquares
+from pmda.util import timeit, make_balanced_slices, fold_second_order_moments
 
 
 def test_timeit():
@@ -133,56 +133,74 @@ def test_make_balanced_slices_ValueError(n_frames, n_blocks,
                              start=start, stop=stop, step=step)
 
 
+def sumofsquares(a):
+    """
+    Calculates the sum of squares
+
+    Parameters
+    ----------
+    a : array
+        `t x n x m` array where `ts` is an integer (number of elements in the
+        partition, e.g., the number of time frames), `n` is an integer (number
+        of atoms in the system), and `m` is the number of dimensions (3 in this
+        case).
+    Returns
+    -------
+    sos : array
+        `n x m` array of the sum of squares for 'n' atoms
+    """
+    dev = a - np.mean(a, axis=0)
+    sos = np.sum(dev**2, axis=0)
+    return sos
+
+
+@pytest.fixture(scope="module")
+def pos():
+    """Generates array of random positions in range [-100, 100]"""
+    return 200*(np.random.random(size=(1e5, 1000, 3)) - 0.5).astype(np.float64)
+
+
 @pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
-def test_second_order_moments(n_frames):
-    # generate array of random positions in range [-100, 100] for 100 time steps
-    pos = 200*(np.random.random(size=(n_frames, 1000, 3)) - 0.5)
-    # random splitting point
+def test_second_order_moments(pos, n_frames):
+    pos = pos[:n_frames]
+    # generate random splitting point
     isplit = (np.random.randint(1, n_frames-1))
-    # split into two partitions; should be fixed to split by n_blocks partitions
+    # split into two partitions
     p1, p2 = pos[:isplit], pos[isplit:]
     # create [t, mu, M] lists
     S1 = [len(p1), p1.mean(axis=0), sumofsquares(p1)]
     S2 = [len(p2), p2.mean(axis=0), sumofsquares(p2)]
     # run lists through second_order_moments
-    result = second_order_moments(S1, S2)
+    result = fold_second_order_moments([S1, S2])
     # compare result to calculations over entire pos array
     assert result[0] == len(pos)
     assert_almost_equal(result[1], pos.mean(axis=0))
     assert_almost_equal(result[2], sumofsquares(pos))
 
 
-@pytest.mark.parametrize('n_frames', [1000, 10000, 50000, 100000])
+@pytest.mark.parametrize('n_frames', [1e3, 1e4, 5e4, 1e5])
 @pytest.mark.parametrize('n_blocks', [2, 3, 4, 5, 10, 100, 500])
-def test_reduce(n_frames, n_blocks):
-    # generate array of random positions in range [-100, 100] for 100 time steps
-    pos = 200*(np.random.random(size=(n_frames, 1000, 3)) - 0.5).astype(np.float64)
-    # generate array of indices to split pos by
-    split = []
-    for i in range(n_blocks):
-        split.append(np.random.randint(1, n_frames-1))
-    # remove reduntant indices and sort
-    split = np.sort(np.unique(split))
-    # generate list of block slices
-    split_pos = []
-    for i in range(len(split)):
-        if i == 0:
-            split_pos.append(pos[0:split[i]])
-        elif not i == 0 and not i == len(split)-1:
-            split_pos.append(pos[split[i-1]:split[i]])
-        else:
-            split_pos.append(pos[split[-2]:split[-1]])
-            split_pos.append(pos[split[-1]:n_frames])
-    # create list of [t, mu, M] lists
-    S = []
-    for i in range(len(split_pos)):
-        S.append([len(split_pos[i]), split_pos[i].mean(axis=0, dtype=np.float64), sumofsquares(split_pos[i])])
+def test_fold_second_order_moments(pos, n_frames, n_blocks):
+    pos = pos[:n_frames]
+    # all possible indices, except first and last ones
+    indices = range(1, n_frames-1)
+    # shuffle indices, take the first n_block indices
+    # (need n_blocks-1 indices "between" blocks)
+    split_indices = list(np.random.shuffle(indices)[:n_blocks-1])
+    # create start and stop indices for slices
+    start_indices = [0] + split_indices
+    stop_indices = split_indices + [n_frames]
+    # slice "trajectory" pos into random length blocks to test more than two
+    # cases per iteration
+    blocks = [pos[i:j] for i,j in zip(start_indices, stop_indices)]
+    S = [(len(block), block.mean(axis=0, dtype=np.float64), sumofsquares(block)) for block in blocks]
     # combine block results using fold method
-    results = reduce(second_order_moments, S)
+    results = fold_second_order_moments(S)
     # compare result to calculations over entire pos array
     assert results[0] == len(pos)
-    # check that the mean of the original pos array is equal to the collected mean array from reduce()
-    assert_almost_equal(results[1], pos.mean(axis=0, dtype=np.float64))
+    # check that the mean of the original pos array is equal to the collected
+    # mean array from reduce()
+    assert_almost_equal(results[1], pos.mean(axis=0))
     # check that the sum of square arrays are equal
     # Note: 'decimal' was changed from the default '7' to '5' because the
     # absolute error for large trajectory lengths (n_frames > 1e4) is not

@@ -27,13 +27,13 @@ MDAnalysis.analysis.rms.RMSF
 
 from __future__ import absolute_import
 
-import numpy as np
+import functools
 
-from functools import reduce
+import numpy as np
 
 from .parallel import ParallelAnalysisBase
 
-from .util import second_order_moments
+from .util import fold_second_order_moments
 
 
 class RMSF(ParallelAnalysisBase):
@@ -182,7 +182,7 @@ class RMSF(ParallelAnalysisBase):
             for i in range(n_blocks):
                 vals.append([len(self._blocks[i]), mean[i], sos[i]])
             # combine block results using fold method
-            results = reduce(second_order_moments, vals)
+            results = fold_second_order_moments(vals)
             self.totalts = results[0]
             self.mean = results[1]
             self.sumsquares = results[2]
@@ -190,7 +190,6 @@ class RMSF(ParallelAnalysisBase):
         if not (self.rmsf >= 0).all():
             raise ValueError("Some RMSF values negative; overflow " +
                              "or underflow occurred")
-
 
     @staticmethod
     def _reduce(res, result_single_frame):

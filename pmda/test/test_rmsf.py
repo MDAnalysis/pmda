@@ -15,24 +15,18 @@ def u():
     return mda.Universe(GRO_MEMPROT, XTC_MEMPROT)
 
 
-def test_rmsf_sum(u):
+@pytest.parametrize('n_cores', (1, 2, 3, 4, 5))
+@pytest.parametrize('n_frames', (10, 100))
+def test_rmsf_sum(u, n_cores, n_frames):
     PMDA = pmda.rmsf.RMSF(u.atoms)
-    core_number = 1
-    PMDA.run(n_blocks=core_number, n_jobs=core_number)
-    MDA = mda.analysis.rms.RMSF(u.atoms).run()
+    PMDA.run(stop=n_frames, n_blocks=n_cores, n_jobs=n_cores)
+    MDA = mda.analysis.rms.RMSF(u.atoms).run(stop=n_frames)
     assert np.sum(MDA.rmsf) == np.sum(PMDA.rmsf)
 
-
-def test_rmsf_values(u):
+@pytest.parametrize('n_cores', (1, 2, 3, 4, 5))
+@pytest.parametrize('n_frames', (10, 100))
+def test_rmsf_values(u, n_cores, n_frames):
     PMDA = pmda.rmsf.RMSF(u.atoms)
-    core_number = 1
-    PMDA.run(n_blocks=core_number, n_jobs=core_number)
-    MDA = mda.analysis.rms.RMSF(u.atoms).run()
+    PMDA.run(stop=n_frames, n_blocks=n_cores, n_jobs=n_cores)
+    MDA = mda.analysis.rms.RMSF(u.atoms).run(stop=n_frames)
     assert_almost_equal(MDA.rmsf, PMDA.rmsf)
-
-
-def test_tmpdir(tmpdir):
-    newdir = tmpdir.mkdir('resources')
-    os.chdir(newdir.dirname)
-    filepath = os.path.join(os.path.realpath(pmda.__file__))
-    assert os.path.exists(filepath)
