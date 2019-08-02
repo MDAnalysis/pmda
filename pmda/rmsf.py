@@ -16,8 +16,12 @@ This module contains parallel versions of analysis tasks in
 
 .. autoclass:: RMSF
    :members:
-   :undoc-members:
    :inherited-members:
+
+   .. attribute:: rmsf
+
+      Results are stored in this N-length :class:`numpy.ndarray` array,
+      giving RMSFs for each of the given atoms.
 
 See Also
 --------
@@ -27,8 +31,6 @@ MDAnalysis.analysis.rms.RMSF
 
 from __future__ import absolute_import
 
-import functools
-
 import numpy as np
 
 from .parallel import ParallelAnalysisBase
@@ -37,20 +39,20 @@ from .util import fold_second_order_moments
 
 
 class RMSF(ParallelAnalysisBase):
-    r"""Parallel RMSF Analysis.
+    r"""Parallel RMSF analysis.
 
     Calculates RMSF of given atoms across a trajectory.
 
     Parameters
     ----------
     atomgroup : AtomGroup
-        Atoms for which RMSF is calculated
+       Atoms for which RMSF is calculated
 
     Raises
     ------
     ValueError
-    raised if negative values are calculated, which indicates that a
-    numerical overflow or underflow occured
+        raised if negative values are calculated, which indicates that a
+        numerical overflow or underflow occured
 
     See Also
     --------
@@ -63,27 +65,31 @@ class RMSF(ParallelAnalysisBase):
     aligned to a reference structure (see the Examples section below). The
     protein also has be whole because periodic boundaries are not taken into
     account.
+
     Run the analysis with :meth:`RMSF.run`, which stores the results
     in the array :attr:`RMSF.rmsf`.
 
     The root mean square fluctuation of an atom :math:`i` is computed as the
     time average
+
     .. math::
-    \rho_i = \sqrt{\left\langle (\mathbf{x}_i -
-                                 \langle\mathbf{x}_i\rangle)^2 \right\rangle}
+
+        \rho_i = \sqrt{\left\langle (\mathbf{x}_i -
+                                     \langle\mathbf{x}_i\rangle)^2
+                                     \right\rangle}
+
     No mass weighting is performed.
     This method implements an algorithm for computing sums of squares while
-    avoiding overflows and underflows [Welford1962]_.
+    avoiding overflows and underflows [Welford1962]_, as well as an algorithm
+    for combining the sum of squares and means of separate partitions of a
+    given trajectory to calculate the RMSF of the entire trajectory
+    [CGL1979]_.
 
     References
     ----------
     .. [Welford1962] B. P. Welford (1962). "Note on a Method for
-    Calculating Corrected Sums of Squares and Products." Technometrics
-    4(3):419-420.
-    .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. "Updating
-    formulae and a pairwise algorithm for computing sample variances."
-    Technical Report STAN-CS-79-773, Stanford University, Department of
-    Computer Science, 1979.
+       Calculating Corrected Sums of Squares and Products." Technometrics
+       4(3):419-420.
 
     Examples
     --------
@@ -99,50 +105,48 @@ class RMSF(ParallelAnalysisBase):
     <creating-in-memory-trajectory-label>` that only contains, say, the
     protein)::
 
-       import MDAnalysis as mda
-       from MDAnalysis.analysis import align
-       from MDAnalysis.tests.datafiles import TPR, XTC
-       u = mda.Universe(TPR, XTC, in_memory=True)
-       protein = u.select_atoms("protein")
-       # 1) need a step to center and make whole: this trajectory
-       #    contains the protein being split across periodic boundaries
-       #
-       # TODO
-       # 2) fit to the initial frame to get a better average structure
-       #    (the trajectory is changed in memory)
-       prealigner = align.AlignTraj(u, select="protein and name CA",
-                                    in_memory=True).run()
-       # 3) ref = average structure
-       ref_coordinates = u.trajectory.timeseries(asel=protein).mean(axis=1)
-       # make a reference structure (need to reshape into
-       # a 1-frame "trajectory")
-       ref = mda.Merge(protein).load_new(ref_coordinates[:, None, :],
-                                         order="afc")
+        import MDAnalysis as mda
+        from MDAnalysis.analysis import align
+        from MDAnalysis.tests.datafiles import TPR, XTC
+        u = mda.Universe(TPR, XTC, in_memory=True)
+        protein = u.select_atoms("protein")
+        # Need to center and make whole: this trajectory
+        # contains the protein being split across periodic boundaries.
+        # Fit to the initial frame to get a better average structure
+        # (the trajectory is changed in memory)
+        prealigner = align.AlignTraj(u, select="protein and name CA",
+                                     in_memory=True).run()
+        # ref = average structure
+        ref_coordinates = u.trajectory.timeseries(asel=protein).mean(axis=1)
+        # Make a reference structure (need to reshape into a
+        # 1-frame "trajectory").
+        ref = mda.Merge(protein).load_new(ref_coordinates[:, None, :],
+                                          order="afc")
 
     We created a new universe ``reference`` that contains a single frame
     with the averaged coordinates of the protein.  Now we need to fit the
     whole trajectory to the reference by minimizing the RMSD. We use
     :class:`MDAnalysis.analysis.align.AlignTraj`::
 
-       aligner = align.AlignTraj(u, reference, select="protein and name CA",
-                                 in_memory=True).run()
+        aligner = align.AlignTraj(u, reference, select="protein and name CA",
+                                  in_memory=True).run()
 
     The trajectory is now fitted to the reference (the RMSD is stored as
     `aligner.rmsd` for further inspection). Now we can calculate the RMSF::
 
-       from MDAnalysis.analysis.rms import RMSF
-       calphas = protein.select_atoms("name CA")
-       rmsfer = RMSF(calphas, verbose=True).run()
+        from pmda.rmsf import RMSF
+        calphas = protein.select_atoms("name CA")
+        rmsfer = RMSF(calphas).run()
 
     and plot::
 
-       import matplotlib.pyplot as plt
-       plt.plot(calphas.resnums, rmsfer.rmsf)
-
+        import matplotlib.pyplot as plt
+        plt.plot(calphas.resnums, rmsfer.rmsf)
 
     .. versionadded:: 0.3.0
 
     """
+
     def __init__(self, atomgroup):
         u = atomgroup.universe
         super(RMSF, self).__init__(u, (atomgroup, ))
