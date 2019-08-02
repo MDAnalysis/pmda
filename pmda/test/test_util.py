@@ -157,7 +157,7 @@ def sumofsquares(a):
 @pytest.fixture(scope="module")
 def pos():
     """Generates array of random positions in range [-100, 100]"""
-    return 200*(np.random.random(size=(1e5, 1000, 3)) - 0.5).astype(np.float64)
+    return 200*(np.random.random(size=(100000, 1000, 3)) - 0.5).astype(np.float64)
 
 
 @pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
@@ -178,15 +178,16 @@ def test_second_order_moments(pos, n_frames):
     assert_almost_equal(result[2], sumofsquares(pos))
 
 
-@pytest.mark.parametrize('n_frames', [1e3, 1e4, 5e4, 1e5])
+@pytest.mark.parametrize('n_frames', [1000, 10000, 50000, 100000])
 @pytest.mark.parametrize('n_blocks', [2, 3, 4, 5, 10, 100, 500])
 def test_fold_second_order_moments(pos, n_frames, n_blocks):
     pos = pos[:n_frames]
     # all possible indices, except first and last ones
-    indices = range(1, n_frames-1)
+    indices = [i for i in range(1, n_frames-1)]
     # shuffle indices, take the first n_block indices
     # (need n_blocks-1 indices "between" blocks)
-    split_indices = list(np.random.shuffle(indices)[:n_blocks-1])
+    np.random.shuffle(indices)
+    split_indices = list(indices[:n_blocks-1])
     # create start and stop indices for slices
     start_indices = [0] + split_indices
     stop_indices = split_indices + [n_frames]
