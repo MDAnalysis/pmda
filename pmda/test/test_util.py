@@ -149,22 +149,27 @@ def sumofsquares(a):
     sos : array
         `n x m` array of the sum of squares for 'n' atoms
     """
-    dev = a - np.mean(a, axis=0)
-    sos = np.sum(dev**2, axis=0)
+    dev = a - np.mean(a, axis=0, dtype=np.float64)
+    sos = np.sum(dev**2, axis=0, dtype=np.float64)
     return sos
 
 
 @pytest.fixture(scope="module")
 def pos():
     """Generates array of random positions in range [-100, 100]"""
-    return 200*(np.random.random(size=(100000, 1000, 3)) - 0.5).astype(np.float64)
+    return 200*(np.random.random(size=(100000,
+                                       1000,
+                                       3)) - 0.5).astype(np.float64)
 
 
 @pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
-def test_second_order_moments(pos, n_frames):
+@pytest.mark.parametrize('isplit', [1, -1, 'other'])
+def test_second_order_moments(pos, n_frames, isplit):
+    if isplit == 'other':
+        isplit = np.random.randint(1, n_frames-1)
     pos = pos[:n_frames]
-    # generate random splitting point
-    isplit = (np.random.randint(1, n_frames-1))
+    # # generate random splitting point
+    # isplit = (np.random.randint(1, n_frames-1))
     # split into two partitions
     p1, p2 = pos[:isplit], pos[isplit:]
     # create [t, mu, M] lists
@@ -178,23 +183,24 @@ def test_second_order_moments(pos, n_frames):
     assert_almost_equal(result[2], sumofsquares(pos))
 
 
-@pytest.mark.parametrize('n_frames', [1000, 10000, 50000, 100000])
+@pytest.mark.parametrize('n_frames', [1000, 10000, 50000])
 @pytest.mark.parametrize('n_blocks', [2, 3, 4, 5, 10, 100, 500])
 def test_fold_second_order_moments(pos, n_frames, n_blocks):
     pos = pos[:n_frames]
     # all possible indices, except first and last ones
-    indices = [i for i in range(1, n_frames-1)]
-    # shuffle indices, take the first n_block indices
+    indices = np.arange(1, n_frames-1)
     # (need n_blocks-1 indices "between" blocks)
+    # shuffle indices, take the first n_block indices, and sort
     np.random.shuffle(indices)
-    split_indices = list(indices[:n_blocks-1])
+    split_indices = list(np.sort(indices[:n_blocks-1]))
     # create start and stop indices for slices
     start_indices = [0] + split_indices
     stop_indices = split_indices + [n_frames]
     # slice "trajectory" pos into random length blocks to test more than two
     # cases per iteration
-    blocks = [pos[i:j] for i,j in zip(start_indices, stop_indices)]
-    S = [(len(block), block.mean(axis=0, dtype=np.float64), sumofsquares(block)) for block in blocks]
+    blocks = [pos[i:j] for i, j in zip(start_indices, stop_indices)]
+    S = [(len(block), block.mean(axis=0, dtype=np.float64),
+          sumofsquares(block)) for block in blocks]
     # combine block results using fold method
     results = fold_second_order_moments(S)
     # compare result to calculations over entire pos array

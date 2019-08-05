@@ -190,13 +190,13 @@ def second_order_moments(S1, S2):
     Parameters
     ----------
     S1 : array
-       Contains `[T1, mu1, M1]` where `T1` is an integer (number of elements
+       Contains `(T1, mu1, M1)` where `T1` is an integer (number of elements
        in the partition, e.g., the number of time frames), `mu1` is an
        `n x m` array of the means for `n` atoms (and for example, `m=3` for
        the center of geometry), `M1` is also an `n x m` array of the sum of
        squares.
     S2 : array
-       Contains `[T2, mu2, M2]` where `T2` is an integer (number of elements
+       Contains `(T2, mu2, M2)` where `T2` is an integer (number of elements
        in the partition, e.g., the number of time frames), `mu2` is an
        `n x m` array of the means for `n` atoms (and for example, `m=3` for
        the center of geometry), `M2` is also an `n x m` array of the sum of
@@ -204,8 +204,8 @@ def second_order_moments(S1, S2):
 
     Returns
     -------
-    S : [T, mu, M]
-       The returned list contains the total number of elements in the
+    S : (T, mu, M)
+       The returned tuple contains the total number of elements in the
        partition `T`, the mean `mu` and the "second moment" `M` (sum of
        squares) for the combined data.
 
@@ -267,7 +267,7 @@ def second_order_moments(S1, S2):
     T = S1[0] + S2[0]
     mu = (S1[0]*S1[1] + S2[0]*S2[1])/T
     M = S1[2] + S2[2] + (S1[0] * S2[0]/T) * (S2[1] - S1[1])**2
-    S = [T, mu, M]
+    S = T, mu, M
 
     return S
 
@@ -277,13 +277,14 @@ def fold_second_order_moments(*args):
 
     Takes in data that can be combined associatively (order doesn't matter)
     and applies a combining function in a recursive fashion. In this case,
-    it takes in a list of lists that each contain the total number of time steps,
-    an `n x m` array of mean positions for `n` atoms, and an `n x m` array of
-    second order moments for `n` atoms, for a given partition of a trajectory.
-    It takes the first partition, combines it with the second, combines that
-    result with the third, and that result with the fourth, etc. The final
-    result is a list of the summed time steps, combined mean positions, and
-    combined second order moments of all atoms in the combined trajectory.
+    it takes in a list of lists that each contain the total number of time
+    steps, an `n x m` array of mean positions for `n` atoms, and an `n x m`
+    array of second order moments for `n` atoms, for a given partition of a
+    trajectory. It takes the first partition, combines it with the second,
+    combines that result with the third, and that result with the fourth,
+    etc. The final result is a list of the summed time steps, combined mean
+    positions, and combined second order moments of all atoms in the combined
+    trajectory.
 
     See Also
     --------

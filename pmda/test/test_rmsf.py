@@ -17,16 +17,10 @@ def u():
 
 @pytest.mark.parametrize('n_cores', (1, 2, 3, 4, 5))
 @pytest.mark.parametrize('n_frames', (10, 100))
-def test_rmsf_sum(u, n_cores, n_frames):
-    PMDA = pmda.rmsf.RMSF(u.atoms)
-    PMDA.run(stop=n_frames, n_blocks=n_cores, n_jobs=n_cores)
-    MDA = mda.analysis.rms.RMSF(u.atoms).run(stop=n_frames)
-    assert np.sum(MDA.rmsf) == np.sum(PMDA.rmsf)
-
-@pytest.mark.parametrize('n_cores', (1, 2, 3, 4, 5))
-@pytest.mark.parametrize('n_frames', (10, 100))
-def test_rmsf_values(u, n_cores, n_frames):
-    PMDA = pmda.rmsf.RMSF(u.atoms)
-    PMDA.run(stop=n_frames, n_blocks=n_cores, n_jobs=n_cores)
-    MDA = mda.analysis.rms.RMSF(u.atoms).run(stop=n_frames)
-    assert_almost_equal(MDA.rmsf, PMDA.rmsf)
+def test_RMSF_values(u, n_cores, n_frames):
+    PMDA_values = pmda.rmsf.RMSF(u.atoms)
+    PMDA_values.run(stop=n_frames, n_blocks=n_cores, n_jobs=n_cores)
+    MDA_values = mda.analysis.rms.RMSF(u.atoms).run(stop=n_frames)
+    assert_almost_equal(MDA_values.mean, PMDA_values.mean)
+    assert_almost_equal(MDA_values.sumsquares, PMDA_values.sumsquares)
+    assert_almost_equal(MDA_values.rmsf, PMDA_values.rmsf)

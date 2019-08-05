@@ -176,15 +176,15 @@ class RMSF(ParallelAnalysisBase):
             k = len(self._blocks[0])
             self.mean = self._results[0, 0]
             self.sumsquares = self._results[0, 1]
-            self.rmsf = np.sqrt(self.sumsquares.sum(axis=0) / k)
+            self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / k)
         # parallel case
         else:
             mean = self._results[:, 0]
             sos = self._results[:, 1]
-            # create list of [timesteps, mean, sumsq] lists for each block
+            # create list of (timesteps, mean, sumsq tuples for each block
             vals = []
             for i in range(n_blocks):
-                vals.append([len(self._blocks[i]), mean[i], sos[i]])
+                vals.append((len(self._blocks[i]), mean[i], sos[i]))
             # combine block results using fold method
             results = fold_second_order_moments(vals)
             self.totalts = results[0]
