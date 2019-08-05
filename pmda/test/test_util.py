@@ -163,13 +163,12 @@ def pos():
 
 
 @pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
-@pytest.mark.parametrize('isplit', [1, -1, 'other'])
+@pytest.mark.parametrize('isplit', [1, -1] + ["rand{0:03d}".format(i) for i in range(10)])
 def test_second_order_moments(pos, n_frames, isplit):
-    if isplit == 'other':
-        isplit = np.random.randint(1, n_frames-1)
     pos = pos[:n_frames]
-    # # generate random splitting point
-    # isplit = (np.random.randint(1, n_frames-1))
+    if str(isplit).startswith("rand"):
+        # generate random splitting point
+        isplit = np.random.randint(1, n_frames-1)
     # split into two partitions
     p1, p2 = pos[:isplit], pos[isplit:]
     # create [t, mu, M] lists
