@@ -29,7 +29,7 @@ MDAnalysis.analysis.rms.RMSF
 
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import numpy as np
 
@@ -158,10 +158,10 @@ class RMSF(ParallelAnalysisBase):
         self.sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
         self.mean = self.sumsquares.copy()
 
-    def _single_frame(self, ts, agroups):
+    def _single_frame(self, ts, atomgroups):
         sumsquares = self.sumsquares
         mean = self.mean
-        agroup = agroups[0]
+        agroup = atomgroups[0]
         return agroup, mean, sumsquares
 
     def _conclude(self):
