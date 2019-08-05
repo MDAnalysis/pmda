@@ -15,8 +15,8 @@ def u():
 
 
 @pytest.mark.parametrize('n_cores', (1, 2, 3, 4, 5))
-@pytest.mark.parametrize('n_frames', (10, 50, 100))
-def test_RMSF_values(u, n_cores, n_frames):
+# @pytest.mark.parametrize('n_frames', (5))
+def test_RMSF_values(u, n_cores, n_frames=5):
     atoms = u.select_atoms("all")
     PMDA_vals = pmda.rmsf.RMSF(atoms).run(stop=n_frames,
                                           n_blocks=n_cores,

@@ -163,7 +163,9 @@ def pos():
 
 
 @pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
-@pytest.mark.parametrize('isplit', [1, -1] + ["rand{0:03d}".format(i) for i in range(10)])
+@pytest.mark.parametrize('isplit',
+                         [1, -1] +
+                         ["rand{0:03d}".format(i) for i in range(10)])
 def test_second_order_moments(pos, n_frames, isplit):
     pos = pos[:n_frames]
     if str(isplit).startswith("rand"):
