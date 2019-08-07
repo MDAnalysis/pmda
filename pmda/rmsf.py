@@ -203,16 +203,18 @@ class RMSF(ParallelAnalysisBase):
         atoms, mean, sumsq = result_single_frame
         positions = atoms.positions.astype(np.float64)
         # initial time step case
-        if len(res) == 0:
+        if isinstance(res, list) and len(res) == 0:
             # set initial time step for each block to zero
             k = 0
+            # reset sum of squares array for each block
+            sumsq = np.zeros_like((sumsq))
             # assign initial (sum of squares and mean) zero-arrays to res
             res = [mean, sumsq, k]
             # initial positions = initial mean positions
             res[0] = positions
         else:
             # update time step
-            k = int(res[2] + 1)
+            k = res[2] + 1
             # update sum of squares
             res[1] += (k / (k + 1)) * (positions - res[0]) ** 2
             # update mean
