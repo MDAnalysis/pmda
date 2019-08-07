@@ -35,3 +35,10 @@ def test_RMSF_n_jobs(u, n_cores):
     assert_almost_equal(MDA_vals.mean, PMDA_vals.mean)
     assert_almost_equal(MDA_vals.sumsquares, PMDA_vals.sumsquares)
     assert_almost_equal(MDA_vals.rmsf, PMDA_vals.rmsf)
+
+
+@pytest.mark.parametrize('rmsf_array', [pytest.param(np.array([-1, -1, -1]),
+                                        marks=pytest.mark.xfail)])
+def test_negative_rmsf(u, rmsf_array):
+    PMDA_res = pmda.rmsf.RMSF(u.atoms).run(n_blocks=2, n_jobs=2)
+    PMDA_res._negative_rmsf(np.array([0, -1, -2]))

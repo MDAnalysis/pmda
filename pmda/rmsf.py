@@ -191,9 +191,7 @@ class RMSF(ParallelAnalysisBase):
             self.mean = results[1]
             self.sumsquares = results[2]
             self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.totalts)
-        if not (self.rmsf >= 0).all():
-            raise ValueError("Some RMSF values negative; overflow " +
-                             "or underflow occurred")
+            self._negative_rmsf(self.rmsf)
 
     @staticmethod
     def _reduce(res, result_single_frame):
@@ -222,3 +220,8 @@ class RMSF(ParallelAnalysisBase):
             # update time step in res
             res[2] = k
         return res
+
+    @staticmethod
+    def _negative_rmsf(rmsf):
+        if not (rmsf >= 0).all():
+            raise ValueError("Some RMSF values negative.")
