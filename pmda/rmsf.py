@@ -225,4 +225,4 @@ class RMSF(ParallelAnalysisBase):
     def _negative_rmsf(rmsf):
         if not (rmsf >= 0).all():
             raise ValueError("Some RMSF values negative; overflow " +
-			     "or underflow occurred")
+                             "or underflow occurred")
