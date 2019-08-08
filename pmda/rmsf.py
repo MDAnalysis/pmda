@@ -159,8 +159,10 @@ class RMSF(ParallelAnalysisBase):
         self.mean = self.sumsquares.copy()
 
     def _single_frame(self, ts, atomgroups):
-        sumsquares = self.sumsquares
-        mean = self.mean
+        # create new zero-arrays for sumsquares and mean to prevent blocks
+        # from using data from previous blocks
+        sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
+        mean = sumsquares.copy()
         agroup = atomgroups[0]
         return agroup, mean, sumsquares
 
@@ -204,12 +206,10 @@ class RMSF(ParallelAnalysisBase):
         if isinstance(res, list) and len(res) == 0:
             # set initial time step for each block to zero
             k = 0
-            # reset sum of squares array for each block
-            sumsq = np.zeros_like((sumsq))
+            # initial mean position = initial position
+            mean = positions
             # assign initial (sum of squares and mean) zero-arrays to res
             res = [mean, sumsq, k]
-            # initial positions = initial mean positions
-            res[0] = positions
         else:
             # update time step
             k = res[2] + 1
@@ -224,4 +224,5 @@ class RMSF(ParallelAnalysisBase):
     @staticmethod
     def _negative_rmsf(rmsf):
         if not (rmsf >= 0).all():
-            raise ValueError("Some RMSF values negative.")
+            raise ValueError("Some RMSF values negative; overflow " +
+			     "or underflow occurred")
