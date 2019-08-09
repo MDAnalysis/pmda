@@ -154,17 +154,9 @@ class RMSF(ParallelAnalysisBase):
         self._top = u.filename
         self._traj = u.trajectory.filename
 
-    def _prepare(self):
-        self.sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
-        self.mean = self.sumsquares.copy()
-
     def _single_frame(self, ts, atomgroups):
-        # create new zero-arrays for sumsquares and mean to prevent blocks
-        # from using data from previous blocks
-        sumsquares = np.zeros((self._atomgroup.n_atoms, 3))
-        mean = sumsquares.copy()
-        agroup = atomgroups[0]
-        return agroup, mean, sumsquares
+        # mean and sum of squares calculations done in _reduce()
+        return atomgroups[0]
 
     def _conclude(self):
         """
@@ -200,14 +192,17 @@ class RMSF(ParallelAnalysisBase):
         """
         'sum' action for time series
         """
-        atoms, mean, sumsq = result_single_frame
+        atoms = result_single_frame
         positions = atoms.positions.astype(np.float64)
         # initial time step case
         if isinstance(res, list) and len(res) == 0:
-            # set initial time step for each block to zero
-            k = 0
             # initial mean position = initial position
             mean = positions
+            # create new zero-array for sum of squares to prevent blocks from
+            # using data from previous blocks
+            sumsq = np.zeros((atoms.n_atoms, 3))
+            # set initial time step for each block to zero
+            k = 0
             # assign initial (sum of squares and mean) zero-arrays to res
             res = [mean, sumsq, k]
         else:
