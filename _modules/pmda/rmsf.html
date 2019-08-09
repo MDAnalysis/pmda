@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>pmda.rmsf &#8212; PMDA 0.2.1+14.g9e4321c documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.2.1+14.g9e4321c documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pmda.rmsf</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
+<span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
+<span class="c1">#</span>
+<span class="c1"># PMDA</span>
+<span class="c1"># Copyright (c) 2019 The MDAnalysis Development Team and contributors</span>
+<span class="c1"># (see the file AUTHORS for the full list of names)</span>
+<span class="c1">#</span>
+<span class="c1"># Released under the GNU Public Licence, v2 or any higher version</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Calculating Root-Mean-Square Fluctuations (RMSF) --- :mod:`pmda.rmsf`</span>
+<span class="sd">=====================================================================</span>
+
+<span class="sd">This module contains parallel versions of analysis tasks in</span>
+<span class="sd">:mod:`MDAnalysis.analysis.rms`.</span>
+
+<span class="sd">.. autoclass:: RMSF</span>
+<span class="sd">   :members:</span>
+<span class="sd">   :inherited-members:</span>
+
+<span class="sd">   .. attribute:: rmsf</span>
+
+<span class="sd">      Results are stored in this N-length :class:`numpy.ndarray` array,</span>
+<span class="sd">      giving RMSFs for each of the given atoms.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">MDAnalysis.analysis.rms.RMSF</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">fold_second_order_moments</span>
+
+
+<div class="viewcode-block" id="RMSF"><a class="viewcode-back" href="../../api/rmsf.html#pmda.rmsf.RMSF">[docs]</a><span class="k">class</span> <span class="nc">RMSF</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Parallel RMSF analysis.</span>
+
+<span class="sd">    Calculates RMSF of given atoms across a trajectory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    atomgroup : AtomGroup</span>
+<span class="sd">       Atoms for which RMSF is calculated</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        raised if negative values are calculated, which indicates that a</span>
+<span class="sd">        numerical overflow or underflow occured</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MDAnalysis.analysis.rms.RMSF</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    No RMSD-superposition is performed; it is assumed that the user is</span>
+<span class="sd">    providing a trajectory where the protein of interest has been structurally</span>
+<span class="sd">    aligned to a reference structure (see the Examples section below). The</span>
+<span class="sd">    protein also has be whole because periodic boundaries are not taken into</span>
+<span class="sd">    account.</span>
+
+<span class="sd">    Run the analysis with :meth:`RMSF.run`, which stores the results</span>
+<span class="sd">    in the array :attr:`RMSF.rmsf`.</span>
+
+<span class="sd">    The root mean square fluctuation of an atom :math:`i` is computed as the</span>
+<span class="sd">    time average</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho_i = \sqrt{\left\langle (\mathbf{x}_i -</span>
+<span class="sd">                                     \langle\mathbf{x}_i\rangle)^2</span>
+<span class="sd">                                     \right\rangle}</span>
+
+<span class="sd">    No mass weighting is performed.</span>
+<span class="sd">    This method implements an algorithm for computing sums of squares while</span>
+<span class="sd">    avoiding overflows and underflows [Welford1962]_, as well as an algorithm</span>
+<span class="sd">    for combining the sum of squares and means of separate partitions of a</span>
+<span class="sd">    given trajectory to calculate the RMSF of the entire trajectory</span>
+<span class="sd">    [CGL1979]_.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [Welford1962] B. P. Welford (1962). &quot;Note on a Method for</span>
+<span class="sd">       Calculating Corrected Sums of Squares and Products.&quot; Technometrics</span>
+<span class="sd">       4(3):419-420.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    In this example we calculate the residue RMSF fluctuations by analyzing</span>
+<span class="sd">    the :math:`\text{C}_\alpha` atoms. First we need to fit the trajectory</span>
+<span class="sd">    to the average structure as a reference. That requires calculating the</span>
+<span class="sd">    average structure first. Because we need to analyze and manipulate the</span>
+<span class="sd">    same trajectory multiple times, we are going to load it into memory</span>
+<span class="sd">    using the :mod:`~MDAnalysis.coordinates.MemoryReader`. (If your</span>
+<span class="sd">    trajectory does not fit into memory, you will need to :ref:`write out</span>
+<span class="sd">    intermediate trajectories &lt;writing-trajectories&gt;` to disk or</span>
+<span class="sd">    :ref:`generate an in-memory universe</span>
+<span class="sd">    &lt;creating-in-memory-trajectory-label&gt;` that only contains, say, the</span>
+<span class="sd">    protein)::</span>
+
+<span class="sd">        import MDAnalysis as mda</span>
+<span class="sd">        from MDAnalysis.analysis import align</span>
+<span class="sd">        from MDAnalysis.tests.datafiles import TPR, XTC</span>
+<span class="sd">        u = mda.Universe(TPR, XTC, in_memory=True)</span>
+<span class="sd">        protein = u.select_atoms(&quot;protein&quot;)</span>
+<span class="sd">        # Need to center and make whole: this trajectory</span>
+<span class="sd">        # contains the protein being split across periodic boundaries.</span>
+<span class="sd">        # Fit to the initial frame to get a better average structure</span>
+<span class="sd">        # (the trajectory is changed in memory)</span>
+<span class="sd">        prealigner = align.AlignTraj(u, select=&quot;protein and name CA&quot;,</span>
+<span class="sd">                                     in_memory=True).run()</span>
+<span class="sd">        # ref = average structure</span>
+<span class="sd">        ref_coordinates = u.trajectory.timeseries(asel=protein).mean(axis=1)</span>
+<span class="sd">        # Make a reference structure (need to reshape into a</span>
+<span class="sd">        # 1-frame &quot;trajectory&quot;).</span>
+<span class="sd">        ref = mda.Merge(protein).load_new(ref_coordinates[:, None, :],</span>
+<span class="sd">                                          order=&quot;afc&quot;)</span>
+
+<span class="sd">    We created a new universe ``reference`` that contains a single frame</span>
+<span class="sd">    with the averaged coordinates of the protein.  Now we need to fit the</span>
+<span class="sd">    whole trajectory to the reference by minimizing the RMSD. We use</span>
+<span class="sd">    :class:`MDAnalysis.analysis.align.AlignTraj`::</span>
+
+<span class="sd">        aligner = align.AlignTraj(u, reference, select=&quot;protein and name CA&quot;,</span>
+<span class="sd">                                  in_memory=True).run()</span>
+
+<span class="sd">    The trajectory is now fitted to the reference (the RMSD is stored as</span>
+<span class="sd">    `aligner.rmsd` for further inspection). Now we can calculate the RMSF::</span>
+
+<span class="sd">        from pmda.rmsf import RMSF</span>
+<span class="sd">        calphas = protein.select_atoms(&quot;name CA&quot;)</span>
+<span class="sd">        rmsfer = RMSF(calphas).run()</span>
+
+<span class="sd">    and plot::</span>
+
+<span class="sd">        import matplotlib.pyplot as plt</span>
+<span class="sd">        plt.plot(calphas.resnums, rmsfer.rmsf)</span>
+
+<span class="sd">    .. versionadded:: 0.3.0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atomgroup</span><span class="p">):</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">atomgroup</span><span class="o">.</span><span class="n">universe</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RMSF</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="p">(</span><span class="n">atomgroup</span><span class="p">,</span> <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atomgroup</span> <span class="o">=</span> <span class="n">atomgroup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traj</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">_single_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">atomgroups</span><span class="p">):</span>
+        <span class="c1"># mean and sum of squares calculations done in _reduce()</span>
+        <span class="k">return</span> <span class="n">atomgroups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_conclude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        self._results : Array</span>
+<span class="sd">            (n_blocks x 2 x N x 3) array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_blocks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
+        <span class="c1"># serial case</span>
+        <span class="k">if</span> <span class="n">n_blocks</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># get length of trajectory slice</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sumsquares</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rmsf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sumsquares</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span>
+        <span class="c1"># parallel case</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">sos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># create list of (timesteps, mean, sumsq tuples for each block</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">):</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">mean</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sos</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="c1"># combine block results using fold method</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">fold_second_order_moments</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">totalts</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sumsquares</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rmsf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sumsquares</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">totalts</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_negative_rmsf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmsf</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &#39;sum&#39; action for time series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">result_single_frame</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="c1"># initial time step case</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># initial mean position = initial position</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">positions</span>
+            <span class="c1"># create new zero-array for sum of squares to prevent blocks from</span>
+            <span class="c1"># using data from previous blocks</span>
+            <span class="n">sumsq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">atoms</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="c1"># set initial time step for each block to zero</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># assign initial (sum of squares and mean) zero-arrays to res</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">mean</span><span class="p">,</span> <span class="n">sumsq</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># update time step</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="c1"># update sum of squares</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">k</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">positions</span> <span class="o">-</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="c1"># update mean</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">positions</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># update time step in res</span>
+            <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_negative_rmsf</span><span class="p">(</span><span class="n">rmsf</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rmsf</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Some RMSF values negative; overflow &quot;</span> <span class="o">+</span>
+                             <span class="s2">&quot;or underflow occurred&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

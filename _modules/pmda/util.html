@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.util &#8212; PMDA 0.2.1+13.g34d465b documentation</title>
+    <title>pmda.util &#8212; PMDA 0.2.1+14.g9e4321c documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+13.g34d465b documentation"
+          title="Search within PMDA 0.2.1+14.g9e4321c documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -55,6 +55,8 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -215,6 +217,119 @@
     <span class="n">slices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">last</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">last_stop</span><span class="p">,</span> <span class="n">last</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">slices</span></div>
+
+
+<div class="viewcode-block" id="second_order_moments"><a class="viewcode-back" href="../../api/util.html#pmda.util.second_order_moments">[docs]</a><span class="k">def</span> <span class="nf">second_order_moments</span><span class="p">(</span><span class="n">S1</span><span class="p">,</span> <span class="n">S2</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculates the combined second order moment.</span>
+
+<span class="sd">    Given the partial centered moments of two partitions (S1 and S2) of a data</span>
+<span class="sd">    set S, calculates the second order moments of S = S1 ∪ S2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    S1 : array</span>
+<span class="sd">       Contains `(T1, mu1, M1)` where `T1` is an integer (number of elements</span>
+<span class="sd">       in the partition, e.g., the number of time frames), `mu1` is an</span>
+<span class="sd">       `n x m` array of the means for `n` atoms (and for example, `m=3` for</span>
+<span class="sd">       the center of geometry), `M1` is also an `n x m` array of the sum of</span>
+<span class="sd">       squares.</span>
+<span class="sd">    S2 : array</span>
+<span class="sd">       Contains `(T2, mu2, M2)` where `T2` is an integer (number of elements</span>
+<span class="sd">       in the partition, e.g., the number of time frames), `mu2` is an</span>
+<span class="sd">       `n x m` array of the means for `n` atoms (and for example, `m=3` for</span>
+<span class="sd">       the center of geometry), `M2` is also an `n x m` array of the sum of</span>
+<span class="sd">       squares.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    S : (T, mu, M)</span>
+<span class="sd">       The returned tuple contains the total number of elements in the</span>
+<span class="sd">       partition `T`, the mean `mu` and the &quot;second moment&quot; `M` (sum of</span>
+<span class="sd">       squares) for the combined data.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The variance and sum of squares, known as the first and second order</span>
+<span class="sd">    moments, are defined as</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        M_{1, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})</span>
+
+<span class="sd">    and</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2,</span>
+
+<span class="sd">    where :math:`\bar{x}` is the time average of :math:`x_{t}`. In order to</span>
+<span class="sd">    combine the mean and second order moments of two separate partitions,</span>
+<span class="sd">    [CGL1979]_ derived the following formulae:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mu = \frac{T_{1}\mu_{1} + T_{2}\mu_{2}}{T}</span>
+
+<span class="sd">    and</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        M_{2, S} = M_{2, S_{1}} + M_{2, S_{2}} + \</span>
+<span class="sd">        \frac{T_{1}T_{2}}{T}(\mu_{2} - \mu_{1})^{2},</span>
+
+<span class="sd">    where :math:`T`, :math:`T_{1}`, and :math:`T_{2}` are the respective</span>
+<span class="sd">    cardinalities of :math:`S`, :math:`S_{1}`, and :math:`S_{2}`, :math:`\mu`,</span>
+<span class="sd">    :math:`\mu_{1}`, and :math:`\mu_{2}` are the respective means of</span>
+<span class="sd">    :math:`S`, :math:`S_{1}`, and :math:`S_{2}`, and :math:`M_{2, S}`,</span>
+<span class="sd">    :math:`M_{2, S_{1}}`, and :math:`M_{2, S_{2}}` are the respective second</span>
+<span class="sd">    order moments of :math:`S`, :math:`S_{1}`, and :math:`S_{2}`. This is</span>
+<span class="sd">    similar notation to [Pebay2008]_. With a combined sum of squares and mean,</span>
+<span class="sd">    one can take this result and calculate the root-mean-square fluctuations:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f_{i} = \sqrt{\frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2}</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. &quot;Updating</span>
+<span class="sd">       formulae and a pairwise algorithm for computing sample variances.&quot;</span>
+<span class="sd">       Technical Report STAN-CS-79-773, Stanford University, Department of</span>
+<span class="sd">       Computer Science, 1979.</span>
+<span class="sd">    .. [Pebay2008] P. Pebay. &quot;Formulas for robust one-pass parallel</span>
+<span class="sd">       computation of co-variances and arbitrary-order statistical moments.&quot;</span>
+<span class="sd">       Technical Report SAND2008-6212, 2008.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">T</span> <span class="o">=</span> <span class="n">S1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">S2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="n">S1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">S1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">S2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">S2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">T</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">S1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">S2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">S1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">S2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">S2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">S1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">M</span>
+
+    <span class="k">return</span> <span class="n">S</span></div>
+
+
+<div class="viewcode-block" id="fold_second_order_moments"><a class="viewcode-back" href="../../api/util.html#pmda.util.fold_second_order_moments">[docs]</a><span class="k">def</span> <span class="nf">fold_second_order_moments</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fold action for second_order_moments calculation.</span>
+
+<span class="sd">    Takes in data that can be combined associatively (order doesn&#39;t matter)</span>
+<span class="sd">    and applies a combining function in a recursive fashion. In this case,</span>
+<span class="sd">    it takes in a list of lists that each contain the total number of time</span>
+<span class="sd">    steps, an `n x m` array of mean positions for `n` atoms, and an `n x m`</span>
+<span class="sd">    array of second order moments for `n` atoms, for a given partition of a</span>
+<span class="sd">    trajectory. It takes the first partition, combines it with the second,</span>
+<span class="sd">    combines that result with the third, and that result with the fourth,</span>
+<span class="sd">    etc. The final result is a list of the summed time steps, combined mean</span>
+<span class="sd">    positions, and combined second order moments of all atoms in the combined</span>
+<span class="sd">    trajectory.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    `Haskell fold/reduce method &lt;https://wiki.haskell.org/Fold&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">second_order_moments</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>2.2.6. Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf &#8212; PMDA 0.2.1+14.g9e4321c documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.2.1+14.g9e4321c documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. References" href="../references.html" />
+    <link rel="prev" title="2.2.5. Generating Densities from Trajectories — pmda.density" href="density.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <span class="target" id="module-pmda.rmsf"></span><div class="section" id="calculating-root-mean-square-fluctuations-rmsf-pmda-rmsf">
+<h1>2.2.6. Calculating Root-Mean-Square Fluctuations (RMSF) — <a class="reference internal" href="#module-pmda.rmsf" title="pmda.rmsf"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a><a class="headerlink" href="#calculating-root-mean-square-fluctuations-rmsf-pmda-rmsf" title="Permalink to this headline">¶</a></h1>
+<p>This module contains parallel versions of analysis tasks in
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v0.19)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
+<dl class="class">
+<dt id="pmda.rmsf.RMSF">
+<em class="property">class </em><code class="sig-prename descclassname">pmda.rmsf.</code><code class="sig-name descname">RMSF</code><span class="sig-paren">(</span><em class="sig-param">atomgroup</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rmsf.html#RMSF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rmsf.RMSF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parallel RMSF analysis.</p>
+<p>Calculates RMSF of given atoms across a trajectory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>atomgroup</strong> (<em>AtomGroup</em>) – Atoms for which RMSF is calculated</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><strong>ValueError</strong></a> – raised if negative values are calculated, which indicates that a
+    numerical overflow or underflow occured</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>No RMSD-superposition is performed; it is assumed that the user is
+providing a trajectory where the protein of interest has been structurally
+aligned to a reference structure (see the Examples section below). The
+protein also has be whole because periodic boundaries are not taken into
+account.</p>
+<p>Run the analysis with <a class="reference internal" href="#pmda.rmsf.RMSF.run" title="pmda.rmsf.RMSF.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RMSF.run()</span></code></a>, which stores the results
+in the array <a class="reference internal" href="#pmda.rmsf.RMSF.rmsf" title="pmda.rmsf.RMSF.rmsf"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RMSF.rmsf</span></code></a>.</p>
+<p>The root mean square fluctuation of an atom <span class="math notranslate nohighlight">\(i\)</span> is computed as the
+time average</p>
+<div class="math notranslate nohighlight">
+\[\rho_i = \sqrt{\left\langle (\mathbf{x}_i -
+                             \langle\mathbf{x}_i\rangle)^2
+                             \right\rangle}\]</div>
+<p>No mass weighting is performed.
+This method implements an algorithm for computing sums of squares while
+avoiding overflows and underflows <a class="reference internal" href="#welford1962" id="id1"><span>[Welford1962]</span></a>, as well as an algorithm
+for combining the sum of squares and means of separate partitions of a
+given trajectory to calculate the RMSF of the entire trajectory
+<a class="reference internal" href="util.html#cgl1979" id="id2"><span>[CGL1979]</span></a>.</p>
+<p class="rubric">References</p>
+<dl class="citation">
+<dt class="label" id="welford1962"><span class="brackets"><a class="fn-backref" href="#id1">Welford1962</a></span></dt>
+<dd><p>B. P. Welford (1962). “Note on a Method for
+Calculating Corrected Sums of Squares and Products.” Technometrics
+4(3):419-420.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>In this example we calculate the residue RMSF fluctuations by analyzing
+the <span class="math notranslate nohighlight">\(\text{C}_\alpha\)</span> atoms. First we need to fit the trajectory
+to the average structure as a reference. That requires calculating the
+average structure first. Because we need to analyze and manipulate the
+same trajectory multiple times, we are going to load it into memory
+using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">MemoryReader</span></code>. (If your
+trajectory does not fit into memory, you will need to <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/coordinates/init.html#writing-trajectories" title="(in MDAnalysis v0.19)"><span class="xref std std-ref">write out
+intermediate trajectories</span></a> to disk or
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/coordinates/memory.html#creating-in-memory-trajectory-label" title="(in MDAnalysis v0.19)"><span class="xref std std-ref">generate an in-memory universe</span></a> that only contains, say, the
+protein):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.analysis</span> <span class="k">import</span> <span class="n">align</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="k">import</span> <span class="n">TPR</span><span class="p">,</span> <span class="n">XTC</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">TPR</span><span class="p">,</span> <span class="n">XTC</span><span class="p">,</span> <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">protein</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
+<span class="c1"># Need to center and make whole: this trajectory</span>
+<span class="c1"># contains the protein being split across periodic boundaries.</span>
+<span class="c1"># Fit to the initial frame to get a better average structure</span>
+<span class="c1"># (the trajectory is changed in memory)</span>
+<span class="n">prealigner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
+                             <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="c1"># ref = average structure</span>
+<span class="n">ref_coordinates</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">asel</span><span class="o">=</span><span class="n">protein</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Make a reference structure (need to reshape into a</span>
+<span class="c1"># 1-frame &quot;trajectory&quot;).</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Merge</span><span class="p">(</span><span class="n">protein</span><span class="p">)</span><span class="o">.</span><span class="n">load_new</span><span class="p">(</span><span class="n">ref_coordinates</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:],</span>
+                                  <span class="n">order</span><span class="o">=</span><span class="s2">&quot;afc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We created a new universe <code class="docutils literal notranslate"><span class="pre">reference</span></code> that contains a single frame
+with the averaged coordinates of the protein.  Now we need to fit the
+whole trajectory to the reference by minimizing the RMSD. We use
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/align.html#MDAnalysis.analysis.align.AlignTraj" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.align.AlignTraj</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aligner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
+                          <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The trajectory is now fitted to the reference (the RMSD is stored as
+<cite>aligner.rmsd</cite> for further inspection). Now we can calculate the RMSF:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pmda.rmsf</span> <span class="k">import</span> <span class="n">RMSF</span>
+<span class="n">calphas</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;name CA&quot;</span><span class="p">)</span>
+<span class="n">rmsfer</span> <span class="o">=</span> <span class="n">RMSF</span><span class="p">(</span><span class="n">calphas</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>and plot:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">calphas</span><span class="o">.</span><span class="n">resnums</span><span class="p">,</span> <span class="n">rmsfer</span><span class="o">.</span><span class="n">rmsf</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.3.0.</span></p>
+</div>
+<dl class="attribute">
+<dt id="pmda.rmsf.RMSF.rmsf">
+<code class="sig-name descname">rmsf</code><a class="headerlink" href="#pmda.rmsf.RMSF.rmsf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Results are stored in this N-length <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> array,
+giving RMSFs for each of the given atoms.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pmda.rmsf.RMSF.readonly_attributes">
+<code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rmsf.RMSF.readonly_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the attributes of this class to be read only</p>
+<p>Useful to avoid the class being modified when passing it around.</p>
+<p>To be used as a context manager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">analysis</span><span class="o">.</span><span class="n">readonly_attributes</span><span class="p">():</span>
+    <span class="n">some_function</span><span class="p">(</span><span class="n">analysis</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pmda.rmsf.RMSF.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=1</em>, <em class="sig-param">n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.rmsf.RMSF.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the calculation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+This argument will be ignored when the distributed scheduler is
+used</p></li>
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+to n_jobs or number of available workers in scheduler.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rms.html">2.2.1. RMSD analysis tools — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="contacts.html">2.2.2. Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rdf.html">2.2.3. Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.4. LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="density.html">2.2.5. Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.6. Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
+      <li>Previous: <a href="density.html" title="previous chapter">2.2.5. Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
+      <li>Next: <a href="../references.html" title="next chapter">3. References</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/api/rmsf.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
