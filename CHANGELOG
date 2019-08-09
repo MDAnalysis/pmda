@@ -13,7 +13,7 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-2019/**/** VOD555 nawtrey
+2019/**/** VOD555, nawtrey
 
   * 0.3.0
 
@@ -21,6 +21,7 @@ Enhancements
   * add timer for block-IO and block-compute
   * store block information in `_block` attribute (Issue #89)
   * add parallel density class (Issue #8)
+  * add parallel RMSF class (Issue #90)
 
 Fixes
   * default _conclude() in pmda.custom.AnalysisFromFunction fails with

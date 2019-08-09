@@ -18,6 +18,8 @@ from __future__ import absolute_import, division
 
 import time
 
+import functools
+
 import numpy as np
 
 
@@ -177,3 +179,116 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
     slices[-1] = slice(last.start, last_stop, last.step)
 
     return slices
+
+
+def second_order_moments(S1, S2):
+    r"""Calculates the combined second order moment.
+
+    Given the partial centered moments of two partitions (S1 and S2) of a data
+    set S, calculates the second order moments of S = S1 ∪ S2.
+
+    Parameters
+    ----------
+    S1 : array
+       Contains `(T1, mu1, M1)` where `T1` is an integer (number of elements
+       in the partition, e.g., the number of time frames), `mu1` is an
+       `n x m` array of the means for `n` atoms (and for example, `m=3` for
+       the center of geometry), `M1` is also an `n x m` array of the sum of
+       squares.
+    S2 : array
+       Contains `(T2, mu2, M2)` where `T2` is an integer (number of elements
+       in the partition, e.g., the number of time frames), `mu2` is an
+       `n x m` array of the means for `n` atoms (and for example, `m=3` for
+       the center of geometry), `M2` is also an `n x m` array of the sum of
+       squares.
+
+    Returns
+    -------
+    S : (T, mu, M)
+       The returned tuple contains the total number of elements in the
+       partition `T`, the mean `mu` and the "second moment" `M` (sum of
+       squares) for the combined data.
+
+    Notes
+    -----
+    The variance and sum of squares, known as the first and second order
+    moments, are defined as
+
+    .. math::
+
+        M_{1, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})
+
+    and
+
+    .. math::
+
+        M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2,
+
+    where :math:`\bar{x}` is the time average of :math:`x_{t}`. In order to
+    combine the mean and second order moments of two separate partitions,
+    [CGL1979]_ derived the following formulae:
+
+    .. math::
+
+        \mu = \frac{T_{1}\mu_{1} + T_{2}\mu_{2}}{T}
+
+    and
+
+    .. math::
+
+        M_{2, S} = M_{2, S_{1}} + M_{2, S_{2}} + \
+        \frac{T_{1}T_{2}}{T}(\mu_{2} - \mu_{1})^{2},
+
+    where :math:`T`, :math:`T_{1}`, and :math:`T_{2}` are the respective
+    cardinalities of :math:`S`, :math:`S_{1}`, and :math:`S_{2}`, :math:`\mu`,
+    :math:`\mu_{1}`, and :math:`\mu_{2}` are the respective means of
+    :math:`S`, :math:`S_{1}`, and :math:`S_{2}`, and :math:`M_{2, S}`,
+    :math:`M_{2, S_{1}}`, and :math:`M_{2, S_{2}}` are the respective second
+    order moments of :math:`S`, :math:`S_{1}`, and :math:`S_{2}`. This is
+    similar notation to [Pebay2008]_. With a combined sum of squares and mean,
+    one can take this result and calculate the root-mean-square fluctuations:
+
+    .. math::
+
+        f_{i} = \sqrt{\frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2}
+
+    References
+    ----------
+    .. [CGL1979] T. F. Chan, G. H. Golub, and R. J. LeVeque. "Updating
+       formulae and a pairwise algorithm for computing sample variances."
+       Technical Report STAN-CS-79-773, Stanford University, Department of
+       Computer Science, 1979.
+    .. [Pebay2008] P. Pebay. "Formulas for robust one-pass parallel
+       computation of co-variances and arbitrary-order statistical moments."
+       Technical Report SAND2008-6212, 2008.
+
+    """
+
+    T = S1[0] + S2[0]
+    mu = (S1[0]*S1[1] + S2[0]*S2[1])/T
+    M = S1[2] + S2[2] + (S1[0] * S2[0]/T) * (S2[1] - S1[1])**2
+    S = T, mu, M
+
+    return S
+
+
+def fold_second_order_moments(*args):
+    """Fold action for second_order_moments calculation.
+
+    Takes in data that can be combined associatively (order doesn't matter)
+    and applies a combining function in a recursive fashion. In this case,
+    it takes in a list of lists that each contain the total number of time
+    steps, an `n x m` array of mean positions for `n` atoms, and an `n x m`
+    array of second order moments for `n` atoms, for a given partition of a
+    trajectory. It takes the first partition, combines it with the second,
+    combines that result with the third, and that result with the fourth,
+    etc. The final result is a list of the summed time steps, combined mean
+    positions, and combined second order moments of all atoms in the combined
+    trajectory.
+
+    See Also
+    --------
+    `Haskell fold/reduce method <https://wiki.haskell.org/Fold>`_
+
+    """
+    return functools.reduce(second_order_moments, *args)

@@ -45,3 +45,4 @@ also function as examples for how to implement your own functions with
    api/rdf
    api/leaflet
    api/density
+   api/rmsf

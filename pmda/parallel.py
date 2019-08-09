@@ -393,9 +393,9 @@ class ParallelAnalysisBase(object):
             # record conclude time
             with timeit() as conclude:
                 self._results = np.asarray([el[0] for el in res])
-                self._conclude()
                 # save the frame numbers for all blocks
                 self._blocks = _blocks
+                self._conclude()
         # put all time information into the timing object
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
