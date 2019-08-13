@@ -262,6 +262,8 @@ def second_order_moments(S1, S2):
        computation of co-variances and arbitrary-order statistical moments."
        Technical Report SAND2008-6212, 2008.
 
+
+    .. versionadded:: 0.3.0
     """
 
     T = S1[0] + S2[0]
@@ -273,22 +275,24 @@ def second_order_moments(S1, S2):
 
 
 def fold_second_order_moments(*args):
-    """Fold action for second_order_moments calculation.
+    """Fold action for :func:`second_order_moments` calculation.
 
-    Takes in data that can be combined associatively (order doesn't matter)
-    and applies a combining function in a recursive fashion. In this case,
-    it takes in a list of lists that each contain the total number of time
-    steps, an `n x m` array of mean positions for `n` atoms, and an `n x m`
-    array of second order moments for `n` atoms, for a given partition of a
-    trajectory. It takes the first partition, combines it with the second,
-    combines that result with the third, and that result with the fourth,
-    etc. The final result is a list of the summed time steps, combined mean
-    positions, and combined second order moments of all atoms in the combined
-    trajectory.
+    Takes in data that can be combined associatively (order doesn't matter) and
+    applies a combining function in a recursive fashion. In this case, it takes
+    in a list of lists that each contain the total number of time steps, an `n
+    x m` array of mean positions for `n` atoms, and an `n x m` array of second
+    order moments for `n` atoms, for a given partition of a trajectory. It
+    takes the first partition, combines it with the second, combines that
+    result with the third, and that result with the fourth, etc. using
+    :func:`second_order_moments`. The final result is a list of the summed time
+    steps, combined mean positions, and combined second order moments of all
+    atoms in the combined trajectory.
 
     See Also
     --------
     `Haskell fold/reduce method <https://wiki.haskell.org/Fold>`_
 
+
+    .. versionadded:: 0.3.0
     """
     return functools.reduce(second_order_moments, *args)

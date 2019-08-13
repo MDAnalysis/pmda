@@ -110,11 +110,14 @@ class RMSF(ParallelAnalysisBase):
         from MDAnalysis.tests.datafiles import TPR, XTC
         u = mda.Universe(TPR, XTC, in_memory=True)
         protein = u.select_atoms("protein")
-        # Need to center and make whole: this trajectory
-        # contains the protein being split across periodic boundaries.
+
+        # TODO: Need to center and make whole (this test trajectory
+        # contains the protein being split across periodic boundaries
+        # and the results will be WRONG!)
+
         # Fit to the initial frame to get a better average structure
         # (the trajectory is changed in memory)
-        prealigner = align.AlignTraj(u, select="protein and name CA",
+        prealigner = align.AlignTraj(u, u, select="protein and name CA",
                                      in_memory=True).run()
         # ref = average structure
         ref_coordinates = u.trajectory.timeseries(asel=protein).mean(axis=1)
@@ -128,14 +131,25 @@ class RMSF(ParallelAnalysisBase):
     whole trajectory to the reference by minimizing the RMSD. We use
     :class:`MDAnalysis.analysis.align.AlignTraj`::
 
-        aligner = align.AlignTraj(u, reference, select="protein and name CA",
+        aligner = align.AlignTraj(u, ref, select="protein and name CA",
                                   in_memory=True).run()
+        # need to write the trajectory to disk for PMDA 0.3.0 (see issue #15)
+        with mda.Writer("rmsfit.xtc", n_atoms=u.atoms.n_atoms) as W:
+            for ts in u.trajectory:
+                W.write(u.atoms)
+
+    (For use with PMDA we cannot currently use a in-memory trajectory
+    (see `Issue #15`_) so we must write out the RMS-superimposed
+    trajectory to the file "rmsfit.xtc".)
 
     The trajectory is now fitted to the reference (the RMSD is stored as
     `aligner.rmsd` for further inspection). Now we can calculate the RMSF::
 
         from pmda.rmsf import RMSF
-        calphas = protein.select_atoms("name CA")
+
+        u = mda.Universe(TPR, "rmsfit.xtc")
+        calphas = protein.select_atoms("protein and name CA")
+
         rmsfer = RMSF(calphas).run()
 
     and plot::
@@ -143,7 +157,11 @@ class RMSF(ParallelAnalysisBase):
         import matplotlib.pyplot as plt
         plt.plot(calphas.resnums, rmsfer.rmsf)
 
+
     .. versionadded:: 0.3.0
+
+
+    .. _`Issue #15`: https://github.com/MDAnalysis/pmda/issues/15
 
     """
 
