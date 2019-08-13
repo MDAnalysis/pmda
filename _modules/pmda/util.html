@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.util &#8212; PMDA 0.2.1+14.g9e4321c documentation</title>
+    <title>pmda.util &#8212; PMDA 0.2.1+15.gd12b088 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+14.g9e4321c documentation"
+          title="Search within PMDA 0.2.1+15.gd12b088 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -300,6 +300,8 @@
 <span class="sd">       computation of co-variances and arbitrary-order statistical moments.&quot;</span>
 <span class="sd">       Technical Report SAND2008-6212, 2008.</span>
 
+
+<span class="sd">    .. versionadded:: 0.3.0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">T</span> <span class="o">=</span> <span class="n">S1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">S2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -311,23 +313,25 @@
 
 
 <div class="viewcode-block" id="fold_second_order_moments"><a class="viewcode-back" href="../../api/util.html#pmda.util.fold_second_order_moments">[docs]</a><span class="k">def</span> <span class="nf">fold_second_order_moments</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Fold action for second_order_moments calculation.</span>
+    <span class="sd">&quot;&quot;&quot;Fold action for :func:`second_order_moments` calculation.</span>
 
-<span class="sd">    Takes in data that can be combined associatively (order doesn&#39;t matter)</span>
-<span class="sd">    and applies a combining function in a recursive fashion. In this case,</span>
-<span class="sd">    it takes in a list of lists that each contain the total number of time</span>
-<span class="sd">    steps, an `n x m` array of mean positions for `n` atoms, and an `n x m`</span>
-<span class="sd">    array of second order moments for `n` atoms, for a given partition of a</span>
-<span class="sd">    trajectory. It takes the first partition, combines it with the second,</span>
-<span class="sd">    combines that result with the third, and that result with the fourth,</span>
-<span class="sd">    etc. The final result is a list of the summed time steps, combined mean</span>
-<span class="sd">    positions, and combined second order moments of all atoms in the combined</span>
-<span class="sd">    trajectory.</span>
+<span class="sd">    Takes in data that can be combined associatively (order doesn&#39;t matter) and</span>
+<span class="sd">    applies a combining function in a recursive fashion. In this case, it takes</span>
+<span class="sd">    in a list of lists that each contain the total number of time steps, an `n</span>
+<span class="sd">    x m` array of mean positions for `n` atoms, and an `n x m` array of second</span>
+<span class="sd">    order moments for `n` atoms, for a given partition of a trajectory. It</span>
+<span class="sd">    takes the first partition, combines it with the second, combines that</span>
+<span class="sd">    result with the third, and that result with the fourth, etc. using</span>
+<span class="sd">    :func:`second_order_moments`. The final result is a list of the summed time</span>
+<span class="sd">    steps, combined mean positions, and combined second order moments of all</span>
+<span class="sd">    atoms in the combined trajectory.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    `Haskell fold/reduce method &lt;https://wiki.haskell.org/Fold&gt;`_</span>
 
+
+<span class="sd">    .. versionadded:: 0.3.0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">second_order_moments</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </pre></div>

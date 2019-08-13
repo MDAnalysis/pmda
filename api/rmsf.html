@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.6. Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf &#8212; PMDA 0.2.1+14.g9e4321c documentation</title>
+    <title>2.2.6. Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf &#8212; PMDA 0.2.1+15.gd12b088 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+14.g9e4321c documentation"
+          title="Search within PMDA 0.2.1+15.gd12b088 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -103,11 +103,14 @@ protein):</p>
 <span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="k">import</span> <span class="n">TPR</span><span class="p">,</span> <span class="n">XTC</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">TPR</span><span class="p">,</span> <span class="n">XTC</span><span class="p">,</span> <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">protein</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
-<span class="c1"># Need to center and make whole: this trajectory</span>
-<span class="c1"># contains the protein being split across periodic boundaries.</span>
+
+<span class="c1"># TODO: Need to center and make whole (this test trajectory</span>
+<span class="c1"># contains the protein being split across periodic boundaries</span>
+<span class="c1"># and the results will be WRONG!)</span>
+
 <span class="c1"># Fit to the initial frame to get a better average structure</span>
 <span class="c1"># (the trajectory is changed in memory)</span>
-<span class="n">prealigner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
+<span class="n">prealigner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
                              <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="c1"># ref = average structure</span>
 <span class="n">ref_coordinates</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">asel</span><span class="o">=</span><span class="n">protein</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -121,14 +124,24 @@ protein):</p>
 with the averaged coordinates of the protein.  Now we need to fit the
 whole trajectory to the reference by minimizing the RMSD. We use
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/align.html#MDAnalysis.analysis.align.AlignTraj" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.align.AlignTraj</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aligner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aligner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
                           <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="c1"># need to write the trajectory to disk for PMDA 0.3.0 (see issue #15)</span>
+<span class="k">with</span> <span class="n">mda</span><span class="o">.</span><span class="n">Writer</span><span class="p">(</span><span class="s2">&quot;rmsfit.xtc&quot;</span><span class="p">,</span> <span class="n">n_atoms</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">)</span> <span class="k">as</span> <span class="n">W</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">:</span>
+        <span class="n">W</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>(For use with PMDA we cannot currently use a in-memory trajectory
+(see <a class="reference external" href="https://github.com/MDAnalysis/pmda/issues/15">Issue #15</a>) so we must write out the RMS-superimposed
+trajectory to the file “rmsfit.xtc”.)</p>
 <p>The trajectory is now fitted to the reference (the RMSD is stored as
 <cite>aligner.rmsd</cite> for further inspection). Now we can calculate the RMSF:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pmda.rmsf</span> <span class="k">import</span> <span class="n">RMSF</span>
-<span class="n">calphas</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;name CA&quot;</span><span class="p">)</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">TPR</span><span class="p">,</span> <span class="s2">&quot;rmsfit.xtc&quot;</span><span class="p">)</span>
+<span class="n">calphas</span> <span class="o">=</span> <span class="n">protein</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">)</span>
+
 <span class="n">rmsfer</span> <span class="o">=</span> <span class="n">RMSF</span><span class="p">(</span><span class="n">calphas</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>

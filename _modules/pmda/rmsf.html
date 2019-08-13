@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.rmsf &#8212; PMDA 0.2.1+14.g9e4321c documentation</title>
+    <title>pmda.rmsf &#8212; PMDA 0.2.1+15.gd12b088 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+14.g9e4321c documentation"
+          title="Search within PMDA 0.2.1+15.gd12b088 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -148,11 +148,14 @@
 <span class="sd">        from MDAnalysis.tests.datafiles import TPR, XTC</span>
 <span class="sd">        u = mda.Universe(TPR, XTC, in_memory=True)</span>
 <span class="sd">        protein = u.select_atoms(&quot;protein&quot;)</span>
-<span class="sd">        # Need to center and make whole: this trajectory</span>
-<span class="sd">        # contains the protein being split across periodic boundaries.</span>
+
+<span class="sd">        # TODO: Need to center and make whole (this test trajectory</span>
+<span class="sd">        # contains the protein being split across periodic boundaries</span>
+<span class="sd">        # and the results will be WRONG!)</span>
+
 <span class="sd">        # Fit to the initial frame to get a better average structure</span>
 <span class="sd">        # (the trajectory is changed in memory)</span>
-<span class="sd">        prealigner = align.AlignTraj(u, select=&quot;protein and name CA&quot;,</span>
+<span class="sd">        prealigner = align.AlignTraj(u, u, select=&quot;protein and name CA&quot;,</span>
 <span class="sd">                                     in_memory=True).run()</span>
 <span class="sd">        # ref = average structure</span>
 <span class="sd">        ref_coordinates = u.trajectory.timeseries(asel=protein).mean(axis=1)</span>
@@ -166,14 +169,25 @@
 <span class="sd">    whole trajectory to the reference by minimizing the RMSD. We use</span>
 <span class="sd">    :class:`MDAnalysis.analysis.align.AlignTraj`::</span>
 
-<span class="sd">        aligner = align.AlignTraj(u, reference, select=&quot;protein and name CA&quot;,</span>
+<span class="sd">        aligner = align.AlignTraj(u, ref, select=&quot;protein and name CA&quot;,</span>
 <span class="sd">                                  in_memory=True).run()</span>
+<span class="sd">        # need to write the trajectory to disk for PMDA 0.3.0 (see issue #15)</span>
+<span class="sd">        with mda.Writer(&quot;rmsfit.xtc&quot;, n_atoms=u.atoms.n_atoms) as W:</span>
+<span class="sd">            for ts in u.trajectory:</span>
+<span class="sd">                W.write(u.atoms)</span>
+
+<span class="sd">    (For use with PMDA we cannot currently use a in-memory trajectory</span>
+<span class="sd">    (see `Issue #15`_) so we must write out the RMS-superimposed</span>
+<span class="sd">    trajectory to the file &quot;rmsfit.xtc&quot;.)</span>
 
 <span class="sd">    The trajectory is now fitted to the reference (the RMSD is stored as</span>
 <span class="sd">    `aligner.rmsd` for further inspection). Now we can calculate the RMSF::</span>
 
 <span class="sd">        from pmda.rmsf import RMSF</span>
-<span class="sd">        calphas = protein.select_atoms(&quot;name CA&quot;)</span>
+
+<span class="sd">        u = mda.Universe(TPR, &quot;rmsfit.xtc&quot;)</span>
+<span class="sd">        calphas = protein.select_atoms(&quot;protein and name CA&quot;)</span>
+
 <span class="sd">        rmsfer = RMSF(calphas).run()</span>
 
 <span class="sd">    and plot::</span>
@@ -181,7 +195,11 @@
 <span class="sd">        import matplotlib.pyplot as plt</span>
 <span class="sd">        plt.plot(calphas.resnums, rmsfer.rmsf)</span>
 
+
 <span class="sd">    .. versionadded:: 0.3.0</span>
+
+
+<span class="sd">    .. _`Issue #15`: https://github.com/MDAnalysis/pmda/issues/15</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
