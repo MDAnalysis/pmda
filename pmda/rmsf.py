@@ -85,6 +85,8 @@ class RMSF(ParallelAnalysisBase):
     given trajectory to calculate the RMSF of the entire trajectory
     [CGL1979]_.
 
+    For more details about RMSF calculations, refer to [Awtrey2019]_.
+
     References
     ----------
     .. [Welford1962] B. P. Welford (1962). "Note on a Method for

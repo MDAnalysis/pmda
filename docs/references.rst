@@ -18,9 +18,9 @@
                 rapid analysis of molecular dynamics
                 simulations`_. In S. Benthall and S. Rostrup, editors,
                 Proceedings of the 15th Python in Science Conference,
-                pages 102 – 109, Austin, TX, 2016. SciPy. 
+                pages 102 – 109, Austin, TX, 2016. SciPy.
 		doi:`10.25080/Majora-629e541a-00e`_.
-		
+
 .. _`10.25080/Majora-629e541a-00e`: https://doi.org/10.25080/Majora-629e541a-00e
 
 .. _`MDAnalysis: A Python package for the rapid analysis of molecular
@@ -37,11 +37,11 @@
 
 .. _`10.25080/shinma-7f4c6e7-00a`: https://doi.org/10.25080/shinma-7f4c6e7-00a
 
-.. [Paraskevakos2018] Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan, 
-                      George Chantzialexiou, Thomas E. Cheatham, Oliver 
+.. [Paraskevakos2018] Ioannis Paraskevakos, Andre Luckow, Mahzad Khoshlessan,
+                      George Chantzialexiou, Thomas E. Cheatham, Oliver
                       Beckstein, Geoffrey C. Fox and Shantenu Jha. Task-
                       parallel Analysis of Molecular Dynamics Trajectories. In
-                      47th International Conference on Parallel Processing 
+                      47th International Conference on Parallel Processing
                       (ICPP 2018). doi: `10.1145/3225058.3225128`_.
 
 .. _`10.1145/3225058.3225128` : https://doi.org/10.1145/3225058.3225128
@@ -53,3 +53,10 @@
 	     Austin, TX, 2019. doi:`10.25080/Majora-7ddc1dd1-013`_.
 
 .. _`10.25080/Majora-7ddc1dd1-013` : https://doi.org/10.25080/Majora-7ddc1dd1-013
+
+.. [Awtrey2019] Awtrey, Nikolaus. SPIDAL Summer REU 2019: Parallelizing
+                DensityAnalysis and RMSF in PMDA. Technical report, Arizona
+                State University, Tempe, AZ, 2019.
+                doi: `10.6084/m9.figshare.9695852.v1`_. 
+
+.. _`10.6084/m9.figshare.9695852.v1` : https://figshare.com/articles/SPIDAL_Summer_REU_2019_Parallelizing_DensityAnalysis_and_RMSF_in_PMDA/9695852
