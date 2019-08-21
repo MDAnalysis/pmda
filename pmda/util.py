@@ -254,7 +254,7 @@ def second_order_moments(S1, S2):
 
     .. math::
 
-        \sigma_{i} = \sqrt{\sigma_{i}^2} = \sqrt{\frac{1}{T} \
+        \sigma_{i} = \sqrt{\frac{1}{T} \
         \sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2}
 
     References

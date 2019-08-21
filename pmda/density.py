@@ -15,7 +15,6 @@ This module contains parallel versions of analysis tasks in
 
 .. autoclass:: DensityAnalysis
    :members:
-   :undoc-members:
    :inherited-members:
 
 See Also
@@ -84,35 +83,72 @@ class DensityAnalysis(ParallelAnalysisBase):
             User defined z dimension box edge in ångström; ignored if
             gridcenter is "None".
 
+    See Also
+    --------
+    MDAnalysis.analysis.density.density_from_Universe
+
     Notes
     -----
     By default, the `atomselection` is static, i.e., atoms are only selected
     once at the beginning. If you want *dynamically changing selections*
     (such as "name OW and around 4.0 (protein and not name H*)", i.e., the
     water oxygen atoms that are within 4 Å of the protein heavy atoms) then
-    set ``update_selection=True``.
+    set ``updating=True``.
 
     Examples
     --------
-    First create the :class:`DensityAnalysis` object by supplying an
-    AtomGroup, then use the :meth:`run` method :: In the following example,
-    all water oxygen atoms are used::
+    A common use case is to analyze the solvent density around a protein of
+    interest. The density is calculated with :class:`DensityAnalysis` in the
+    fixed coordinate system of the simulation unit cell. It is therefore
+    necessary to orient and fix the protein with respect to the box coordinate
+    system. In practice this means centering and superimposing the protein,
+    frame by frame, on a reference structure and translating and rotating all
+    other components of the simulation with the protein. In this way, the
+    solvent will appear in the reference frame of the protein.
 
-      ow = u.select_atoms("name OW")
-      D = DensityAnalysis(ow)
-      D.run()
+    An input trajectory must
 
-    Results are available through the :attr:`density` attribute,
-    which has the :attr:`grid` attribute that contains the histogrammed
-    density data. :attr:`DensityAnalysis.density` is a
-    :class:`gridData.core.Grid` object. In particular, its contents can be
-    `exported to different formats
+    1. have been centered on the protein of interest;
+    2. have all molecules made whole that have been broken across periodic
+       boundaries [#pbc]_;
+    3. have the solvent molecules remapped so that they are closest to the
+       solute (this is important when using triclinic unit cells such as
+       a dodecahedron or a truncated octahedron) [#pbc]_;
+    4. have a fixed frame of reference; for instance, by superimposing a
+       protein on a reference structure so that one can study the solvent
+       density around it [#fit]_.
+
+    To generate the density of water molecules around a protein (assuming that
+    the trajectory is already appropriately treated for periodic boundary
+    artifacts and is suitably superimposed to provide a fixed reference frame)
+    [#testraj]_, first  create the :class:`DensityAnalysis` object by
+    supplying an AtomGroup, then use  the :meth:`run` method::
+
+        from pmda.density import DensityAnalysis
+        U = Universe(TPR, XTC)
+        ow = U.select_atoms("name OW")
+        D = DensityAnalysis(ow, delta=1.0)
+        D.run()
+        D.convert_density('TIP4P')
+
+    The positions of all water oxygens are histogrammed on a grid with spacing
+    *delta* = 1 Å. Initially the density is measured in inverse cubic
+    angstroms. With the :meth:`Density.convert_density` method,
+    the units of measurement are changed. In the example we are now measuring
+    the density relative to the literature value of the TIP4P water model at
+    ambient conditions (see the values in :data:`MDAnalysis.units.water` for
+    details). In particular, the density is stored as a NumPy array in
+    :attr:`grid`, which can be processed in any manner. Results are available
+    through the :attr:`density` attribute, which has the :attr:`grid`
+    attribute that contains the histogrammed density data.
+    :attr:`DensityAnalysis.density` is a :class:`gridData.core.Grid` object.
+    In particular, its contents can be `exported to different formats
     <https://www.mdanalysis.org/GridDataFormats/gridData/formats.html>`_.
     For example, to `write a DX file
     <https://www.mdanalysis.org/GridDataFormats/gridData/basic.html#writing-out-data>`_
-    ``density.dx`` that can be read with VMD, PyMOL, or Chimera::
+    ``water.dx`` that can be read with VMD, PyMOL, or Chimera::
 
-      D.density.export("density.dx", type="double")
+      D.density.export("water.dx", type="double")
 
     Basic use for creating a water density (just using the water oxygen
     atoms "OW")::
@@ -151,9 +187,45 @@ class DensityAnalysis(ParallelAnalysisBase):
       (It should be noted that the `padding` keyword is not used when a user
       defined grid is assigned).
 
-    See Also
-    --------
-    MDAnalysis.analysis.density.density_from_Universe
+    .. rubric:: Footnotes
+
+    .. [#pbc] Making molecules whole can be accomplished with the
+              :meth:`MDAnalysis.core.groups.AtomGroup.wrap` of
+              :attr:`Universe.atoms` (use ``compound="fragments"``).
+
+              When using, for instance, the Gromacs_ command `gmx trjconv`_::
+
+                gmx trjconv -pbc mol -center -ur compact
+
+              one can make the molecules whole ``-pbc whole``, center it on a
+              group (``-center``), and also pack all molecules in a compact
+              unitcell representation, which can be useful for density
+              generation.
+
+    .. [#fit] Superposition can be performed with
+              :class:`MDAnalysis.analysis.align.AlignTraj`.
+
+              The Gromacs_ command `gmx trjconv`_::
+
+                gmx trjconv -fit rot+trans
+
+              will also accomplish such a superposition. Note that the fitting
+              has to be done in a *separate* step from the treatment of the
+              periodic boundaries [#pbc]_.
+
+    .. [#testraj] Note that the trajectory in the example (`XTC`) is *not*
+                  properly made whole and fitted to a reference structure;
+                  these steps were omitted to clearly show the steps necessary
+                  for the actual density calculation.
+
+    .. Links
+    .. -----
+    .. _OpenDX: http://www.opendx.org/
+    .. _VMD:   http://www.ks.uiuc.edu/Research/vmd/
+    .. _Chimera: https://www.cgl.ucsf.edu/chimera/
+    .. _PyMOL: http://www.pymol.org/
+    .. _Gromacs: http://www.gromacs.org
+    .. _`gmx trjconv`: http://manual.gromacs.org/programs/gmx-trjconv.html
 
 
     .. versionadded:: 0.3.0
