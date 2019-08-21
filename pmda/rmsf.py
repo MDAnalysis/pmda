@@ -70,13 +70,13 @@ class RMSF(ParallelAnalysisBase):
     in the array :attr:`RMSF.rmsf`.
 
     The root mean square fluctuation of an atom :math:`i` is computed as the
-    time average
+    time average:
 
     .. math::
 
-        \rho_i = \sqrt{\left\langle (\mathbf{x}_i -
-                                     \langle\mathbf{x}_i\rangle)^2
-                                     \right\rangle}
+        \sigma_{i} = \sqrt{\left\langle (\mathbf{x}_{i} -
+                           \langle\mathbf{x}_{i}\rangle)^2
+                           \right\rangle}
 
     No mass weighting is performed.
     This method implements an algorithm for computing sums of squares while

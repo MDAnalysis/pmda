@@ -211,22 +211,25 @@ def second_order_moments(S1, S2):
 
     Notes
     -----
-    The variance and sum of squares, known as the first and second order
-    moments, are defined as
+    For a given set of data, the sum of squares, also known as the second
+    order moment about the mean, is defined as the sum of the squares of the
+    differences between each data point and the mean (sum of the individual
+    deviations from the mean) of the data set,
 
     .. math::
 
-        M_{1, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})
+        M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2,
 
-    and
+    where :math:`\mu_{i}` is the time average of :math:`x_{t}`. If the
+    average of the squares of the individual deviations is taken (instead of
+    the sum), this yields the variance:
 
     .. math::
 
-        M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2,
+        \sigma_{i}^{2} = \frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2
 
-    where :math:`\bar{x}` is the time average of :math:`x_{t}`. In order to
-    combine the mean and second order moments of two separate partitions,
-    [CGL1979]_ derived the following formulae:
+    In order to combine the mean and second order moments of two separate
+    partitions, [CGL1979]_ derived the following formulae:
 
     .. math::
 
@@ -246,11 +249,13 @@ def second_order_moments(S1, S2):
     :math:`M_{2, S_{1}}`, and :math:`M_{2, S_{2}}` are the respective second
     order moments of :math:`S`, :math:`S_{1}`, and :math:`S_{2}`. This is
     similar notation to [Pebay2008]_. With a combined sum of squares and mean,
-    one can take this result and calculate the root-mean-square fluctuations:
+    it is possible to calculate the root-mean-square fluctuations, otherwise
+    known as the population standard deviation:
 
     .. math::
 
-        f_{i} = \sqrt{\frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2}
+        \sigma_{i} = \sqrt{\frac{1}{T} \
+        \sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2}
 
     References
     ----------
