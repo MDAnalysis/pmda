@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.util &#8212; PMDA 0.2.1+15.gd12b088 documentation</title>
+    <title>pmda.util &#8212; PMDA 0.2.1+16.gbc1ed7f documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+15.gd12b088 documentation"
+          title="Search within PMDA 0.2.1+16.gbc1ed7f documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -249,22 +249,25 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The variance and sum of squares, known as the first and second order</span>
-<span class="sd">    moments, are defined as</span>
+<span class="sd">    For a given set of data, the sum of squares, also known as the second</span>
+<span class="sd">    order moment about the mean, is defined as the sum of the squares of the</span>
+<span class="sd">    differences between each data point and the mean (sum of the individual</span>
+<span class="sd">    deviations from the mean) of the data set,</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        M_{1, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})</span>
+<span class="sd">        M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2,</span>
 
-<span class="sd">    and</span>
+<span class="sd">    where :math:`\mu_{i}` is the time average of :math:`x_{t}`. If the</span>
+<span class="sd">    average of the squares of the individual deviations is taken (instead of</span>
+<span class="sd">    the sum), this yields the variance:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        M_{2, S_{i}} = \sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2,</span>
+<span class="sd">        \sigma_{i}^{2} = \frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2</span>
 
-<span class="sd">    where :math:`\bar{x}` is the time average of :math:`x_{t}`. In order to</span>
-<span class="sd">    combine the mean and second order moments of two separate partitions,</span>
-<span class="sd">    [CGL1979]_ derived the following formulae:</span>
+<span class="sd">    In order to combine the mean and second order moments of two separate</span>
+<span class="sd">    partitions, [CGL1979]_ derived the following formulae:</span>
 
 <span class="sd">    .. math::</span>
 
@@ -284,11 +287,13 @@
 <span class="sd">    :math:`M_{2, S_{1}}`, and :math:`M_{2, S_{2}}` are the respective second</span>
 <span class="sd">    order moments of :math:`S`, :math:`S_{1}`, and :math:`S_{2}`. This is</span>
 <span class="sd">    similar notation to [Pebay2008]_. With a combined sum of squares and mean,</span>
-<span class="sd">    one can take this result and calculate the root-mean-square fluctuations:</span>
+<span class="sd">    it is possible to calculate the root-mean-square fluctuations, otherwise</span>
+<span class="sd">    known as the population standard deviation:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        f_{i} = \sqrt{\frac{1}{T}\sum_{t=t_{0}}^{T}(x_{t} - \bar{x})^2}</span>
+<span class="sd">        \sigma_{i} = \sqrt{\frac{1}{T} \</span>
+<span class="sd">        \sum_{t=t_{0}}^{T}(x_{t} - \mu_{i})^2}</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -407,7 +412,7 @@
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
