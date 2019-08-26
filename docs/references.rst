@@ -57,6 +57,6 @@
 .. [Awtrey2019] Awtrey, Nikolaus. SPIDAL Summer REU 2019: Parallelizing
                 DensityAnalysis and RMSF in PMDA. Technical report, Arizona
                 State University, Tempe, AZ, 2019.
-                doi: `10.6084/m9.figshare.9695852.v1`_. 
+                doi: `10.6084/m9.figshare.9695852`_.
 
-.. _`10.6084/m9.figshare.9695852.v1` : https://figshare.com/articles/SPIDAL_Summer_REU_2019_Parallelizing_DensityAnalysis_and_RMSF_in_PMDA/9695852
+.. _`10.6084/m9.figshare.9695852` : https://doi.org/10.6084/m9.figshare.9695852
