@@ -95,6 +95,8 @@ class DensityAnalysis(ParallelAnalysisBase):
     water oxygen atoms that are within 4 Å of the protein heavy atoms) then
     set ``updating=True``.
 
+    For more details about density calculations, refer to [Awtrey2019]_.
+
     Examples
     --------
     A common use case is to analyze the solvent density around a protein of
