@@ -109,8 +109,8 @@ class RMSD(ParallelAnalysisBase):
         import MDAnalysis
         from MDAnalysis.tests.datafiles import PSF, DCD, CRD
         mobile = MDAnalysis.Universe(PSF,DCD).atoms
-        ref = MDAnalysis.Universe(PSF,DCD).atoms     # reference closed AdK (1AKE) (with the default ref_frame=0)
-        #ref = MDAnalysis.Universe(PSF,CRD).atoms    # reference open AdK (4AKE)
+        # reference closed AdK (1AKE) (with the default ref_frame=0)
+        ref = MDAnalysis.Universe(PSF,DCD).atoms
 
         from pmda.rms import RMSD
 

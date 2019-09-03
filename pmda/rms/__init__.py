@@ -7,6 +7,21 @@
 #
 # Released under the GNU Public Licence, v2 or any higher version
 
+"""
+pmda.rms
+========
+
+Ready to use root-mean-square analyses built via MDAnalysis with dask.
+
+The full documentation can be found at https://www.mdanalysis.org/pmda/.
+
+Note that by default no modules are imported in the top-level name
+space. Import what you need::
+
+    import pmda.rms.rmsd.RMSD
+    import pmda.rms.rmsf.RMSF
+"""
+
 from __future__ import absolute_import
 from .rmsd import RMSD
 from .rmsf import RMSF

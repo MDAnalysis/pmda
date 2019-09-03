@@ -15,6 +15,7 @@ import MDAnalysis
 from MDAnalysisTests.datafiles import (PSF, DCD)
 from pmda.rms import RMSD
 
+
 class TestRMSD(object):
     @pytest.fixture()
     def universe(self):
