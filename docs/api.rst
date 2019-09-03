@@ -40,9 +40,9 @@ also function as examples for how to implement your own functions with
 .. toctree::
    :maxdepth: 1
 
-   api/rms
+   api/rmsd
+   api/rmsf
    api/contacts
    api/rdf
    api/leaflet
    api/density
-   api/rmsf
