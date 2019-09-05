@@ -349,6 +349,8 @@ class InterRDF_s(ParallelAnalysisBase):
 
 
         .. versionadded:: 0.3.0
+           Method ``get_cdf()`` was removed and :attr:`cdf` is now a managed
+           attribute that computes the CDF when accessed.
         """
         # Calculate cumulative distribution function
         # Empty list to restore CDF
