@@ -171,6 +171,9 @@ class InterRDF(ParallelAnalysisBase):
         -------
               cdf : numpy array
                       a numpy array with the same structure as :attr:`rdf`
+
+
+        .. versionadded:: 0.3.0
         """
         cdf = np.cumsum(self.count) / self.nf
 
@@ -343,6 +346,9 @@ class InterRDF_s(ParallelAnalysisBase):
         -------
               cdf : list
                       list of arrays with the same structure as :attr:`rdf`
+
+
+        .. versionadded:: 0.3.0
         """
         # Calculate cumulative distribution function
         # Empty list to restore CDF
