@@ -22,8 +22,6 @@ Enhancements
   * store block information in `_block` attribute (Issue #89)
   * add parallel density class (Issue #8)
   * add parallel RMSF class (Issue #90)
-  * add `cdf` attribute to `pmda.rdf.InterRDF` for cumulative
-    distribution function instead of `get_cdf`
 
 Fixes
   * default _conclude() in pmda.custom.AnalysisFromFunction fails with
@@ -31,6 +29,8 @@ Fixes
 
 Changes
   * Update all docs with the SciPy paper reference (Issue #98)
+  * The method rdf.InterRDF_s.get_cdf() was removed; just use the managed
+    attribute rdf.InterRDF_s.cdf
 
 
 2019/05/23 VOD555
