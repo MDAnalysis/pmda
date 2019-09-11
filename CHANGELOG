@@ -29,6 +29,7 @@ Fixes
 
 Changes
   * Update all docs with the SciPy paper reference (Issue #98)
+  * Moved RMSF and RMSD into pmda.rms module
 
 
 2019/05/23 VOD555
