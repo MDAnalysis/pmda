@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.1. Using the pmda analysis classes &#8212; PMDA 0.2.1+17.g1e99541 documentation</title>
+    <title>1.1. Using the pmda analysis classes &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+17.g1e99541 documentation"
+          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -40,9 +40,9 @@
   <div class="section" id="using-the-pmda-analysis-classes">
 <span id="pmda-basics"></span><h1>1.1. Using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code> analysis classes<a class="headerlink" href="#using-the-pmda-analysis-classes" title="Permalink to this headline">¶</a></h1>
 <p>Pre-defined analysis classes follow a common pattern. They require one
-or more MDAnalysis <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
+or more MDAnalysis <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
 instances as input (which one obtains from a MDAnalysis
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code></a>, typically by performing a
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/universe.html#MDAnalysis.core.universe.Universe" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code></a>, typically by performing a
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/selections.html">selection</a>). They also typically require a number of parameters that
 are provided as keyword arguments:</p>
 <dl class="class">
@@ -76,14 +76,14 @@ analysis. Using keyword arguments, one can set the level of
 of the class, such as <a class="reference internal" href="#ParallelAnalysisClass.results" title="ParallelAnalysisClass.results"><code class="xref py py-attr docutils literal notranslate"><span class="pre">results</span></code></a>. The
 actual name of the attribute is defined by the specific analysis
 class. The format and content is also dependent on the analysis; for
-example, the RMSD analysis class <a class="reference internal" href="../api/rms.html#pmda.rms.RMSD" title="pmda.rms.RMSD"><code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.rms.RMSD</span></code></a> produces a
+example, the RMSD analysis class <code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.rms.RMSD</span></code> produces a
 numpy array of the RMSD time series.</p>
 <div class="section" id="example-parallel-rmsd">
 <span id="id1"></span><h2>1.1.1. Example: Parallel RMSD<a class="headerlink" href="#example-parallel-rmsd" title="Permalink to this headline">¶</a></h2>
-<p>In order to use the parallel RMSD calculator <a class="reference internal" href="../api/rms.html#pmda.rms.RMSD" title="pmda.rms.RMSD"><code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.rms.RMSD</span></code></a>,
+<p>In order to use the parallel RMSD calculator <code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.rms.RMSD</span></code>,
 import the module, set up two
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
-class and directly use its <a class="reference internal" href="../api/rms.html#pmda.rms.RMSD.run" title="pmda.rms.RMSD.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method:</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
+class and directly use its <code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code> method:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="kn">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">pmda</span> <span class="kn">import</span> <span class="n">rms</span>
 
@@ -96,7 +96,7 @@ class and directly use its <a class="reference internal" href="../api/rms.html#p
 </pre></div>
 </div>
 <p>The resulting <code class="docutils literal notranslate"><span class="pre">rmsd_ana</span></code> instance contains the array of the RMSD
-time series in the attribute <a class="reference internal" href="../api/rms.html#pmda.rms.RMSD.rmsd" title="pmda.rms.RMSD.rmsd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rmsd</span></code></a>.</p>
+time series in the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">rmsd</span></code>.</p>
 </div>
 </div>
 

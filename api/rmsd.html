@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>2.2.1. Calculating Root-Mean-Square Deviations (RMSD) — pmda.rms &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.2.2. Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf" href="rmsf.html" />
+    <link rel="prev" title="2.1.3. Utility functions — pmda.util" href="util.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <span class="target" id="module-pmda.rms.rmsd"></span><div class="section" id="calculating-root-mean-square-deviations-rmsd-pmda-rms">
+<h1>2.2.1. Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code><a class="headerlink" href="#calculating-root-mean-square-deviations-rmsd-pmda-rms" title="Permalink to this headline">¶</a></h1>
+<p>This module contains parallel versions of analysis tasks in
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code>.</p>
+<dl class="class">
+<dt id="pmda.rms.rmsd.RMSD">
+<em class="property">class </em><code class="sig-prename descclassname">pmda.rms.rmsd.</code><code class="sig-name descname">RMSD</code><span class="sig-paren">(</span><em class="sig-param">mobile</em>, <em class="sig-param">ref</em>, <em class="sig-param">superposition=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms/rmsd.html#RMSD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.rmsd.RMSD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parallel RMSD analysis.</p>
+<p>Optimally superimpose the coordinates in the
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> <cite>mobile</cite> onto <cite>ref</cite> for
+each frame in the trajectory of <cite>mobile</cite>, and calculate the time
+series of the RMSD. The single frame calculation is performed with
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.rmsd" title="(in MDAnalysis v0.20)"><code class="xref py py-func docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.rmsd()</span></code></a> (with <code class="docutils literal notranslate"><span class="pre">superposition=True</span></code>
+by default).</p>
+<dl class="attribute">
+<dt id="pmda.rms.rmsd.RMSD.rmsd">
+<code class="sig-name descname">rmsd</code><a class="headerlink" href="#pmda.rms.rmsd.RMSD.rmsd" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Tx3</cite> array where each row contains
+<cite>[frame, time (ps), RMSD (Å)]</cite>, and <cite>T</cite> is the number of time steps
+selected in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mobile</strong> (<em>AtomGroup</em>) – atoms that are optimally superimposed on <cite>ref</cite> before
+the RMSD is calculated for all atoms. The coordinates
+of <cite>mobile</cite> change with each frame in the trajectory.</p></li>
+<li><p><strong>ref</strong> (<em>AtomGroup</em>) – fixed reference coordinates</p></li>
+<li><p><strong>superposition</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">True</span></code> perform a RMSD-superposition, <code class="docutils literal notranslate"><span class="pre">False</span></code> only
+calculates the RMSD. The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>If you use trajectory data from simulations performed under <em>periodic
+boundary conditions</em> then you <strong>must make your molecules whole</strong> before
+performing RMSD calculations so that the centers of mass of the mobile and
+reference structure are properly superimposed.</p>
+<p>Run the analysis with <code class="xref py py-meth docutils literal notranslate"><span class="pre">RMSD.run()</span></code>, which stores the results
+in the array <a class="reference internal" href="#pmda.rms.rmsd.RMSD.rmsd" title="pmda.rms.rmsd.RMSD.rmsd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RMSD.rmsd</span></code></a>.</p>
+<p>The root mean square deviation <span class="math notranslate nohighlight">\(\rho(t)\)</span> of a group of <span class="math notranslate nohighlight">\(N\)</span>
+atoms relative to a reference structure as a function of time is
+calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\rho(t) = \sqrt{\frac{1}{N} \sum_{i=1}^N \left(\mathbf{x}_i(t)
+                - \mathbf{x}_i^{\text{ref}}\right)^2}\]</div>
+<p>The selected coordinates from <cite>atomgroup</cite> are optimally superimposed
+(translation and rotation) on the <cite>reference</cite> coordinates at each time step
+as to minimize the RMSD.</p>
+<p>At the moment, this class has far fewer features than its serial
+counterpart, <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<p>In this example we will globally fit a protein to a reference
+structure. The example is a DIMS trajectory of adenylate kinase, which
+samples a large closed-to-open transition.</p>
+<p>The trajectory is included in the MDAnalysis test data files. The data in
+<a class="reference internal" href="#pmda.rms.rmsd.RMSD.rmsd" title="pmda.rms.rmsd.RMSD.rmsd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RMSD.rmsd</span></code></a> is plotted with <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="k">import</span> <span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span><span class="p">,</span> <span class="n">CRD</span>
+<span class="n">mobile</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span><span class="n">DCD</span><span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="c1"># reference closed AdK (1AKE) (with the default ref_frame=0)</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span><span class="n">DCD</span><span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+
+<span class="kn">from</span> <span class="nn">pmda.rms</span> <span class="k">import</span> <span class="n">RMSD</span>
+
+<span class="n">R</span> <span class="o">=</span> <span class="n">RMSD</span><span class="p">(</span><span class="n">mobile</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
+<span class="n">R</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">rmsd</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">rmsd</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># transpose makes it easier for plotting</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">rmsd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">rmsd</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time (ps)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;RMSD ($</span><span class="se">\\</span><span class="s2">AA$)&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;rmsd_all_CORE_LID_NMP_ref1AKE.pdf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Universe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
+<cite>atomgroups</cite> must belong to this Universe)</p></li>
+<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="pmda.rms.rmsd.RMSD._results">
+<code class="sig-name descname">_results</code><a class="headerlink" href="#pmda.rms.rmsd.RMSD._results" title="Permalink to this definition">¶</a></dt>
+<dd><p>The raw data from each process are stored as a list of
+lists, with each sublist containing the return values from
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">rmsd</code></dt>
+<dd><p>Contains the time series of the RMSD as a <cite>Tx3</cite> <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>
+array with content <code class="docutils literal notranslate"><span class="pre">[[frame,</span> <span class="pre">time</span> <span class="pre">(ps),</span> <span class="pre">RMSD</span> <span class="pre">(Å)],</span> <span class="pre">[...],</span> <span class="pre">...]</span></code>,
+where <cite>T</cite> is the number of time steps selected in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code>
+method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSD</span></code></p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">PMDA</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Parallel Molecular Dynamics Analysis</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.1. Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmsf.html">2.2.2. Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="contacts.html">2.2.3. Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rdf.html">2.2.4. Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.5. LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="density.html">2.2.6. Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
+</ul>
+
+
+<hr />
+<ul>
+    
+    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
+    
+    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
+    
+    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
+    
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
+      <li>Previous: <a href="util.html" title="previous chapter">2.1.3. Utility functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.util</span></code></a></li>
+      <li>Next: <a href="rmsf.html" title="next chapter">2.2.2. Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/api/rmsd.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/MDAnalysis/pmda" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

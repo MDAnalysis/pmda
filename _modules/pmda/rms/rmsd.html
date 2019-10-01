@@ -4,23 +4,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.rms &#8212; PMDA 0.2.1+17.g1e99541 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <title>pmda.rms.rmsd &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+17.g1e99541 documentation"
-          href="../../_static/opensearch.xml"/>
-    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
+          href="../../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -35,42 +35,53 @@
 
           <div class="body" role="main">
             
-  <h1>Source code for pmda.rms</h1><div class="highlight"><pre>
+  <h1>Source code for pmda.rms.rmsd</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
 <span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
 <span class="c1">#</span>
 <span class="c1"># PMDA</span>
-<span class="c1"># Copyright (c) 2017 The MDAnalysis Development Team and contributors</span>
+<span class="c1"># Copyright (c) 2019 The MDAnalysis Development Team and contributors</span>
 <span class="c1"># (see the file AUTHORS for the full list of names)</span>
 <span class="c1">#</span>
 <span class="c1"># Released under the GNU Public Licence, v2 or any higher version</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">RMSD analysis tools --- :mod:`pmda.rms`</span>
-<span class="sd">=======================================</span>
+<span class="sd">Calculating Root-Mean-Square Deviations (RMSD) --- :mod:`pmda.rms`</span>
+<span class="sd">=====================================================================</span>
 
 <span class="sd">This module contains parallel versions of analysis tasks in</span>
-<span class="sd">:mod:`MDAnalysis.analysis.rms`.</span>
+<span class="sd">:mod:`MDAnalysis.analysis.rms.RMSD`.</span>
 
 <span class="sd">.. autoclass:: RMSD</span>
-<span class="sd">   :members:</span>
-<span class="sd">   :undoc-members:</span>
-<span class="sd">   :inherited-members:</span>
+<span class="sd">    :members:</span>
+
+<span class="sd">    .. attribute:: rmsd</span>
+
+<span class="sd">        Contains the time series of the RMSD as a `Tx3` :class:`numpy.ndarray`</span>
+<span class="sd">        array with content ``[[frame, time (ps), RMSD (Å)], [...], ...]``,</span>
+<span class="sd">        where `T` is the number of time steps selected in the :meth:`run`</span>
+<span class="sd">        method.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">MDAnalysis.analysis.rms.RMSD</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
 
 <span class="kn">from</span> <span class="nn">MDAnalysis.analysis</span> <span class="k">import</span> <span class="n">rms</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+<span class="kn">from</span> <span class="nn">pmda.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
 
 
-<div class="viewcode-block" id="RMSD"><a class="viewcode-back" href="../../api/rms.html#pmda.rms.RMSD">[docs]</a><span class="k">class</span> <span class="nc">RMSD</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parallel RMSD analysis.</span>
+<div class="viewcode-block" id="RMSD"><a class="viewcode-back" href="../../../api/rmsd.html#pmda.rms.rmsd.RMSD">[docs]</a><span class="k">class</span> <span class="nc">RMSD</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Parallel RMSD analysis.</span>
 
 <span class="sd">    Optimally superimpose the coordinates in the</span>
 <span class="sd">    :class:`~MDAnalysis.core.groups.AtomGroup` `mobile` onto `ref` for</span>
-<span class="sd">    each frame in the trajectory of `mobile` and calculate the time</span>
+<span class="sd">    each frame in the trajectory of `mobile`, and calculate the time</span>
 <span class="sd">    series of the RMSD. The single frame calculation is performed with</span>
 <span class="sd">    :func:`MDAnalysis.analysis.rms.rmsd` (with ``superposition=True``</span>
 <span class="sd">    by default).</span>
@@ -78,9 +89,9 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    rmsd : array</span>
-<span class="sd">         Result as a Nx3 array where each row contains</span>
-<span class="sd">         `[frame, time (ps), RMSD (Å)]`.</span>
-
+<span class="sd">         `Tx3` array where each row contains</span>
+<span class="sd">         `[frame, time (ps), RMSD (Å)]`, and `T` is the number of time steps</span>
+<span class="sd">         selected in the :meth:`run` method.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -94,11 +105,66 @@
 <span class="sd">         ``True`` perform a RMSD-superposition, ``False`` only</span>
 <span class="sd">         calculates the RMSD. The default is ``True``.</span>
 
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MDAnalysis.analysis.rms.RMSD</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">    At the moment, this class has far fewer features than the serial</span>
-<span class="sd">    version :class:`MDAnalysis.analysis.rms.RMSD`.</span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If you use trajectory data from simulations performed under *periodic</span>
+<span class="sd">    boundary conditions* then you **must make your molecules whole** before</span>
+<span class="sd">    performing RMSD calculations so that the centers of mass of the mobile and</span>
+<span class="sd">    reference structure are properly superimposed.</span>
+
+<span class="sd">    Run the analysis with :meth:`RMSD.run`, which stores the results</span>
+<span class="sd">    in the array :attr:`RMSD.rmsd`.</span>
+
+<span class="sd">    The root mean square deviation :math:`\rho(t)` of a group of :math:`N`</span>
+<span class="sd">    atoms relative to a reference structure as a function of time is</span>
+<span class="sd">    calculated as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho(t) = \sqrt{\frac{1}{N} \sum_{i=1}^N \left(\mathbf{x}_i(t)</span>
+<span class="sd">                        - \mathbf{x}_i^{\text{ref}}\right)^2}</span>
+
+<span class="sd">    The selected coordinates from `atomgroup` are optimally superimposed</span>
+<span class="sd">    (translation and rotation) on the `reference` coordinates at each time step</span>
+<span class="sd">    as to minimize the RMSD.</span>
+
+<span class="sd">    At the moment, this class has far fewer features than its serial</span>
+<span class="sd">    counterpart, :class:`MDAnalysis.analysis.rms.RMSD`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    In this example we will globally fit a protein to a reference</span>
+<span class="sd">    structure. The example is a DIMS trajectory of adenylate kinase, which</span>
+<span class="sd">    samples a large closed-to-open transition.</span>
+
+<span class="sd">    The trajectory is included in the MDAnalysis test data files. The data in</span>
+<span class="sd">    :attr:`RMSD.rmsd` is plotted with :func:`matplotlib.pyplot.plot`::</span>
+
+<span class="sd">        import MDAnalysis</span>
+<span class="sd">        from MDAnalysis.tests.datafiles import PSF, DCD, CRD</span>
+<span class="sd">        mobile = MDAnalysis.Universe(PSF,DCD).atoms</span>
+<span class="sd">        # reference closed AdK (1AKE) (with the default ref_frame=0)</span>
+<span class="sd">        ref = MDAnalysis.Universe(PSF,DCD).atoms</span>
+
+<span class="sd">        from pmda.rms import RMSD</span>
+
+<span class="sd">        R = RMSD(mobile, ref)</span>
+<span class="sd">        R.run()</span>
+
+<span class="sd">        import matplotlib.pyplot as plt</span>
+<span class="sd">        rmsd = R.rmsd.T[2]  # transpose makes it easier for plotting</span>
+<span class="sd">        time = rmsd[0]</span>
+<span class="sd">        fig = plt.figure(figsize=(4,4))</span>
+<span class="sd">        ax = fig.add_subplot(111)</span>
+<span class="sd">        ax.plot(time, rmsd,  label=&quot;all&quot;)</span>
+<span class="sd">        ax.legend(loc=&quot;best&quot;)</span>
+<span class="sd">        ax.set_xlabel(&quot;time (ps)&quot;)</span>
+<span class="sd">        ax.set_ylabel(r&quot;RMSD ($\\AA$)&quot;)</span>
+<span class="sd">        fig.savefig(&quot;rmsd_all_CORE_LID_NMP_ref1AKE.pdf&quot;)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mobile</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">superposition</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -126,8 +192,8 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
-  <a href="../../index.html">
-    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logos/pmda-logo.png" alt="Logo"/>
     
     <h1 class="logo logo-name">PMDA</h1>
     
@@ -147,9 +213,9 @@
 
 <h3>Navigation</h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">3. References</a></li>
 </ul>
 
 
@@ -166,8 +232,8 @@
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
   </ul></li>
   </ul></li>
 </ul>
@@ -175,7 +241,7 @@
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
+    <form class="search" action="../../../search.html" method="get">
       <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>

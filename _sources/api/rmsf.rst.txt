@@ -1,1 +1,1 @@
-.. automodule:: pmda.rmsf
+.. automodule:: pmda.rms.rmsf

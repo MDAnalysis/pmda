@@ -4,23 +4,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.rmsf &#8212; PMDA 0.2.1+17.g1e99541 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <title>pmda.rms.rmsf &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+17.g1e99541 documentation"
-          href="../../_static/opensearch.xml"/>
-    <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
+          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
+          href="../../../_static/opensearch.xml"/>
+    <link rel="shortcut icon" href="../../../_static/mdanalysis-logo.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
    
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -35,7 +35,7 @@
 
           <div class="body" role="main">
             
-  <h1>Source code for pmda.rmsf</h1><div class="highlight"><pre>
+  <h1>Source code for pmda.rms.rmsf</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- Mode: python; tab-width: 4; indent-tabs-mode:nil; coding:utf-8 -*-</span>
 <span class="c1"># vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4</span>
 <span class="c1">#</span>
@@ -53,13 +53,12 @@
 <span class="sd">:mod:`MDAnalysis.analysis.rms`.</span>
 
 <span class="sd">.. autoclass:: RMSF</span>
-<span class="sd">   :members:</span>
-<span class="sd">   :inherited-members:</span>
+<span class="sd">    :members:</span>
 
-<span class="sd">   .. attribute:: rmsf</span>
+<span class="sd">    .. attribute:: rmsf</span>
 
-<span class="sd">      Results are stored in this N-length :class:`numpy.ndarray` array,</span>
-<span class="sd">      giving RMSFs for each of the given atoms.</span>
+<span class="sd">        Results are stored in this N-length :class:`numpy.ndarray` array,</span>
+<span class="sd">        giving RMSFs for each of the given atoms.</span>
 
 <span class="sd">See Also</span>
 <span class="sd">--------</span>
@@ -71,15 +70,22 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+<span class="kn">from</span> <span class="nn">pmda.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
 
-<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">fold_second_order_moments</span>
+<span class="kn">from</span> <span class="nn">pmda.util</span> <span class="k">import</span> <span class="n">fold_second_order_moments</span>
 
 
-<div class="viewcode-block" id="RMSF"><a class="viewcode-back" href="../../api/rmsf.html#pmda.rmsf.RMSF">[docs]</a><span class="k">class</span> <span class="nc">RMSF</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
+<div class="viewcode-block" id="RMSF"><a class="viewcode-back" href="../../../api/rmsf.html#pmda.rms.rmsf.RMSF">[docs]</a><span class="k">class</span> <span class="nc">RMSF</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Parallel RMSF analysis.</span>
 
 <span class="sd">    Calculates RMSF of given atoms across a trajectory.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rmsf : array</span>
+<span class="sd">         N-length :class:`numpy.ndarray` array of RMSF values, where `N` is</span>
+<span class="sd">         the number of atoms in the atomgroup of interest. Returned values</span>
+<span class="sd">         have units of ångströms.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -185,7 +191,7 @@
 <span class="sd">    The trajectory is now fitted to the reference (the RMSD is stored as</span>
 <span class="sd">    `aligner.rmsd` for further inspection). Now we can calculate the RMSF::</span>
 
-<span class="sd">        from pmda.rmsf import RMSF</span>
+<span class="sd">        from pmda.rms import RMSF</span>
 
 <span class="sd">        u = mda.Universe(TPR, &quot;rmsfit.xtc&quot;)</span>
 <span class="sd">        calphas = protein.select_atoms(&quot;protein and name CA&quot;)</span>
@@ -288,8 +294,8 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <p class="logo">
-  <a href="../../index.html">
-    <img class="logo" src="../../_static/logos/pmda-logo.png" alt="Logo"/>
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logos/pmda-logo.png" alt="Logo"/>
     
     <h1 class="logo logo-name">PMDA</h1>
     
@@ -309,9 +315,9 @@
 
 <h3>Navigation</h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">1. User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../references.html">3. References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html">1. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">3. References</a></li>
 </ul>
 
 
@@ -328,8 +334,8 @@
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
   </ul></li>
   </ul></li>
 </ul>
@@ -337,7 +343,7 @@
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
+    <form class="search" action="../../../search.html" method="get">
       <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.3. Writing new parallel analysis &#8212; PMDA 0.2.1+17.g1e99541 documentation</title>
+    <title>1.3. Writing new parallel analysis &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+17.g1e99541 documentation"
+          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -48,7 +48,7 @@ trajectory slices is combined.</p>
 <span id="wrapping-functions"></span><h2>1.3.1. Wrapping existing analysis functions<a class="headerlink" href="#wrapping-existing-analysis-functions" title="Permalink to this headline">¶</a></h2>
 <p>If you already have a function that</p>
 <ol class="arabic simple">
-<li><p>takes one or more <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
+<li><p>takes one or more <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
 instances as input</p></li>
 <li><p>analyzes one frame in a trajectory and returns the result for this
 frame</p></li>
@@ -93,12 +93,12 @@ described above.</p>
 <ol class="arabic simple">
 <li><p>Define the <em>single frame</em> analysis function, i.e., how to compute
 the observable for a single time step from a given
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>.</p></li>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>.</p></li>
 <li><p>Derive a class from <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParallelAnalysisBase</span></code></a>
 that uses the single frame function.</p></li>
 </ol>
 <p>As an example, we show how one can parallelize the RMSF function (from
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v0.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
 <ul class="simple">
 <li><p>TODO</p></li>
 <li><p>more TODO</p></li>

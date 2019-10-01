@@ -1,0 +1,1 @@
+.. automodule:: pmda.rms.rmsd
