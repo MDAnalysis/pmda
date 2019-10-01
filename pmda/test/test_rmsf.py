@@ -32,7 +32,8 @@ def test_rmsf_accuracy(u, n_blocks, decimal, step):
                                   n_jobs=n_blocks)
     MDA_vals = mda.analysis.rms.RMSF(u.atoms).run(step=step)
     assert_almost_equal(MDA_vals.mean, PMDA_vals.mean, decimal=decimal)
-    assert_almost_equal(MDA_vals.sumsquares, PMDA_vals.sumsquares, decimal=decimal)
+    assert_almost_equal(MDA_vals.sumsquares, PMDA_vals.sumsquares,
+                        decimal=decimal)
     assert_almost_equal(MDA_vals.rmsf, PMDA_vals.rmsf, decimal=decimal)
 
 
