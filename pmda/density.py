@@ -304,7 +304,7 @@ class DensityAnalysis(ParallelAnalysisBase):
         metadata['psf'] = self._atomgroup.universe.filename
         metadata['dcd'] = self._trajectory.filename
         metadata['atomselection'] = self._atomselection
-        # metadata['n_frames'] = self._n_frames
+        metadata['n_frames'] = self.n_frames
         metadata['totaltime'] = self._atomgroup.universe.trajectory.totaltime
         metadata['dt'] = self._trajectory.dt
         metadata['time_unit'] = mda.core.flags['time_unit']
