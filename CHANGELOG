@@ -29,6 +29,7 @@ Fixes
 
 Changes
   * Update all docs with the SciPy paper reference (Issue #98)
+  * Moved RMSF and RMSD into pmda.rms module
   * The method rdf.InterRDF_s.get_cdf() was removed; just use the managed
     attribute rdf.InterRDF_s.cdf
 

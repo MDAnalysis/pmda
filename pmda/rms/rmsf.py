@@ -15,13 +15,12 @@ This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.rms`.
 
 .. autoclass:: RMSF
-   :members:
-   :inherited-members:
+    :members:
 
-   .. attribute:: rmsf
+    .. attribute:: rmsf
 
-      Results are stored in this N-length :class:`numpy.ndarray` array,
-      giving RMSFs for each of the given atoms.
+        Results are stored in this N-length :class:`numpy.ndarray` array,
+        giving RMSFs for each of the given atoms.
 
 See Also
 --------
@@ -33,15 +32,22 @@ from __future__ import absolute_import, division
 
 import numpy as np
 
-from .parallel import ParallelAnalysisBase
+from pmda.parallel import ParallelAnalysisBase
 
-from .util import fold_second_order_moments
+from pmda.util import fold_second_order_moments
 
 
 class RMSF(ParallelAnalysisBase):
     r"""Parallel RMSF analysis.
 
     Calculates RMSF of given atoms across a trajectory.
+
+    Attributes
+    ----------
+    rmsf : array
+         N-length :class:`numpy.ndarray` array of RMSF values, where `N` is
+         the number of atoms in the atomgroup of interest. Returned values
+         have units of ångströms.
 
     Parameters
     ----------
@@ -147,7 +153,7 @@ class RMSF(ParallelAnalysisBase):
     The trajectory is now fitted to the reference (the RMSD is stored as
     `aligner.rmsd` for further inspection). Now we can calculate the RMSF::
 
-        from pmda.rmsf import RMSF
+        from pmda.rms import RMSF
 
         u = mda.Universe(TPR, "rmsfit.xtc")
         calphas = protein.select_atoms("protein and name CA")
