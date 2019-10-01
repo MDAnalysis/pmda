@@ -74,3 +74,12 @@ def test_gridcenter(u):
     assert len(pdens.density.edges[0]) == xdim + 1
     assert len(pdens.density.edges[1]) == ydim + 1
     assert len(pdens.density.edges[2]) == zdim + 1
+
+
+@pytest.mark.parametrize("step", [1, 2])
+@pytest.mark.parametrize("stop", [5, 4])
+@pytest.mark.parametrize("start", [0, 1])
+def test_n_frames(u, start, stop, step):
+    D = pmda.density.DensityAnalysis(u.atoms)
+    D.run(start, stop, step)
+    assert D._n_frames == len(range(start, stop, step))
