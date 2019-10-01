@@ -39,7 +39,7 @@ from .parallel import ParallelAnalysisBase
 
 
 class DensityAnalysis(ParallelAnalysisBase):
-    """Parallel density analysis.
+    r"""Parallel density analysis.
 
     The trajectory is read, frame by frame, and the atoms selected with
     `atomselection` are histogrammed on a grid with spacing `delta`.
