@@ -85,8 +85,8 @@ def test_double_run(rdf_s):
 
 
 def test_cdf(rdf_s):
-    rdf_s.get_cdf()
-    assert rdf_s.cdf[0][0][0][-1] == rdf_s.count[0][0][0].sum()/rdf_s.nf
+    assert_almost_equal(rdf_s.cdf[0][0][0][-1],
+                        rdf_s.count[0][0][0].sum()/rdf_s.nf)
 
 
 def test_reduce(rdf_s):
@@ -110,7 +110,7 @@ def test_same_result(u, sels, n_blocks):
 
 
 @pytest.mark.parametrize("density, value", [
-    (True, 13275.775528444701),
+    (True, 13275.775440503656),
     (False, 0.021915460340071267)])
 def test_density(u, sels, density, value):
     rdf = InterRDF_s(u, sels, density=density).run()
