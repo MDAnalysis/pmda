@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.rdf &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
+    <title>pmda.rdf &#8212; PMDA 0.2.1+22.g2055b8e documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
+          title="Search within PMDA 0.2.1+22.g2055b8e documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -199,6 +199,24 @@
         <span class="n">rdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the cumulative distribution functions (CDF).</span>
+<span class="sd">        Note that this is the actual count within a given radius, i.e.,</span>
+<span class="sd">        :math:`N(r)`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">              cdf : numpy array</span>
+<span class="sd">                      a numpy array with the same structure as :attr:`rdf`</span>
+
+
+<span class="sd">        .. versionadded:: 0.3.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span>
+
+        <span class="k">return</span> <span class="n">cdf</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_reduce</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">result_single_frame</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; &#39;add&#39; action for an accumulator&quot;&quot;&quot;</span>
@@ -356,7 +374,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf</span>
 
-    <span class="k">def</span> <span class="nf">get_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the cumulative distribution functions (CDF) for all sites.</span>
 <span class="sd">        Note that this is the actual count within a given radius, i.e.,</span>
 <span class="sd">        :math:`N(r)`.</span>
@@ -365,17 +384,19 @@
 <span class="sd">        -------</span>
 <span class="sd">              cdf : list</span>
 <span class="sd">                      list of arrays with the same structure as :attr:`rdf`</span>
+
+
+<span class="sd">        .. versionadded:: 0.3.0</span>
+<span class="sd">           Method ``get_cdf()`` was removed and :attr:`cdf` is now a managed</span>
+<span class="sd">           attribute that computes the CDF when accessed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Calculate cumulative distribution function</span>
         <span class="c1"># Empty list to restore CDF</span>
         <span class="n">cdf</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="c1"># cdf is a list of cdf between pairs of AtomGroups in ags</span>
         <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
             <span class="n">cdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">)</span>
-
-        <span class="c1"># Results stored in self.cdf</span>
-        <span class="c1"># self.cdf is a list of cdf between pairs of AtomGroups in ags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cdf</span> <span class="o">=</span> <span class="n">cdf</span>
 
         <span class="k">return</span> <span class="n">cdf</span>
 

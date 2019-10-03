@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.4. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.2.1+18.g3605ee8 documentation</title>
+    <title>2.2.4. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.2.1+22.g2055b8e documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.2.1+18.g3605ee8 documentation"
+          title="Search within PMDA 0.2.1+22.g2055b8e documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -130,6 +130,25 @@ lists, with each sublist containing the return values from
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pmda.rdf.InterRDF.cdf">
+<em class="property">property </em><code class="sig-name descname">cdf</code><a class="headerlink" href="#pmda.rdf.InterRDF.cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the cumulative distribution functions (CDF).
+Note that this is the actual count within a given radius, i.e.,
+<span class="math notranslate nohighlight">\(N(r)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>cdf</strong> – a numpy array with the same structure as <a class="reference internal" href="#pmda.rdf.InterRDF.rdf" title="pmda.rdf.InterRDF.rdf"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rdf</span></code></a></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy array</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.3.0.</span></p>
+</div>
 </dd></dl>
 
 <dl class="method">
