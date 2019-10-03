@@ -23,8 +23,22 @@ def u():
     return mda.Universe(PSF, DCD)
 
 
+@pytest.mark.parametrize('n_blocks', (2, 3, 4))
+@pytest.mark.parametrize('decimal', (7, 10, 11))
+@pytest.mark.parametrize("step", [1, 2, 3, 5])
+def test_rmsf_accuracy(u, n_blocks, decimal, step):
+    PMDA_vals = RMSF(u.atoms).run(step=step,
+                                  n_blocks=n_blocks,
+                                  n_jobs=n_blocks)
+    MDA_vals = mda.analysis.rms.RMSF(u.atoms).run(step=step)
+    assert_almost_equal(MDA_vals.mean, PMDA_vals.mean, decimal=decimal)
+    assert_almost_equal(MDA_vals.sumsquares, PMDA_vals.sumsquares,
+                        decimal=decimal)
+    assert_almost_equal(MDA_vals.rmsf, PMDA_vals.rmsf, decimal=decimal)
+
+
 @pytest.mark.parametrize('n_blocks', (1, 2, 3, 4, 5, 10))
-@pytest.mark.parametrize('n_frames', (10, 50, 100))
+@pytest.mark.parametrize('n_frames', (10, 45, 90))
 def test_RMSF_values(u, n_blocks, n_frames):
     PMDA_vals = RMSF(u.atoms).run(stop=n_frames,
                                   n_blocks=n_blocks,
@@ -49,3 +63,11 @@ def test_RMSF_n_jobs(u, n_blocks):
 def test_negative_RMSF_raises_ValueError():
     with pytest.raises(ValueError):
         RMSF._negative_rmsf(np.array([-1, -1, -1]))
+
+
+@pytest.mark.parametrize("stop", [10, 33, 45, 90])
+@pytest.mark.parametrize("step", [1, 2, 3, 5])
+def test_n_frames(u, stop, step):
+    F = RMSF(u.atoms)
+    F.run(stop=stop, step=step)
+    assert F.n_frames == len(range(0, stop, step))

@@ -251,7 +251,6 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._ydim = ydim
         self._zdim = zdim
         self._trajectory = u.trajectory
-        self._n_frames = u.trajectory.n_frames
         if updating and atomselection is None:
             raise ValueError("updating=True requires a atomselection string")
         elif not updating and atomselection is not None:
@@ -300,12 +299,12 @@ class DensityAnalysis(ParallelAnalysisBase):
 
     def _conclude(self):
         self._grid = self._results[:].sum(axis=0)
-        self._grid /= float(self._n_frames)
+        self._grid /= float(self.n_frames)
         metadata = self._metadata if self._metadata is not None else {}
         metadata['psf'] = self._atomgroup.universe.filename
         metadata['dcd'] = self._trajectory.filename
         metadata['atomselection'] = self._atomselection
-        metadata['n_frames'] = self._n_frames
+        metadata['n_frames'] = self.n_frames
         metadata['totaltime'] = self._atomgroup.universe.trajectory.totaltime
         metadata['dt'] = self._trajectory.dt
         metadata['time_unit'] = mda.core.flags['time_unit']

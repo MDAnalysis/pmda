@@ -1,76 +1,77 @@
 import pytest
 import MDAnalysis as mda
 import numpy as np
-import pmda.density
+from pmda.density import DensityAnalysis
 from MDAnalysis.analysis.density import density_from_Universe
 from numpy.testing import assert_almost_equal
 from MDAnalysisTests.datafiles import GRO_MEMPROT, XTC_MEMPROT
+from MDAnalysisTests.datafiles import PSF_TRICLINIC, DCD_TRICLINIC
 
 
 @pytest.fixture(scope='module')
-def u():
+def u1():
     return mda.Universe(GRO_MEMPROT, XTC_MEMPROT)
 
 
-def test_density_sum(u):
-    pdensity = pmda.density.DensityAnalysis(u.atoms, atomselection='name OD1',
-                                            updating=True)
-    core_number = 2
-    pdensity.run(n_blocks=core_number, n_jobs=core_number)
-    dens = mda.analysis.density.density_from_Universe(u,
-                                                      atomselection='name OD1',
-                                                      update_selection=True)
-    assert np.sum(dens.grid) == np.sum(pdensity.density.grid)
+@pytest.fixture(scope='module')
+def u2():
+    return mda.Universe(PSF_TRICLINIC, DCD_TRICLINIC)
 
 
-@pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
-def test_density_grid(u, n_blocks):
-    pdensity = pmda.density.DensityAnalysis(u.atoms, atomselection='name OD1',
-                                            updating=True)
-    core_number = n_blocks
-    pdensity.run(n_blocks=core_number, n_jobs=core_number)
-    dens = mda.analysis.density.density_from_Universe(u,
-                                                      atomselection='name OD1',
-                                                      update_selection=True)
-    assert_almost_equal(dens.grid, pdensity.density.grid)
+@pytest.mark.parametrize("n_blocks", [1, 2])
+@pytest.mark.parametrize("stop", [4, 5])
+@pytest.mark.parametrize("step", [1, 2])
+def test_density_values(u1, n_blocks, stop, step):
+    parallel = DensityAnalysis(u1.atoms, atomselection='name OD1',
+                               updating=True)
+    parallel.run(n_blocks=n_blocks, n_jobs=n_blocks, start=0, stop=stop,
+                 step=step)
+    serial = density_from_Universe(u1, atomselection='name OD1',
+                                   update_selection=True, start=0, stop=stop,
+                                   step=step)
+    assert np.sum(serial.grid) == np.sum(parallel.density.grid)
+    assert_almost_equal(serial.grid, parallel.density.grid, decimal=17)
 
 
-def test_updating(u):
+def test_updating(u1):
     with pytest.raises(ValueError):
-        pdensity = pmda.density.DensityAnalysis(u.atoms,
-                                                updating=True)
+        pdensity = DensityAnalysis(u1.atoms, updating=True)
 
 
-def test_atomselection(u):
+def test_atomselection(u1):
     with pytest.raises(ValueError):
-        pdensity = pmda.density.DensityAnalysis(u.atoms,
-                                                atomselection='name OD1')
+        pdensity = DensityAnalysis(u1.atoms, atomselection='name OD1')
 
 
-def test_gridcenter(u):
-    aselect = 'name OD1'
+def test_gridcenter(u1):
     gridcenter = np.array([10, 10, 10])
     xdim = 190
     ydim = 200
     zdim = 210
-    dens = mda.analysis.density.density_from_Universe(u,
-                                                      atomselection=aselect,
-                                                      update_selection=True,
-                                                      gridcenter=gridcenter,
-                                                      xdim=xdim,
-                                                      ydim=ydim,
-                                                      zdim=zdim)
-    pdens = pmda.density.DensityAnalysis(u.atoms,
-                                         atomselection=aselect,
-                                         updating=True,
-                                         gridcenter=gridcenter,
-                                         xdim=xdim,
-                                         ydim=ydim,
-                                         zdim=zdim)
+    serial = density_from_Universe(u1, atomselection='name OD1',
+                                   update_selection=True,
+                                   gridcenter=gridcenter,
+                                   xdim=xdim,
+                                   ydim=ydim,
+                                   zdim=zdim)
+    parallel = DensityAnalysis(u1.atoms, atomselection='name OD1',
+                               updating=True,
+                               gridcenter=gridcenter,
+                               xdim=xdim,
+                               ydim=ydim,
+                               zdim=zdim)
     core_number = 4
-    pdens.run(n_blocks=core_number, n_jobs=core_number)
-    assert_almost_equal(dens.grid, pdens.density.grid)
-    assert_almost_equal(pdens._gridcenter, gridcenter)
-    assert len(pdens.density.edges[0]) == xdim + 1
-    assert len(pdens.density.edges[1]) == ydim + 1
-    assert len(pdens.density.edges[2]) == zdim + 1
+    parallel.run(n_blocks=core_number, n_jobs=core_number)
+    assert_almost_equal(serial.grid, parallel.density.grid)
+    assert_almost_equal(parallel._gridcenter, gridcenter)
+    assert len(parallel.density.edges[0]) == xdim + 1
+    assert len(parallel.density.edges[1]) == ydim + 1
+    assert len(parallel.density.edges[2]) == zdim + 1
+
+
+@pytest.mark.parametrize("start", [0, 1])
+@pytest.mark.parametrize("stop", [5, 7, 10])
+@pytest.mark.parametrize("step", [1, 2, 3])
+def test_n_frames(u2, start, stop, step):
+    pdensity = DensityAnalysis(u2.atoms).run(start, stop, step)
+    assert pdensity.n_frames == len(range(start, stop, step))

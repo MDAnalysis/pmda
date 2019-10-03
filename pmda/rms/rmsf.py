@@ -193,10 +193,9 @@ class RMSF(ParallelAnalysisBase):
         # serial case
         if n_blocks == 1:
             # get length of trajectory slice
-            k = len(self._blocks[0])
             self.mean = self._results[0, 0]
             self.sumsquares = self._results[0, 1]
-            self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / k)
+            self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.n_frames)
         # parallel case
         else:
             mean = self._results[:, 0]
@@ -207,10 +206,9 @@ class RMSF(ParallelAnalysisBase):
                 vals.append((len(self._blocks[i]), mean[i], sos[i]))
             # combine block results using fold method
             results = fold_second_order_moments(vals)
-            self.totalts = results[0]
             self.mean = results[1]
             self.sumsquares = results[2]
-            self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.totalts)
+            self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.n_frames)
             self._negative_rmsf(self.rmsf)
 
     @staticmethod
