@@ -83,6 +83,14 @@ def test_same_result(sels, n_blocks):
     assert_almost_equal(nrdf.rdf, prdf.rdf)
 
 
+def test_cdf(sels):
+    s1, s2 = sels
+    rdf = InterRDF(s1, s2).run()
+    cdf = np.cumsum(rdf.count) / rdf.nf
+    assert_almost_equal(rdf.cdf[-1], rdf.count.sum()/rdf.nf)
+    assert_almost_equal(rdf.cdf, cdf)
+
+
 def test_reduce(sels):
     # should see numpy.array addtion
     s1, s2 = sels
