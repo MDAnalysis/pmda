@@ -98,6 +98,7 @@ class LeafletFinder(ParallelAnalysisBase):
             generated from `data`
 
         """
+        # pylint: disable=unsubscriptable-object
         window, index = data[0]
         num = window[0].shape[0]
         i_index = index[0]
@@ -299,7 +300,6 @@ class LeafletFinder(ParallelAnalysisBase):
                                              scheduler_kwargs=scheduler_kwargs,
                                              n_jobs=n_jobs,
                                              cutoff=cutoff)
-
                     timings.append(b_compute.elapsed)
                     leaflet1 = self._atomgroup[components[0]]
                     leaflet2 = self._atomgroup[components[1]]
