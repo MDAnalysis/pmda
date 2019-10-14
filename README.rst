@@ -103,13 +103,12 @@ Citation
 If you use PMDA in published work please cite [Fan2019]_.
 
 .. [Fan2019] Shujie Fan, Max Linke, Ioannis Paraskevakos, Richard J. Gowers,
-	     Michael Gecht, and Oliver Beckstein. PMDA - Parallel Molecular Dynamics
+	     Michael Gecht, and Oliver Beckstein. PMDA --- Parallel Molecular Dynamics
 	     Analysis. In Chris Calloway, David Lippa, Dillon Niederhut, and David Shupe,
 	     editors, Proceedings of the 18th Python in Science Conference,
-	     pages 134 – 142, Austin, TX, 2019.
-	     doi: `10.25080/Majora-7ddc1dd1-013<https://doi.org/10.25080/Majora-7ddc1dd1-013>`_
+	     pages 134-142, Austin, TX, 2019.
+	     doi: `10.25080/Majora-7ddc1dd1-013`_	     
 
-	       
 .. _MDAnalysis: https://www.mdanalysis.org
 .. _dask: https://dask.pydata.org/en/latest/
 .. _distributed: https://distributed.readthedocs.io/
@@ -120,7 +119,9 @@ If you use PMDA in published work please cite [Fan2019]_.
    https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 .. _`MDAnalysis developer mailing list`:
    https://groups.google.com/group/mdnalysis-devel
-
+.. _`10.25080/Majora-7ddc1dd1-013`:
+   https://doi.org/10.25080/Majora-7ddc1dd1-013
+   
 .. |build| image:: https://travis-ci.org/MDAnalysis/pmda.svg?branch=master
     :alt: Build Status
     :target: https://travis-ci.org/MDAnalysis/pmda
