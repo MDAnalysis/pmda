@@ -326,14 +326,14 @@ class ParallelAnalysisBase(object):
         # job. Therefore we run this on the single threaded scheduler for
         # debugging.
         if scheduler is None and n_jobs == 1:
-            scheduler = 'single-threaded'
+            scheduler = 'synchronous'
 
         # fall back to multiprocessing, we tried everything
         if scheduler is None:
-            scheduler = 'multiprocessing'
+            scheduler = 'processes'
 
         if n_blocks is None:
-            if scheduler == 'multiprocessing':
+            if scheduler == 'processes':
                 n_blocks = n_jobs
             elif isinstance(scheduler, dask.distributed.Client):
                 n_blocks = len(scheduler.ncores())
@@ -345,7 +345,7 @@ class ParallelAnalysisBase(object):
                     "Please provide `n_blocks` in call to method.")
 
         scheduler_kwargs = {'scheduler': scheduler}
-        if scheduler == 'multiprocessing':
+        if scheduler == 'processes':
             scheduler_kwargs['num_workers'] = n_jobs
 
         start, stop, step = self._trajectory.check_slice_indices(start,
