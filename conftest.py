@@ -26,8 +26,8 @@ def client(tmpdir_factory, request):
 
 
 @pytest.fixture(scope='session', params=('distributed',
-                                         'multiprocessing',
-                                         'single-threaded'))
+                                         'processes',
+                                         'synchronous'))
 def scheduler(request, client):
     if request.param == 'distributed':
         arg = client
