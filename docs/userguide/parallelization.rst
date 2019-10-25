@@ -103,7 +103,7 @@ In this way one can spread an analysis task over many different nodes.
 	      *distributed* scheduler, the synchronous scheduler is
 	      automatically used. Alternatively, set the synchronous
         scheduler with
-
+        
 	      .. code:: python
 
 	         dask.config.set(scheduler='synchronous')
