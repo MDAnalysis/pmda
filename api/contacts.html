@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.3. Native contacts analysis — pmda.contacts &#8212; PMDA 0.3.0 documentation</title>
+    <title>2.2.3. Native contacts analysis — pmda.contacts &#8212; PMDA 0.3.0+1.g0465c49 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0 documentation"
+          title="Search within PMDA 0.3.0+1.g0465c49 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -191,7 +191,7 @@ of a trajectory <a class="reference internal" href="#franklin2007" id="id3"><spa
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>atomgroup</strong> (<em>mda.core.groups.AtomGroup</em>) – atomgroup to analyze</p></li>
-<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – distance at which contact is formed</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – distance at which contact is formed</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -233,7 +233,7 @@ argument <cite>method</cite>.</p>
 <dd><p>list containing <em>Q</em> for all refgroup pairs and analyzed frames</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -241,13 +241,13 @@ argument <cite>method</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mobiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting groups that change over time</p></li>
-<li><p><strong>refs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting atomgroups in their reference conformation. This
+<li><p><strong>mobiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting groups that change over time</p></li>
+<li><p><strong>refs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting atomgroups in their reference conformation. This
 can also be a list of tuples containing different atom groups</p></li>
-<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em><em> (</em><em>4.5 Angstroms</em><em>)</em>) – radius within which contacts exist in refgroup</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em><em> (</em><em>4.5 Angstroms</em><em>)</em>) – radius within which contacts exist in refgroup</p></li>
 <li><p><strong>method</strong> (<em>string | callable</em><em> (</em><em>optional</em><em>)</em>) – Can either be one of <code class="docutils literal notranslate"><span class="pre">['hard_cut'</span> <span class="pre">,</span> <span class="pre">'soft_cut']</span></code> or a callable
 with call signature <code class="docutils literal notranslate"><span class="pre">func(r,</span> <span class="pre">r0,</span> <span class="pre">**kwargs)</span></code> (the “Contacts API”).</p></li>
-<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – dictionary of additional kwargs passed to <cite>method</cite>. Check
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – dictionary of additional kwargs passed to <cite>method</cite>. Check
 respective functions for reasonable values.</p></li>
 </ul>
 </dd>
@@ -271,13 +271,13 @@ respective functions for reasonable values.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
 to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </dd>

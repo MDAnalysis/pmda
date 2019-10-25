@@ -18,17 +18,17 @@ By default, all the available cores on the local machine (laptop or
 workstation) are used with the ``n_jobs=-1`` keyword but any number
 can be set, e.g., ``n_jobs=4`` to split the trajectory into 4 blocks.
 
-Internally, this uses the multiprocessing `scheduler`_ of dask. If you
-want to make use of more advanced scheduler features or scale your
-analysis to multiple nodes, e.g., in an HPC (high performance
-computing) environment, then use the :mod:`distributed` scheduler, as
-described next. If ``n_jobs==1`` a single threaded scheduler is used
-[#threads]_.
+Internally, this uses the processes (multiprocessing) `scheduler`_
+of dask. If you want to make use of more advanced scheduler features
+or scale your analysis to multiple nodes, e.g., in an HPC (high
+performance computing) environment, then use the :mod:`distributed`
+scheduler, as described next. If ``n_jobs==1`` a synchronous
+(single threaded) scheduler is used [#threads]_.
 
 .. _`scheduler`:
    https://docs.dask.org/en/latest/scheduler-overview.html
 
-     
+
 ``dask.distributed``
 ====================
 
@@ -51,7 +51,7 @@ Local cluster (single machine)
 ------------------------------
 
 You can try out `dask.distributed`_ with a `local cluster`_, which
-sets up a scheduler and workers on the local machine. 
+sets up a scheduler and workers on the local machine.
 
 .. code:: python
 
@@ -62,10 +62,10 @@ sets up a scheduler and workers on the local machine.
 Setting up the ``client`` is sufficient for Dask_ (and PMDA, namely the
 :meth:`~pmda.parallel.ParallelAnalysisBase.run` method) to use it. We
 continue to use the :ref:`RMSD example<example-parallel-rmsd>`:
-      
+
 .. code:: python
 
-   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run()	  
+   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run()
 
 Because the local cluster contains 8 workers, the RMSD trajectory
 analysis will be parallelized over 8 trajectory segments.
@@ -85,11 +85,11 @@ would initialize the `distributed.Client`_ and this is enough to use
 .. code:: python
 
    import distributed
-   client = distributed.Client('192.168.0.1:8786')   
-   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run()	  
+   client = distributed.Client('192.168.0.1:8786')
+   rmsd_ana = rms.RMSD(u.atoms, ref.atoms).run()
 
 In this way one can spread an analysis task over many different nodes.
-   
+
 .. _`local cluster`:
    https://distributed.readthedocs.io/en/latest/local-cluster.html
 .. _`distributed.Client`:
@@ -98,17 +98,16 @@ In this way one can spread an analysis task over many different nodes.
    https://docs.dask.org/en/latest/scheduling.html#configuration
 
 .. rubric:: Footnotes
-.. [#threads] The *single-threaded* scheduler is very useful for
-	      debugging_. By setting ``n_jobs=1`` and not using a
-	      *distributed* scheduler, the single threaded scheduler is
-	      automatically used. Alternatively, set the single
-	      threaded scheduler with
+.. [#threads] The *synchronous* scheduler is very useful for debugging_.
+        By setting ``n_jobs=1`` and not using a *distributed* scheduler,
+        the synchronous scheduler is automatically used. Alternatively,
+        set the synchronous scheduler with
 
 	      .. code:: python
 
-	         dask.config.set(scheduler='single-threaded')
+	         dask.config.set(scheduler='synchronous')
 
 	      for any ``n_jobs``.
-	      
+
 .. _debugging:
-   https://docs.dask.org/en/latest/debugging.html#use-the-single-threaded-scheduler
+   https://docs.dask.org/en/latest/debugging.html

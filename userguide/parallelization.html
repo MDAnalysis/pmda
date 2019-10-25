@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.2. Parallelization &#8212; PMDA 0.3.0 documentation</title>
+    <title>1.2. Parallelization &#8212; PMDA 0.3.0+1.g0465c49 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0 documentation"
+          title="Search within PMDA 0.3.0+1.g0465c49 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -47,12 +47,12 @@ laptops to large compute clusters.</p>
 <p>By default, all the available cores on the local machine (laptop or
 workstation) are used with the <code class="docutils literal notranslate"><span class="pre">n_jobs=-1</span></code> keyword but any number
 can be set, e.g., <code class="docutils literal notranslate"><span class="pre">n_jobs=4</span></code> to split the trajectory into 4 blocks.</p>
-<p>Internally, this uses the multiprocessing <a class="reference external" href="https://docs.dask.org/en/latest/scheduler-overview.html">scheduler</a> of dask. If you
-want to make use of more advanced scheduler features or scale your
-analysis to multiple nodes, e.g., in an HPC (high performance
-computing) environment, then use the <code class="xref py py-mod docutils literal notranslate"><span class="pre">distributed</span></code> scheduler, as
-described next. If <code class="docutils literal notranslate"><span class="pre">n_jobs==1</span></code> a single threaded scheduler is used
-<a class="footnote-reference brackets" href="#threads" id="id2">1</a>.</p>
+<p>Internally, this uses the processes (multiprocessing) <a class="reference external" href="https://docs.dask.org/en/latest/scheduler-overview.html">scheduler</a>
+of dask. If you want to make use of more advanced scheduler features
+or scale your analysis to multiple nodes, e.g., in an HPC (high
+performance computing) environment, then use the <code class="xref py py-mod docutils literal notranslate"><span class="pre">distributed</span></code>
+scheduler, as described next. If <code class="docutils literal notranslate"><span class="pre">n_jobs==1</span></code> a synchronous
+(single threaded) scheduler is used <a class="footnote-reference brackets" href="#threads" id="id2">1</a>.</p>
 </div>
 <div class="section" id="dask-distributed">
 <h2>1.2.2. <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code><a class="headerlink" href="#dask-distributed" title="Permalink to this headline">¶</a></h2>
@@ -97,15 +97,16 @@ would initialize the <a class="reference external" href="https://distributed.rea
 <p class="rubric">Footnotes</p>
 <dl class="footnote brackets">
 <dt class="label" id="threads"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p>The <em>single-threaded</em> scheduler is very useful for
-<a class="reference external" href="https://docs.dask.org/en/latest/debugging.html#use-the-single-threaded-scheduler">debugging</a>. By setting <code class="docutils literal notranslate"><span class="pre">n_jobs=1</span></code> and not using a
-<em>distributed</em> scheduler, the single threaded scheduler is
-automatically used. Alternatively, set the single
-threaded scheduler with</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="s1">&#39;single-threaded&#39;</span><span class="p">)</span>
+<dd><p>The <em>synchronous</em> scheduler is very useful for <a class="reference external" href="https://docs.dask.org/en/latest/debugging.html">debugging</a>.
+By setting <code class="docutils literal notranslate"><span class="pre">n_jobs=1</span></code> and not using a <em>distributed</em> scheduler,
+the synchronous scheduler is automatically used. Alternatively,
+set the synchronous scheduler with</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dask</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="s1">&#39;synchronous&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>for any <code class="docutils literal notranslate"><span class="pre">n_jobs</span></code>.</p>
+</div></blockquote>
 </dd>
 </dl>
 </div>

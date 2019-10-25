@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.4. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.3.0 documentation</title>
+    <title>2.2.4. Radial Distribution Functions — pmda.rdf &#8212; PMDA 0.3.0+1.g0465c49 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0 documentation"
+          title="Search within PMDA 0.3.0+1.g0465c49 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -81,9 +81,9 @@ the centers of the bins that were used for histogramming.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>g1</strong> (<em>AtomGroup</em>) – First AtomGroup</p></li>
 <li><p><strong>g2</strong> (<em>AtomGroup</em>) – Second AtomGroup</p></li>
-<li><p><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Number of bins in the histogram [75]</p></li>
-<li><p><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</p></li>
-<li><p><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
+<li><p><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Number of bins in the histogram [75]</p></li>
+<li><p><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</p></li>
+<li><p><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
 array. [None]</p></li>
 </ul>
 </dd>
@@ -127,7 +127,7 @@ lists, with each sublist containing the return values from
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -170,13 +170,13 @@ Note that this is the actual count within a given radius, i.e.,
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
 to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </dd>
