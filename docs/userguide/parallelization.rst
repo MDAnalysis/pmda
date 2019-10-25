@@ -98,12 +98,11 @@ In this way one can spread an analysis task over many different nodes.
    https://docs.dask.org/en/latest/scheduling.html#configuration
 
 .. rubric:: Footnotes
-.. [#threads] The *synchronous* scheduler is very useful for
-	      debugging_. By setting ``n_jobs=1`` and not using a
-	      *distributed* scheduler, the synchronous scheduler is
-	      automatically used. Alternatively, set the synchronous
-        scheduler with
-        
+.. [#threads] The *synchronous* scheduler is very useful for debugging_.
+        By setting ``n_jobs=1`` and not using a *distributed* scheduler,
+        the synchronous scheduler is automatically used. Alternatively,
+        set the synchronous scheduler with
+
 	      .. code:: python
 
 	         dask.config.set(scheduler='synchronous')
@@ -111,4 +110,4 @@ In this way one can spread an analysis task over many different nodes.
 	      for any ``n_jobs``.
 
 .. _debugging:
-   https://docs.dask.org/en/latest/scheduling.html#single-thread
+   https://docs.dask.org/en/latest/debugging.html
