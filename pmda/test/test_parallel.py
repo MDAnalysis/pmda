@@ -117,7 +117,7 @@ def test_nblocks(analysis, n_blocks):
 
 
 def test_guess_nblocks(analysis):
-    with dask.config.set(scheduler='multiprocessing'):
+    with dask.config.set(scheduler='processes'):
         analysis.run(n_jobs=-1)
     assert len(analysis._results) == joblib.cpu_count()
 

@@ -13,7 +13,18 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-2019/10/14 VOD555, nawtrey
+MM/DD/YYYY VOD555
+
+  * 0.3.1  
+
+Fixes
+  * use the new dask scheduler names (#102)
+    - multiprocessing --> processes
+    - single-threaded --> synchronous
+    - threaded --> threads
+  
+
+10/14/2019 VOD555, nawtrey
 
   * 0.3.0
 
@@ -34,7 +45,7 @@ Changes
   * Moved RMSF and RMSD into pmda.rms module
 
 
-2019/05/23 VOD555
+05/23/2019 VOD555
 
   * 0.2.1
 
@@ -42,7 +53,7 @@ Enhancements (internal)
   * add timer for the time to start the workers
 
 
-11/02/18 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
+11/02/2018 VOD555, richardjgowers, mimischi, iparask, orbeckst, kain88-de
 
   * 0.2.0
 
@@ -69,7 +80,7 @@ Changes
   * dask.distributed is now a dependency
 
 
-06/07/18 orbeckst
+06/07/2018 orbeckst
 
   * 0.1.1
 
@@ -78,7 +89,7 @@ Fixes
     this release is pip-installable (Issue #42)
 
 
-05/11/18 kain88-de, orbeckst
+05/11/2018 kain88-de, orbeckst
 
   * 0.1.0
 
