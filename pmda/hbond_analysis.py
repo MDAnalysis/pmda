@@ -156,6 +156,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         self.d_a_cutoff = d_a_cutoff
         self.d_h_a_angle = d_h_a_angle_cutoff
         self.update_selections = update_selections
+        self._positions = ag.positions
 
     def guess_hydrogens(self, selection='all', max_mass=1.1, min_charge=0.3):
         """Guesses which hydrogen atoms should be used in the analysis.
@@ -343,10 +344,10 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         return donors, hydrogens
 
     def _prepare(self):
-        u = self._universe()
+        u = mda.Universe(self._top, self._traj)
         self.hbonds = []
         self.frames = np.arange(self.start, self.stop, self.step)
-
+        self.timesteps = (self.frames * u.trajectory.dt) + u.trajectory[0].time
         # Set atom selections if they have not been provided
         if not self.acceptors_sel:
             self.acceptors_sel = self.guess_acceptors()
@@ -498,6 +499,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
 
     def _universe(self):
         u = mda.Universe(self._top)
+        u.load_new(self._positions)
         return u
 
     @staticmethod
