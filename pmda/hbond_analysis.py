@@ -8,140 +8,17 @@
 # Released under the GNU Public Licence, v2 or any higher version
 
 """Hydrogen Bond Analysis --- :mod:`pmda.hbond_analysis`
-=====================================================================================
+========================================================
 
-This module provides methods to find and analyse hydrogen bonds in a Universe.
+This module contains parallel versions of analysis tasks in
+:mod:`MDAnalysis.analysis.hbonds.hbond_analysis`.
 
-The :class:`HydrogenBondAnalysis` class is a new version of the original
-:class:`MDAnalysis.analysis.hbonds.HydrogenBondAnalysis` class from the module
-:mod:`MDAnalysis.analysis.hbonds.hbond_analysis`, which itself was modeled after the `VMD
-HBONDS plugin`_.
+See Also
+--------
+MDAnalysis.analysis.hbonds.hbond_analysis
 
-.. _`VMD HBONDS plugin`: http://www.ks.uiuc.edu/Research/vmd/plugins/hbonds/
-
-
-Input
-------
-
-Required:
-  - *universe* : an MDAnalysis Universe object
-
-Options:
-  - *donors_sel* [None] : Atom selection for donors. If `None`, then will be identified via the topology.
-  - *hydrogens_sel* [None] : Atom selection for hydrogens. If `None`, then will be identified via charge and mass.
-  - *acceptors_sel* [None] : Atom selection for acceptors. If `None`, then will be identified via charge.
-  - *d_h_cutoff* (Å) [1.2] : Distance cutoff used for finding donor-hydrogen pairs
-  - *d_a_cutoff* (Å) [3.0] : Distance cutoff for hydrogen bonds. This cutoff refers to the D-A distance.
-  - *d_h_a_angle_cutoff* (degrees) [150] : D-H-A angle cutoff for hydrogen bonds.
-  - *update_selections* [True] : If true, will update atom selections at each frame.
-
-
-Output
-------
-
-  - *frame* : frame at which a hydrogen bond was found
-  - *donor id* : atom id of the hydrogen bond donor atom
-  - *hydrogen id* : atom id of the hydrogen bond hydrogen atom
-  - *acceptor id* : atom id of the hydrogen bond acceptor atom
-  - *distance* (Å): length of the hydrogen bond
-  - *angle* (degrees): angle of the hydrogen bond
-
-Hydrogen bond data are returned in a :class:`numpy.ndarray` on a "one line, one observation" basis
-and can be accessed via :attr:`HydrogenBondAnalysis.hbonds`::
-
-    results = [
-        [
-            <frame>,
-            <donor index (0-based)>,
-            <hydrogen index (0-based)>,
-            <acceptor index (0-based)>,
-            <distance>,
-            <angle>
-        ],
-        ...
-    ]
-
-Example use of :class:`HydrogenBondAnalysis`
---------------------------------------------
-
-The simplest use case is to allow :class:`HydrogenBondAnalysis` to guess the acceptor and hydrogen atoms, and to
-identify donor-hydrogen pairs via the bonding information in the topology::
-
-  import MDAnalysis
-  from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
-
-  u = MDAnalysis.Universe(psf, trajectory)
-
-  hbonds = HBA(universe=u)
-  hbonds.run()
-
-It is also possible to specify which hydrogens and acceptors to use in the analysis. For example, to find all hydrogen
-bonds in water::
-
-  import MDAnalysis
-  from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
-
-  u = MDAnalysis.Universe(psf, trajectory)
-
-  hbonds = HBA(universe=u, hydrogens_sel='resname TIP3 and name H1 H2', acceptors_sel='resname TIP3 and name OH2')
-  hbonds.run()
-
-Alternatively, :attr:`hydrogens_sel` and :attr:`acceptors_sel` may be generated via the :attr:`guess_hydrogens` and
-:attr:`guess_acceptors`. This selection strings may then be modified prior to calling :attr:`run`, or a subset of
-the universe may be used to guess the atoms. For example, find hydrogens and acceptors belonging to a protein::
-
-  import MDAnalysis
-  from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
-
-  u = MDAnalysis.Universe(psf, trajectory)
-
-  hbonds = HBA(universe=u)
-  hbonds.hydrogens_sel = hbonds.guess_hydrogens("protein")
-  hbonds.acceptors_sel = hbonds.guess_acceptors("protein")
-  hbonds.run()
-
-Slightly more complex selection strings are also possible. For example, to find hydrogen bonds involving a protein and
-any water molecules within 10 Å of the protein (which may be useful for subsequently finding the lifetime of
-protein-water hydrogen bonds or finding water-bridging hydrogen bond paths)::
-
-  import MDAnalysis
-  from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
-
-  u = MDAnalysis.Universe(psf, trajectory)
-
-  hbonds = HBA(universe=u)
-
-  protein_hydrogens_sel = hbonds.guess_hydrogens("protein")
-  protein_acceptors_sel = hbonds.guess_acceptors("protein")
-
-  water_hydrogens_sel = "resname TIP3 and name H1 H2"
-  water_acceptors_sel = "resname TIP3 and name OH2"
-
-  hbonds.hydrogens_sel = f"({protein_hydrogens_sel}) or ({water_hydrogens_sel} and around 10 not resname TIP3})"
-  hbonds.acceptors_sel = f"({protein_acceptors_sel}) or ({water_acceptors_sel} and around 10 not resname TIP3})"
-  hbonds.run()
-
-It is highly recommended that a topology with bonding information is used to generate the universe, e.g `PSF`, `TPR`, or
-`PRMTOP` files. This is the only method by which it can be guaranteed that donor-hydrogen pairs are correctly identified.
-However, if, for example, a `PDB` file is used instead, a :attr:`donors_sel` may be provided along with a
-:attr:`hydrogens_sel` and the donor-hydrogen pairs will be identified via a distance cutoff, :attr:`d_h_cutoff`::
-
-  import MDAnalysis
-  from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
-
-  u = MDAnalysis.Universe(pdb, trajectory)
-
-  hbonds = HBA(
-    universe=u,
-    donors_sel='resname TIP3 and name OH2',
-    hydrogens_sel='resname TIP3 and name H1 H2',
-    acceptors_sel='resname TIP3 and name OH2',
-    d_h_cutoff=1.2
-  )
-  hbonds.run()
-
-The class and its methods
--------------------------
+Classes
+-------
 
 .. autoclass:: HydrogenBondAnalysis
    :members:
@@ -152,6 +29,8 @@ from __future__ import absolute_import, division
 import numpy as  np
 
 from MDAnalysis.lib.distances import capped_distance, calc_angles
+
+import MDAnalysis as mda
 
 from .parallel import ParallelAnalysisBase
 
@@ -188,15 +67,88 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         update_selections: bool (optional)
             Whether or not to update the acceptor, donor and hydrogen lists at each frame. [True]
 
-        Note
-        ----
+        Examples
+        --------
 
-        It is highly recommended that a universe topology with bonding information is used, as this is the only way
-        that guarantees the correct identification of donor-hydrogen pairs.
+        The simplest use case is to allow :class:`HydrogenBondAnalysis` to guess the acceptor and hydrogen atoms, and to
+        identify donor-hydrogen pairs via the bonding information in the topology::
+
+          import MDAnalysis
+          from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
+
+          u = MDAnalysis.Universe(psf, trajectory)
+
+          hbonds = HBA(universe=u)
+          hbonds.run()
+
+        It is also possible to specify which hydrogens and acceptors to use in the analysis. For example, to find all hydrogen
+        bonds in water::
+
+          import MDAnalysis
+          from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
+
+          u = MDAnalysis.Universe(psf, trajectory)
+
+          hbonds = HBA(universe=u, hydrogens_sel='resname TIP3 and name H1 H2', acceptors_sel='resname TIP3 and name OH2')
+          hbonds.run()
+
+        Alternatively, :attr:`hydrogens_sel` and :attr:`acceptors_sel` may be generated via the :attr:`guess_hydrogens` and
+        :attr:`guess_acceptors`. This selection strings may then be modified prior to calling :attr:`run`, or a subset of
+        the universe may be used to guess the atoms. For example, find hydrogens and acceptors belonging to a protein::
+
+          import MDAnalysis
+          from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
+
+          u = MDAnalysis.Universe(psf, trajectory)
+
+          hbonds = HBA(universe=u)
+          hbonds.hydrogens_sel = hbonds.guess_hydrogens("protein")
+          hbonds.acceptors_sel = hbonds.guess_acceptors("protein")
+          hbonds.run()
+
+        Slightly more complex selection strings are also possible. For example, to find hydrogen bonds involving a protein and
+        any water molecules within 10 Å of the protein (which may be useful for subsequently finding the lifetime of
+        protein-water hydrogen bonds or finding water-bridging hydrogen bond paths)::
+
+          import MDAnalysis
+          from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
+
+          u = MDAnalysis.Universe(psf, trajectory)
+
+          hbonds = HBA(universe=u)
+
+          protein_hydrogens_sel = hbonds.guess_hydrogens("protein")
+          protein_acceptors_sel = hbonds.guess_acceptors("protein")
+
+          water_hydrogens_sel = "resname TIP3 and name H1 H2"
+          water_acceptors_sel = "resname TIP3 and name OH2"
+
+          hbonds.hydrogens_sel = f"({protein_hydrogens_sel}) or ({water_hydrogens_sel} and around 10 not resname TIP3})"
+          hbonds.acceptors_sel = f"({protein_acceptors_sel}) or ({water_acceptors_sel} and around 10 not resname TIP3})"
+          hbonds.run()
+
+        It is highly recommended that a topology with bonding information is used to generate the universe, e.g `PSF`, `TPR`, or
+        `PRMTOP` files. This is the only method by which it can be guaranteed that donor-hydrogen pairs are correctly identified.
+        However, if, for example, a `PDB` file is used instead, a :attr:`donors_sel` may be provided along with a
+        :attr:`hydrogens_sel` and the donor-hydrogen pairs will be identified via a distance cutoff, :attr:`d_h_cutoff`::
+
+          import MDAnalysis
+          from MDAnalysis.analysis.hydrogenbonds.hbond_analysis import HydrogenBondAnalysis as HBA
+
+          u = MDAnalysis.Universe(pdb, trajectory)
+
+          hbonds = HBA(
+            universe=u,
+            donors_sel='resname TIP3 and name OH2',
+            hydrogens_sel='resname TIP3 and name H1 H2',
+            acceptors_sel='resname TIP3 and name OH2',
+            d_h_cutoff=1.2
+          )
+          hbonds.run()
         """
 
-        self.u = universe
-        self._trajectory = self.u.trajectory
+        ag = universe.atoms
+        super(HydrogenBondAnalysis, self).__init__(universe, (ag, ))
         self.donors_sel = donors_sel
         self.hydrogens_sel = hydrogens_sel
         self.acceptors_sel = acceptors_sel
@@ -236,7 +188,8 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         :attr:`hydrogens_sel`.
         """
 
-        ag = self.u.select_atoms(selection)
+        u = self._universe()
+        ag = u.select_atoms(selection)
         hydrogens_ag = ag[
             np.logical_and(
                 ag.masses < max_mass,
@@ -290,7 +243,8 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
             hydrogens_sel = self.guess_hydrogens()
         else:
             hydrogens_sel = self.hydrogens_sel
-        hydrogens_ag = self.u.select_atoms(hydrogens_sel)
+        u = self._universe()
+        hydrogens_ag = u.select_atoms(hydrogens_sel)
 
         ag = hydrogens_ag.residues.atoms.select_atoms(
             "({donors_sel}) and around {d_h_cutoff} {hydrogens_sel}".format(
@@ -337,7 +291,8 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         :attr:`acceptors_sel`.
         """
 
-        ag = self.u.select_atoms(selection)
+        u = self._universe()
+        ag = u.select_atoms(selection)
         acceptors_ag = ag[ag.charges < max_charge]
         acceptors_list = np.unique(
             [
@@ -347,7 +302,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
 
         return " or ".join(acceptors_list)
 
-    def _get_dh_pairs(self):
+    def _get_dh_pairs(self, u):
         """Finds donor-hydrogen pairs.
 
         Returns
@@ -360,25 +315,25 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         # If donors_sel is not provided, use topology to find d-h pairs
         if not self.donors_sel:
 
-            if len(self.u.bonds) == 0:
+            if len(u.bonds) == 0:
                 raise Exception('Cannot assign donor-hydrogen pairs via topology as no bonded information is present. '
                                 'Please either: load a topology file with bonded information; use the guess_bonds() '
                                 'topology guesser; or set HydrogenBondAnalysis.donors_sel so that a distance cutoff '
                                 'can be used.')
 
-            hydrogens = self.u.select_atoms(self.hydrogens_sel)
+            hydrogens = u.select_atoms(self.hydrogens_sel)
             donors = sum(h.bonded_atoms[0] for h in hydrogens)
 
         # Otherwise, use d_h_cutoff as a cutoff distance
         else:
 
-            hydrogens = self.u.select_atoms(self.hydrogens_sel)
-            donors = self.u.select_atoms(self.donors_sel)
+            hydrogens = u.select_atoms(self.hydrogens_sel)
+            donors = u.select_atoms(self.donors_sel)
             donors_indices, hydrogen_indices = capped_distance(
                 donors.positions,
                 hydrogens.positions,
                 max_cutoff=self.d_h_cutoff,
-                box=self.u.dimensions,
+                box=u.dimensions,
                 return_distances=False
             ).T
 
@@ -388,10 +343,9 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         return donors, hydrogens
 
     def _prepare(self):
-
-        self.hbonds = [[], [], [], [], [], []]
+        u = self._universe()
+        self.hbonds = []
         self.frames = np.arange(self.start, self.stop, self.step)
-        self.timesteps = (self.frames * self.u.trajectory.dt) + self.u.trajectory[0].time
 
         # Set atom selections if they have not been provided
         if not self.acceptors_sel:
@@ -400,22 +354,31 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
             self.hydrogens_sel = self.guess_hydrogens()
 
         # Select atom groups
-        self._acceptors = self.u.select_atoms(self.acceptors_sel, updating=self.update_selections)
-        self._donors, self._hydrogens = self._get_dh_pairs()
+        acceptors = u.select_atoms(self.acceptors_sel)
+        donors, hydrogens = self._get_dh_pairs(u)
+        self._acceptors_ids = acceptors.ids
+        self._donors_ids = donors.ids
+        self._hydrogens_ids =  hydrogens.ids
 
-    def _single_frame(self):
 
-        box = self._ts.dimensions
+    def _single_frame(self, ts, atomgroups):
+        u = atomgroups[0].universe
+
+        box = ts.dimensions
 
         # Update donor-hydrogen pairs if necessary
         if self.update_selections:
-            self._donors, self._hydrogens = self._get_dh_pairs()
-
+            acceptors = u.select_atoms(self.acceptors_sel)
+            donors, hydrogens = self._get_dh_pairs(u)
+        else:
+            acceptors = u.atoms[self._acceptors_ids]
+            donors = u.atoms[self._donors_ids]
+            hydrogens = u.atoms[self._hydrogens_ids]
         # find D and A within cutoff distance of one another
         # min_cutoff = 1.0 as an atom cannot form a hydrogen bond with itself
         d_a_indices, d_a_distances = capped_distance(
-            self._donors.positions,
-            self._acceptors.positions,
+            donors.positions,
+            acceptors.positions,
             max_cutoff=self.d_a_cutoff,
             min_cutoff=1.0,
             box=box,
@@ -423,9 +386,9 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         )
 
         # Remove D-A pairs more than d_a_cutoff away from one another
-        tmp_donors = self._donors[d_a_indices.T[0]]
-        tmp_hydrogens = self._hydrogens[d_a_indices.T[0]]
-        tmp_acceptors = self._acceptors[d_a_indices.T[1]]
+        tmp_donors = donors[d_a_indices.T[0]]
+        tmp_hydrogens = hydrogens[d_a_indices.T[0]]
+        tmp_acceptors = acceptors[d_a_indices.T[1]]
 
         # Find D-H-A angles greater than d_h_a_angle_cutoff
         d_h_a_angles = np.rad2deg(
@@ -446,16 +409,17 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         hbond_angles = d_h_a_angles[hbond_indices]
 
         # Store data on hydrogen bonds found at this frame
-        self.hbonds[0].extend(np.full_like(hbond_donors, self._ts.frame))
-        self.hbonds[1].extend(hbond_donors.ids)
-        self.hbonds[2].extend(hbond_hydrogens.ids)
-        self.hbonds[3].extend(hbond_acceptors.ids)
-        self.hbonds[4].extend(hbond_distances)
-        self.hbonds[5].extend(hbond_angles)
+        hbonds = [[], [], [], [], [], []]
+        hbonds[0].extend(np.full_like(hbond_donors, ts.frame))
+        hbonds[1].extend(hbond_donors.ids)
+        hbonds[2].extend(hbond_hydrogens.ids)
+        hbonds[3].extend(hbond_acceptors.ids)
+        hbonds[4].extend(hbond_distances)
+        hbonds[5].extend(hbond_angles)
+        return np.asarray(hbonds).T
 
     def _conclude(self):
-
-        self.hbonds = np.asarray(self.hbonds).T
+        self.hbonds = np.vstack(self._results)
 
     def count_by_time(self):
         """Counts the number of hydrogen bonds per timestep.
@@ -491,9 +455,9 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         Unique hydrogen bonds are determined through a consideration of the resname and atom type of the donor and
         acceptor atoms in a hydrogen bond.
         """
-
-        d = self.u.atoms[self.hbonds[:, 1].astype(np.int)]
-        a = self.u.atoms[self.hbonds[:, 3].astype(np.int)]
+        u = self._universe()
+        d = u.atoms[self.hbonds[:, 1].astype(np.int)]
+        a = u.atoms[self.hbonds[:, 3].astype(np.int)]
 
         tmp_hbonds = np.array([d.resnames, d.types, a.resnames, a.types], dtype=np.str).T
         hbond_type, type_counts = np.unique(tmp_hbonds, axis=0, return_counts=True)
@@ -518,9 +482,10 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         in a hydrogen bond.
         """
 
-        d = self.u.atoms[self.hbonds[:, 1].astype(np.int)]
-        h = self.u.atoms[self.hbonds[:, 2].astype(np.int)]
-        a = self.u.atoms[self.hbonds[:, 3].astype(np.int)]
+        u = self._universe()
+        d = u.atoms[self.hbonds[:, 1].astype(np.int)]
+        h = u.atoms[self.hbonds[:, 2].astype(np.int)]
+        a = u.atoms[self.hbonds[:, 3].astype(np.int)]
 
         tmp_hbonds = np.array([d.ids, h.ids, a.ids]).T
         hbond_ids, ids_counts = np.unique(tmp_hbonds, axis=0, return_counts=True)
@@ -530,3 +495,19 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         unique_hbonds = unique_hbonds[unique_hbonds[:, 3].argsort()[::-1]]
 
         return unique_hbonds
+
+    def _universe(self):
+        u = mda.Universe(self._top)
+        return u
+
+    @staticmethod
+    def _reduce(res, result_single_frame):
+        """ Use numpy array append to combine results"""
+        if isinstance(res, list) and len(res) == 0:
+            # Convert res from an empty list to a numpy array
+            # which has the same shape as the single frame result
+            res = result_single_frame
+        else:
+            # Add two numpy arrays
+            res = np.append(res, result_single_frame, axis=0)
+        return res
