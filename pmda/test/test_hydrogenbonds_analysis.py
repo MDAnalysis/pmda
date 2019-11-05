@@ -29,7 +29,8 @@ import MDAnalysis
 from pmda.hbond_analysis import HydrogenBondAnalysis
 
 import pytest
-from numpy.testing import assert_allclose, assert_array_almost_equal, assert_array_equal
+from numpy.testing import assert_allclose
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 from MDAnalysisTests.datafiles import waterPSF, waterDCD
 
 
@@ -54,11 +55,10 @@ class TestHydrogenBondAnalysisTIP3P(object):
         h = HydrogenBondAnalysis(universe, **self.kwargs)
         return h
 
-
     @pytest.mark.parametrize("n_blocks", [1, 2, 3, 4, 8])
     def test_hbond_analysis(self, h, n_blocks):
         h.run(n_jobs=n_blocks, n_blocks=n_blocks)
-        assert len(np.unique(h.hbonds[:,0])) == 10
+        assert len(np.unique(h.hbonds[:, 0])) == 10
         assert len(h.hbonds) == 32
 
         reference = {
@@ -72,7 +72,6 @@ class TestHydrogenBondAnalysisTIP3P(object):
         assert_allclose(np.mean(h.hbonds[:, 5]), reference['angle']['mean'])
         assert_allclose(np.std(h.hbonds[:, 5]), reference['angle']['std'])
 
-
     @pytest.mark.parametrize("n_blocks", [1, 2, 3, 4, 8])
     def test_count_by_time(self, h, n_blocks):
         h.run(n_jobs=n_blocks, n_blocks=n_blocks)
@@ -83,7 +82,6 @@ class TestHydrogenBondAnalysisTIP3P(object):
         assert_array_almost_equal(h.timesteps, ref_times)
         assert_array_equal(counts, ref_counts)
 
-
     def test_count_by_type(self, h):
         h.run(n_jobs=4, n_blocks=4)
         # Only one type of hydrogen bond in this system
@@ -91,7 +89,6 @@ class TestHydrogenBondAnalysisTIP3P(object):
 
         counts = h.count_by_type()
         assert int(counts[0, 2]) == ref_count
-
 
     def test_count_by_ids(self, h):
         h.run(n_jobs=4, n_blocks=4)
@@ -104,12 +101,12 @@ class TestHydrogenBondAnalysisTIP3P(object):
 
         assert_array_equal(counts, ref_counts)
 
-
     def test_universe(self, h, universe):
         ref = universe.atoms.positions
         h.run(n_jobs=4, n_blocks=4)
         u = h._universe()
         assert_array_almost_equal(u.atoms.positions, ref)
+
 
 class TestGuess_UseTopology_(TestHydrogenBondAnalysisTIP3P):
     """Uses the same distance and cutoff hydrogen bond criteria as
@@ -145,12 +142,10 @@ class TestGuessDonors_NoTopology(object):
         'd_h_a_angle_cutoff': 120.0
     }
 
-
     @pytest.fixture(scope='class')
     def h(self, universe):
         h = HydrogenBondAnalysis(universe, **self.kwargs)
         return h
-
 
     def test_guess_donors(self, h):
         ref_donors = "(resname TIP3 and name OH2)"
@@ -178,17 +173,15 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
         'd_h_a_angle_cutoff': 120.0
     }
 
-
     @pytest.fixture(scope='class')
     def h(self, universe):
         h = HydrogenBondAnalysis(universe, **self.kwargs)
         return h
 
-
     @pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
     def test_hbond_analysis(self, h, n_blocks):
         h.run(start=1, step=2, n_jobs=n_blocks, n_blocks=n_blocks)
-        assert len(np.unique(h.hbonds[:,0])) == 5
+        assert len(np.unique(h.hbonds[:, 0])) == 5
         assert len(h.hbonds) == 15
 
         reference = {
@@ -202,7 +195,6 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
         assert_allclose(np.mean(h.hbonds[:, 5]), reference['angle']['mean'])
         assert_allclose(np.std(h.hbonds[:, 5]), reference['angle']['std'])
 
-
     @pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
     def test_count_by_time(self, h, n_blocks):
         h.run(start=1, step=2, n_jobs=n_blocks, n_blocks=n_blocks)
@@ -212,7 +204,6 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
         counts = h.count_by_time()
         assert_array_almost_equal(h.timesteps, ref_times)
         assert_array_equal(counts, ref_counts)
-
 
     def test_count_by_type(self, h):
         h.run(start=1, step=2, n_jobs=4, n_blocks=4)
