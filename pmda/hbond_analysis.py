@@ -361,7 +361,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         # If donors_sel is not provided, use topology to find d-h pairs
         if not self.donors_sel:
 
-            if len(u.bonds) == 0:
+            if not hasattr(u, 'bonds'):
                 raise Exception(
                     'Cannot assign donor-hydrogen pairs via topology as no'
                     'bonded information is present. ',
