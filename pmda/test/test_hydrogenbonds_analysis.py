@@ -31,7 +31,8 @@ from pmda.hbond_analysis import HydrogenBondAnalysis
 import pytest
 from numpy.testing import assert_allclose
 from numpy.testing import assert_array_almost_equal, assert_array_equal
-from MDAnalysisTests.datafiles import waterPSF, waterDCD
+from MDAnalysisTests.datafiles import waterPSF, waterDCD, GRO
+import unittest
 
 
 class TestHydrogenBondAnalysisTIP3P(object):
@@ -108,7 +109,22 @@ class TestHydrogenBondAnalysisTIP3P(object):
         assert_array_almost_equal(u.atoms.positions, ref)
 
 
-class TestGuess_UseTopology_(TestHydrogenBondAnalysisTIP3P):
+class TestGuess_UseTopology(TestHydrogenBondAnalysisTIP3P):
+    """Uses the same distance and cutoff hydrogen bond criteria as
+    :class:`TestHydrogenBondAnalysisTIP3P`, so the results are identical,
+    but the hydrogens and acceptors are guessed whilst the donor-hydrogen
+    pairs are determined via the topology.
+    """
+    kwargs = {
+        'donors_sel': None,
+        'hydrogens_sel': None,
+        'acceptors_sel': None,
+        'd_a_cutoff': 3.0,
+        'd_h_a_angle_cutoff': 120.0
+    }
+
+
+class TestNoUpdating(TestHydrogenBondAnalysisTIP3P):
     """Uses the same distance and cutoff hydrogen bond criteria as
     :class:`TestHydrogenBondAnalysisTIP3P`, so the results are identical,
     but the hydrogens and acceptors are guessed whilst the donor-hydrogen
@@ -212,3 +228,20 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
 
         counts = h.count_by_type()
         assert int(counts[0, 2]) == ref_count
+
+
+class TestNoBond_Topologu(unittest.TestCase):
+    kwargs = {
+        'donors_sel': None,
+        'hydrogens_sel': None,
+        'acceptors_sel': None,
+        'd_h_cutoff': 1.2,
+        'd_a_cutoff': 3.0,
+        'd_h_a_angle_cutoff': 120.0
+    }
+
+    def test_nobond(self):
+        u = MDAnalysis.Universe(GRO)
+        h = HydrogenBondAnalysis(u, **self.kwargs)
+        with self.assertRaises(Exception):
+            h._get_dh_pairs(u)
