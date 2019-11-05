@@ -188,7 +188,8 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         Parameters
         ----------
         selection: str (optional)
-            Selection string for atom group from which hydrogens will be identified.
+            Selection string for atom group from which hydrogens will be
+            identified.
         max_mass: float (optional)
             Maximum allowed mass of a hydrogen atom.
         min_charge: float (optional)
@@ -236,34 +237,41 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         return " or ".join(hydrogens_list)
 
     def guess_donors(self, selection='all', max_charge=-0.5):
-        """Guesses which atoms could be considered donors in the analysis. Only use if the universe topology does not
-        contain bonding information, otherwise donor-hydrogen pairs may be incorrectly assigned.
+        """Guesses which atoms could be considered donors in the analysis.
+        Only use if the universe topology does not contain bonding
+        information, otherwise donor-hydrogen pairs may be incorrectly
+        assigned.
 
         Parameters
         ----------
         selection: str (optional)
-            Selection string for atom group from which donors will be identified.
+            Selection string for atom group from which donors will be
+            identified.
         max_charge: float (optional)
             Maximum allowed charge of a donor atom.
 
         Returns
         -------
         potential_donors: str
-            String containing the :attr:`resname` and :attr:`name` of all atoms that potentially capable of forming
-            hydrogen bonds.
+            String containing the :attr:`resname` and :attr:`name` of all
+            atoms that potentially capable of forming hydrogen bonds.
 
         Notes
         -----
-        This function makes use of and atomic charges to identify which atoms could be considered donor atoms in the
-        hydrogen bond analysis. If an atom has an atomic charge less than :attr:`max_charge`, and it is within
-        :attr:`d_h_cutoff` of a hydrogen atom, then it is considered capable of participating in hydrogen bonds.
+        This function makes use of and atomic charges to identify which atoms
+        could be considered donor atoms in the hydrogen bond analysis. If an
+        atom has an atomic charge less than :attr:`max_charge`, and it is
+        within :attr:`d_h_cutoff` of a hydrogen atom, then it is considered
+        capable of participating in hydrogen bonds.
 
-        If :attr:`donors_sel` is `None`, and the universe topology does not have bonding information, this function is
-        called to guess the selection.
+        If :attr:`donors_sel` is `None`, and the universe topology does not
+        have bonding information, this function is called to guess the
+        selection.
 
-        Alternatively, this function may be used to quickly generate a :class:`str` of potential donor atoms involved
-        in hydrogen bonding. This :class:`str` may then be modified before being used to set the attribute
-        :attr:`donors_sel`.
+        Alternatively, this function may be used to quickly generate a
+        :class:`str` of potential donor atoms involved in hydrogen bonding.
+        This :class:`str` may then be modified before being used to set the
+        attribute :attr:`donors_sel`.
 
         """
 
@@ -400,8 +408,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         donors, hydrogens = self._get_dh_pairs(u)
         self._acceptors_ids = acceptors.ids
         self._donors_ids = donors.ids
-        self._hydrogens_ids =  hydrogens.ids
-
+        self._hydrogens_ids = hydrogens.ids
 
     def _single_frame(self, ts, atomgroups):
         u = atomgroups[0].universe
@@ -476,7 +483,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         """
 
         indices, tmp_counts = np.unique(self.hbonds[:, 0], axis=0,
-                return_counts=True)
+                                        return_counts=True)
 
         indices -= self.start
         indices /= self.step
@@ -506,9 +513,9 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         a = u.atoms[self.hbonds[:, 3].astype(np.int)]
 
         tmp_hbonds = np.array([d.resnames, d.types, a.resnames, a.types],
-                dtype=np.str).T
+                              dtype=np.str).T
         hbond_type, type_counts = np.unique(tmp_hbonds, axis=0,
-                return_counts=True)
+                                            return_counts=True)
         hbond_type_list = []
         for hb_type, hb_count in zip(hbond_type, type_counts):
             hbond_type_list.append(
@@ -541,17 +548,19 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
 
         tmp_hbonds = np.array([d.ids, h.ids, a.ids]).T
         hbond_ids, ids_counts = np.unique(tmp_hbonds, axis=0,
-                return_counts=True)
+                                          return_counts=True)
 
         # Find unique hbonds and sort rows so that most frequent observed
         # bonds are at the top of the array
         unique_hbonds = np.concatenate((hbond_ids, ids_counts[:, None]),
-                                        axis=1)
+                                       axis=1)
         unique_hbonds = unique_hbonds[unique_hbonds[:, 3].argsort()[::-1]]
 
         return unique_hbonds
 
     def _universe(self):
+        # A Universe containing position information is needed for guessing
+        # donors and acceptors.
         u = mda.Universe(self._top)
         if not hasattr(u.atoms, 'positions'):
             u.load_new(self._positions)
