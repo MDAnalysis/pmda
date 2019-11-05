@@ -262,7 +262,6 @@ class TestNoBond_Topology(unittest.TestCase):
         with self.assertRaises(Exception):
             h._get_dh_pairs(u)
 
-
     def test_universe(self):
         universe = MDAnalysis.Universe(GRO)
         ref = universe.atoms.positions
