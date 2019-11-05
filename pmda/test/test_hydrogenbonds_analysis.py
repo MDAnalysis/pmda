@@ -126,14 +126,14 @@ class TestGuess_UseTopology(TestHydrogenBondAnalysisTIP3P):
 
 class TestNoUpdating(TestHydrogenBondAnalysisTIP3P):
     """Uses the same distance and cutoff hydrogen bond criteria as
-    :class:`TestHydrogenBondAnalysisTIP3P`, so the results are identical,
-    but the hydrogens and acceptors are guessed whilst the donor-hydrogen
-    pairs are determined via the topology.
+    :class:`TestHydrogenBondAnalysisTIP3P`, but we set `update_selections` to
+    be False. The results are identical because the selections are the same
+    for each frame for this system.
     """
     kwargs = {
         'donors_sel': None,
-        'hydrogens_sel': None,
-        'acceptors_sel': None,
+        'hydrogens_sel': 'name H1 H2',
+        'acceptors_sel': 'name OH2',
         'd_a_cutoff': 3.0,
         'd_h_a_angle_cutoff': 120.0,
         'update_selections': False
@@ -168,6 +168,21 @@ class TestGuessDonors_NoTopology(object):
         ref_donors = "(resname TIP3 and name OH2)"
         donors = h.guess_donors(selection='all', max_charge=-0.5)
         assert donors == ref_donors
+
+
+class TestGuessDonors_GivenHydrogen(TestGuessDonors_NoTopology):
+    """Guess the donor atoms involved in hydrogen bonds using the partial
+    charges of the atoms, given hydrogen selections.
+    """
+
+    kwargs = {
+        'donors_sel': None,
+        'hydrogens_sel': 'name H1 H2',
+        'acceptors_sel': 'name OH2',
+        'd_h_cutoff': 1.2,
+        'd_a_cutoff': 3.0,
+        'd_h_a_angle_cutoff': 120.0
+    }
 
 
 class TestHydrogenBondAnalysisTIP3PStartStep(object):
