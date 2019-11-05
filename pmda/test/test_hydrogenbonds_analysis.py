@@ -246,7 +246,7 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
         assert int(counts[0, 2]) == ref_count
 
 
-class TestNoBond_Topologu(unittest.TestCase):
+class TestNoBond_Topology(unittest.TestCase):
     kwargs = {
         'donors_sel': None,
         'hydrogens_sel': None,
@@ -261,3 +261,11 @@ class TestNoBond_Topologu(unittest.TestCase):
         h = HydrogenBondAnalysis(u, **self.kwargs)
         with self.assertRaises(Exception):
             h._get_dh_pairs(u)
+
+
+    def test_universe(self):
+        universe = MDAnalysis.Universe(GRO)
+        ref = universe.atoms.positions
+        h = HydrogenBondAnalysis(universe, **self.kwargs)
+        u = h._universe()
+        assert_array_almost_equal(u.atoms.positions, ref)
