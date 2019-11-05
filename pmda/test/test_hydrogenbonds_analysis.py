@@ -135,7 +135,8 @@ class TestNoUpdating(TestHydrogenBondAnalysisTIP3P):
         'hydrogens_sel': None,
         'acceptors_sel': None,
         'd_a_cutoff': 3.0,
-        'd_h_a_angle_cutoff': 120.0
+        'd_h_a_angle_cutoff': 120.0,
+        'update_selections': False
     }
 
 
