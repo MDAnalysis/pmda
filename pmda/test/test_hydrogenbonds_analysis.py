@@ -247,6 +247,10 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
 
 
 class TestNoBond_Topology(unittest.TestCase):
+    """Use the topology file that has positions information, but doesn't have
+    bonds information.
+    """
+
     kwargs = {
         'donors_sel': None,
         'hydrogens_sel': None,

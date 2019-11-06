@@ -15,14 +15,17 @@ The rules for this file:
 ------------------------------------------------------------------------------
 MM/DD/YYYY VOD555
 
-  * 0.3.1  
+  * 0.3.1
+
+Enhancements
+  * add parallel hbond analysis class (Issue #95)
 
 Fixes
   * use the new dask scheduler names (#102)
     - multiprocessing --> processes
     - single-threaded --> synchronous
     - threaded --> threads
-  
+
 
 10/14/2019 VOD555, nawtrey
 
