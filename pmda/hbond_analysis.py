@@ -362,7 +362,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         if not self.donors_sel:
 
             if not (hasattr(u, 'bonds') and len(u.bonds) != 0):
-                raise Exception(
+                raise ValueError(
                     'Cannot assign donor-hydrogen pairs via topology as no'
                     'bonded information is present. ',
                     'Please either: ',

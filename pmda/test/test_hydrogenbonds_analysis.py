@@ -32,7 +32,6 @@ import pytest
 from numpy.testing import assert_allclose
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 from MDAnalysisTests.datafiles import waterPSF, waterDCD, GRO
-import unittest
 
 
 class TestHydrogenBondAnalysisTIP3P(object):
@@ -246,7 +245,7 @@ class TestHydrogenBondAnalysisTIP3PStartStep(object):
         assert int(counts[0, 2]) == ref_count
 
 
-class TestNoBond_Topology(unittest.TestCase):
+class TestNoBond_Topology(object):
     """Use the topology file that has positions information, but doesn't have
     bonds information.
     """
@@ -263,7 +262,7 @@ class TestNoBond_Topology(unittest.TestCase):
     def test_nobond(self):
         u = MDAnalysis.Universe(GRO)
         h = HydrogenBondAnalysis(u, **self.kwargs)
-        with self.assertRaises(Exception):
+        with pytest.raises(ValueError):
             h._get_dh_pairs(u)
 
     def test_universe(self):
