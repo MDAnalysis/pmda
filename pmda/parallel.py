@@ -352,6 +352,8 @@ class ParallelAnalysisBase(object):
                                                                  stop, step)
         n_frames = len(range(start, stop, step))
 
+        self.start, self.stop, self.step = start, stop, step
+
         self.n_frames = n_frames
 
         if n_frames == 0:
