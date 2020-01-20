@@ -96,7 +96,6 @@ class InterRDF(ParallelAnalysisBase):
         super(InterRDF, self).__init__(u, (g1, g2))
 
         # collect all atomgroups with the same trajectory object as universe
-        trajectory = u.trajectory
         self.nA = len(g1)
         self.nB = len(g2)
         self.rdf_settings = {'bins': nbins,
