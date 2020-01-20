@@ -90,6 +90,7 @@ def test_trj_len(sels, step):
     nrdf = rdf.InterRDF(s1, s2).run(step=step)
     prdf = InterRDF(s1, s2).run(step=step)
     assert_almost_equal(nrdf.n_frames, prdf.n_frames)
+    assert_almost_equal(nrdf.rdf, prdf.rdf)
 
 
 def test_cdf(sels):

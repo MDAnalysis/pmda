@@ -112,9 +112,10 @@ def test_same_result(u, sels, n_blocks):
 @pytest.mark.parametrize("step", [1, 2, 3])
 def test_trj_len(u, sels, step):
     # should see same results from analysis.rdf and pmda.rdf
-    nrdf = rdf.InterRDF_s(u, sels).run()
-    prdf = InterRDF_s(u, sels).run(n_blocks=n_blocks)
+    nrdf = rdf.InterRDF_s(u, sels).run(step=step)
+    prdf = InterRDF_s(u, sels).run(step=step)
     assert_almost_equal(nrdf.n_frames, prdf.n_frames)
+    assert_almost_equal(nrdf.rdf[0][0][0], prdf.rdf[0][0][0])
 
 
 @pytest.mark.parametrize("density, value", [
