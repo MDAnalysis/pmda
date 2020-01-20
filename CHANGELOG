@@ -25,6 +25,7 @@ Fixes
     - multiprocessing --> processes
     - single-threaded --> synchronous
     - threaded --> threads
+  * fix wrong n_frames when given start, stop, step (#114)
 
 
 10/14/2019 VOD555, nawtrey
