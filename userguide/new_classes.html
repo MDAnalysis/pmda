@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.3. Writing new parallel analysis &#8212; PMDA 0.3.0+2.g1ad4a53 documentation</title>
+    <title>1.3. Writing new parallel analysis &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+2.g1ad4a53 documentation"
+          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -38,14 +38,14 @@
           <div class="body" role="main">
             
   <div class="section" id="writing-new-parallel-analysis">
-<span id="example-new-parallel-analysis"></span><h1>1.3. Writing new parallel analysis<a class="headerlink" href="#writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h1>
+<span id="example-new-parallel-analysis"></span><h1><span class="section-number">1.3. </span>Writing new parallel analysis<a class="headerlink" href="#writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h1>
 <p>At the core of PMDA is the idea that a common interface makes it easy
 to create code that can be easily parallelized, especially if the
 analysis can be split into independent work over multiple trajectory
 segments (or “slices”)  and a final step in which all data from the
 trajectory slices is combined.</p>
 <div class="section" id="wrapping-existing-analysis-functions">
-<span id="wrapping-functions"></span><h2>1.3.1. Wrapping existing analysis functions<a class="headerlink" href="#wrapping-existing-analysis-functions" title="Permalink to this headline">¶</a></h2>
+<span id="wrapping-functions"></span><h2><span class="section-number">1.3.1. </span>Wrapping existing analysis functions<a class="headerlink" href="#wrapping-existing-analysis-functions" title="Permalink to this headline">¶</a></h2>
 <p>If you already have a function that</p>
 <ol class="arabic simple">
 <li><p>takes one or more <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
@@ -57,10 +57,10 @@ frame</p></li>
 create a parallel analysis class that follows the <a class="reference internal" href="pmda_classes.html#pmda-basics"><span class="std std-ref">common PMDA
 API</span></a>.</p>
 <div class="section" id="example-parallelizing-radius-of-gyration">
-<h3>1.3.1.1. Example: Parallelizing radius of gyration<a class="headerlink" href="#example-parallelizing-radius-of-gyration" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">1.3.1.1. </span>Example: Parallelizing radius of gyration<a class="headerlink" href="#example-parallelizing-radius-of-gyration" title="Permalink to this headline">¶</a></h3>
 <p>For example, we want to calculate the radius of gyration of a
 protein. We first create the protein <code class="docutils literal notranslate"><span class="pre">AtomGroup</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="kn">as</span> <span class="nn">mda</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span>
 <span class="n">protein</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
 </pre></div>
@@ -79,13 +79,13 @@ protein given in <code class="docutils literal notranslate"><span class="pre">At
 <p>Run the analysis on 8 cores and show the timeseries that was collected
 in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">results</span></code> attribute:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parallel_rgyr</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">parallel_rgyr</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parallel_rgyr</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="building-pmda-analysis-classes">
-<h2>1.3.2. Building PMDA analysis classes<a class="headerlink" href="#building-pmda-analysis-classes" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.3.2. </span>Building PMDA analysis classes<a class="headerlink" href="#building-pmda-analysis-classes" title="Permalink to this headline">¶</a></h2>
 <p>With the help of <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> one can
 write new analysis functions that automatically parallelize. This
 approach provides more freedom than <a class="reference internal" href="#wrapping-functions"><span class="std std-ref">Wrapping existing analysis functions</span></a>
@@ -168,9 +168,9 @@ that uses the single frame function.</p></li>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../userguide.html">1. User Guide</a><ul>
-      <li>Previous: <a href="parallelization.html" title="previous chapter">1.2. Parallelization</a></li>
-      <li>Next: <a href="../api.html" title="next chapter">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
+  <li><a href="../userguide.html"><span class="section-number">1. </span>User Guide</a><ul>
+      <li>Previous: <a href="parallelization.html" title="previous chapter"><span class="section-number">1.2. </span>Parallelization</a></li>
+      <li>Next: <a href="../api.html" title="next chapter"><span class="section-number">2. </span>API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -193,7 +193,7 @@ that uses the single frame function.</p></li>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

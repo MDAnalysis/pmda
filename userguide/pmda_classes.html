@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.1. Using the pmda analysis classes &#8212; PMDA 0.3.0+2.g1ad4a53 documentation</title>
+    <title>1.1. Using the pmda analysis classes &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+2.g1ad4a53 documentation"
+          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -38,7 +38,7 @@
           <div class="body" role="main">
             
   <div class="section" id="using-the-pmda-analysis-classes">
-<span id="pmda-basics"></span><h1>1.1. Using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code> analysis classes<a class="headerlink" href="#using-the-pmda-analysis-classes" title="Permalink to this headline">¶</a></h1>
+<span id="pmda-basics"></span><h1><span class="section-number">1.1. </span>Using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code> analysis classes<a class="headerlink" href="#using-the-pmda-analysis-classes" title="Permalink to this headline">¶</a></h1>
 <p>Pre-defined analysis classes follow a common pattern. They require one
 or more MDAnalysis <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
 instances as input (which one obtains from a MDAnalysis
@@ -79,12 +79,12 @@ class. The format and content is also dependent on the analysis; for
 example, the RMSD analysis class <code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.rms.RMSD</span></code> produces a
 numpy array of the RMSD time series.</p>
 <div class="section" id="example-parallel-rmsd">
-<span id="id1"></span><h2>1.1.1. Example: Parallel RMSD<a class="headerlink" href="#example-parallel-rmsd" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2><span class="section-number">1.1.1. </span>Example: Parallel RMSD<a class="headerlink" href="#example-parallel-rmsd" title="Permalink to this headline">¶</a></h2>
 <p>In order to use the parallel RMSD calculator <code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.rms.RMSD</span></code>,
 import the module, set up two
 <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> instances, instantiate the
 class and directly use its <code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code> method:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="kn">as</span> <span class="nn">mda</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">pmda</span> <span class="kn">import</span> <span class="n">rms</span>
 
 <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
@@ -92,7 +92,7 @@ class and directly use its <code class="xref py py-meth docutils literal notrans
 
 <span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="n">rmsd_ana</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rmsd_ana</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The resulting <code class="docutils literal notranslate"><span class="pre">rmsd_ana</span></code> instance contains the array of the RMSD
@@ -157,9 +157,9 @@ time series in the attribute <code class="xref py py-attr docutils literal notra
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../userguide.html">1. User Guide</a><ul>
-      <li>Previous: <a href="../userguide.html" title="previous chapter">1. User Guide</a></li>
-      <li>Next: <a href="parallelization.html" title="next chapter">1.2. Parallelization</a></li>
+  <li><a href="../userguide.html"><span class="section-number">1. </span>User Guide</a><ul>
+      <li>Previous: <a href="../userguide.html" title="previous chapter"><span class="section-number">1. </span>User Guide</a></li>
+      <li>Next: <a href="parallelization.html" title="next chapter"><span class="section-number">1.2. </span>Parallelization</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -182,7 +182,7 @@ time series in the attribute <code class="xref py py-attr docutils literal notra
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

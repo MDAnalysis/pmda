@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.3.0+2.g1ad4a53 documentation</title>
+    <title>PMDA - Parallel Molecular Dynamics Analysis &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+2.g1ad4a53 documentation"
+          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
           href="_static/opensearch.xml"/>
     <link rel="shortcut icon" href="_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
@@ -41,10 +41,10 @@
 <p><a class="reference external" href="https://travis-ci.org/MDAnalysis/pmda"><img alt="Build Status" src="https://travis-ci.org/MDAnalysis/pmda.svg?branch=master" /></a> <a class="reference external" href="https://codecov.io/gh/MDAnalysis/pmda"><img alt="Coverage" src="https://codecov.io/gh/MDAnalysis/pmda/branch/master/graph/badge.svg" /></a> <a class="reference external" href="http://makeapullrequest.com"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" /></a> <a class="reference external" href="https://zenodo.org/badge/latestdoi/106346721"><img alt="DOI" src="https://zenodo.org/badge/106346721.svg" /></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Release</dt>
-<dd class="field-odd"><p>0.3.0+2.g1ad4a53</p>
+<dd class="field-odd"><p>0.3.0+3.g26eb31e</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>Nov 09, 2019</p>
+<dd class="field-even"><p>Jan 21, 2020</p>
 </dd>
 </dl>
 <p>Ready to use analysis and buildings blocks to write parallel analysis algorithms
@@ -56,7 +56,7 @@ should rapidly evolve to test different approaches to implementing
 parallel analysis in a seamless and intuitive fashion.</p>
 </div>
 <p>For example, run a rmsd analysis on all available cores:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="kn">as</span> <span class="nn">mda</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">pmda</span> <span class="kn">import</span> <span class="n">rms</span>
 
 <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
@@ -64,7 +64,7 @@ parallel analysis in a seamless and intuitive fashion.</p>
 
 <span class="n">rmsd_ana</span> <span class="o">=</span> <span class="n">rms</span><span class="o">.</span><span class="n">RMSD</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="n">rmsd_ana</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rmsd_ana</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>By default PMDA uses the multiprocessing scheduler of <a class="reference external" href="https://dask.org/">Dask</a>. This is sufficient
@@ -201,7 +201,7 @@ MDAnalysis for its operation and support for Windows is currently
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="userguide.html" title="next chapter">1. User Guide</a></li>
+      <li>Next: <a href="userguide.html" title="next chapter"><span class="section-number">1. </span>User Guide</a></li>
   </ul></li>
 </ul>
 </div>
@@ -223,7 +223,7 @@ MDAnalysis for its operation and support for Windows is currently
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

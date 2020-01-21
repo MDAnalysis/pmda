@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.2.3. Native contacts analysis — pmda.contacts &#8212; PMDA 0.3.0+2.g1ad4a53 documentation</title>
+    <title>2.2.3. Native contacts analysis — pmda.contacts &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+2.g1ad4a53 documentation"
+          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
           href="../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -38,7 +38,7 @@
           <div class="body" role="main">
             
   <span class="target" id="module-pmda.contacts"></span><div class="section" id="native-contacts-analysis-pmda-contacts">
-<h1>2.2.3. Native contacts analysis — <a class="reference internal" href="#module-pmda.contacts" title="pmda.contacts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a><a class="headerlink" href="#native-contacts-analysis-pmda-contacts" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">2.2.3. </span>Native contacts analysis — <a class="reference internal" href="#module-pmda.contacts" title="pmda.contacts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a><a class="headerlink" href="#native-contacts-analysis-pmda-contacts" title="Permalink to this headline">¶</a></h1>
 <p>This module contains classes to analyze native contacts <em>Q</em> over a
 trajectory. Native contacts of a conformation are contacts that exist
 in a reference structure and in the conformation. Contacts in the
@@ -60,15 +60,15 @@ apart than some distance <cite>radius</cite>.</p></li>
 calculated as the total number of native contacts for a given time frame
 divided by the total number of contacts in the reference structure.</p>
 <div class="section" id="examples-for-contact-analysis">
-<h2>2.2.3.1. Examples for contact analysis<a class="headerlink" href="#examples-for-contact-analysis" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.2.3.1. </span>Examples for contact analysis<a class="headerlink" href="#examples-for-contact-analysis" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="one-dimensional-contact-analysis">
-<h3>2.2.3.1.1. One-dimensional contact analysis<a class="headerlink" href="#one-dimensional-contact-analysis" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">2.2.3.1.1. </span>One-dimensional contact analysis<a class="headerlink" href="#one-dimensional-contact-analysis" title="Permalink to this headline">¶</a></h3>
 <p>As an example we analyze the opening (“unzipping”) of salt bridges
 when the AdK enzyme opens up; this is one of the example trajectories
 in MDAnalysis.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
-<span class="kn">from</span> <span class="nn">pmda</span> <span class="k">import</span> <span class="n">contacts</span>
-<span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="k">import</span> <span class="n">PSF</span><span class="p">,</span><span class="n">DCD</span>
+<span class="kn">from</span> <span class="nn">pmda</span> <span class="kn">import</span> <span class="n">contacts</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.tests.datafiles</span> <span class="kn">import</span> <span class="n">PSF</span><span class="p">,</span><span class="n">DCD</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="c1"># example trajectory (transition of AdK from closed to open)</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span><span class="n">DCD</span><span class="p">)</span>
@@ -111,12 +111,12 @@ opens. They open in a step-wise fashion (made more clear by the movie
 </ul>
 </div>
 <div class="section" id="two-dimensional-contact-analysis-q1-q2">
-<h3>2.2.3.1.2. Two-dimensional contact analysis (q1-q2)<a class="headerlink" href="#two-dimensional-contact-analysis-q1-q2" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">2.2.3.1.2. </span>Two-dimensional contact analysis (q1-q2)<a class="headerlink" href="#two-dimensional-contact-analysis-q1-q2" title="Permalink to this headline">¶</a></h3>
 <p>Analyze a single DIMS transition of AdK between its closed and open
 conformation and plot the trajectory projected on q1-q2 <a class="reference internal" href="#franklin2007" id="id1"><span>[Franklin2007]</span></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
-<span class="kn">from</span> <span class="nn">pmda</span> <span class="k">import</span> <span class="n">contacts</span>
-<span class="kn">from</span> <span class="nn">MDAnalysisTests.datafiles</span> <span class="k">import</span> <span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span>
+<span class="kn">from</span> <span class="nn">pmda</span> <span class="kn">import</span> <span class="n">contacts</span>
+<span class="kn">from</span> <span class="nn">MDAnalysisTests.datafiles</span> <span class="kn">import</span> <span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">PSF</span><span class="p">,</span> <span class="n">DCD</span><span class="p">)</span>
 <span class="n">q1q2</span> <span class="o">=</span> <span class="n">contacts</span><span class="o">.</span><span class="n">q1q2</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="s1">&#39;name CA&#39;</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 <span class="n">q1q2</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -133,7 +133,7 @@ conformation and plot the trajectory projected on q1-q2 <a class="reference inte
 <a class="reference internal" href="#franklin2007" id="id2"><span>[Franklin2007]</span></a>.</p>
 </div>
 <div class="section" id="writing-your-own-contact-analysis">
-<h3>2.2.3.1.3. Writing your own contact analysis<a class="headerlink" href="#writing-your-own-contact-analysis" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">2.2.3.1.3. </span>Writing your own contact analysis<a class="headerlink" href="#writing-your-own-contact-analysis" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="#pmda.contacts.Contacts" title="pmda.contacts.Contacts"><code class="xref py py-class docutils literal notranslate"><span class="pre">Contacts</span></code></a> class has been designed to be extensible for your own
 analysis. As an example we will analyze when the acidic and basic groups of AdK
 are in contact which each other; this means that at least one of the contacts
@@ -180,7 +180,7 @@ analysis:</p>
 </div>
 </div>
 <div class="section" id="functions">
-<h2>2.2.3.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.2.3.2. </span>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="pmda.contacts.q1q2">
 <code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">q1q2</code><span class="sig-paren">(</span><em class="sig-param">atomgroup</em>, <em class="sig-param">radius=4.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#q1q2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.q1q2" title="Permalink to this definition">¶</a></dt>
@@ -215,7 +215,7 @@ doi: <a class="reference external" href="http://doi.org/10.1093/nar/gkm342">10.1
 
 </div>
 <div class="section" id="classes">
-<h2>2.2.3.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">2.2.3.3. </span>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pmda.contacts.Contacts">
 <em class="property">class </em><code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">Contacts</code><span class="sig-paren">(</span><em class="sig-param">mobiles</em>, <em class="sig-param">refs</em>, <em class="sig-param">method='hard_cut'</em>, <em class="sig-param">radius=4.5</em>, <em class="sig-param">kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#Contacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.Contacts" title="Permalink to this definition">¶</a></dt>
@@ -355,9 +355,9 @@ to n_jobs or number of available workers in scheduler.</p></li>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
-      <li>Previous: <a href="rmsf.html" title="previous chapter">2.2.2. Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
-      <li>Next: <a href="rdf.html" title="next chapter">2.2.4. Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
+  <li><a href="../api.html"><span class="section-number">2. </span>API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
+      <li>Previous: <a href="rmsf.html" title="previous chapter"><span class="section-number">2.2.2. </span>Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
+      <li>Next: <a href="rdf.html" title="next chapter"><span class="section-number">2.2.4. </span>Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -380,7 +380,7 @@ to n_jobs or number of available workers in scheduler.</p></li>
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.rdf &#8212; PMDA 0.3.0+2.g1ad4a53 documentation</title>
+    <title>pmda.rdf &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+2.g1ad4a53 documentation"
+          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -64,13 +64,13 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">MDAnalysis.lib</span> <span class="k">import</span> <span class="n">distances</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.lib</span> <span class="kn">import</span> <span class="n">distances</span>
 
-<span class="kn">from</span> <span class="nn">.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+<span class="kn">from</span> <span class="nn">.parallel</span> <span class="kn">import</span> <span class="n">ParallelAnalysisBase</span>
 
 
 <div class="viewcode-block" id="InterRDF"><a class="viewcode-back" href="../../api/rdf.html#pmda.rdf.InterRDF">[docs]</a><span class="k">class</span> <span class="nc">InterRDF</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
@@ -128,16 +128,14 @@
     <span class="c1"># pylint: disable=redefined-builtin</span>
     <span class="c1"># continue to use &#39;range&#39; as long as MDAnalysis uses it so that</span>
     <span class="c1"># the user interface remains consistent</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span>
                  <span class="n">nbins</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">),</span> <span class="n">exclusion_block</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">u</span> <span class="o">=</span> <span class="n">g1</span><span class="o">.</span><span class="n">universe</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">InterRDF</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">))</span>
 
         <span class="c1"># collect all atomgroups with the same trajectory object as universe</span>
-        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nA</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">g1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nB</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">g2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nf</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">n_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rdf_settings</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bins&#39;</span><span class="p">:</span> <span class="n">nbins</span><span class="p">,</span>
                              <span class="s1">&#39;range&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exclusion_block</span> <span class="o">=</span> <span class="n">exclusion_block</span>
@@ -193,10 +191,10 @@
         <span class="n">vol</span> <span class="o">*=</span> <span class="mi">4</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
         <span class="c1"># Average number density</span>
-        <span class="n">box_vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span>
+        <span class="n">box_vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span>
         <span class="n">density</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">box_vol</span>
 
-        <span class="n">rdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">)</span>
+        <span class="n">rdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf</span>
 
     <span class="nd">@property</span>
@@ -213,7 +211,7 @@
 
 <span class="sd">        .. versionadded:: 0.3.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span>
 
         <span class="k">return</span> <span class="n">cdf</span>
 
@@ -295,7 +293,7 @@
     <span class="c1"># pylint: disable=redefined-builtin</span>
     <span class="c1"># continue to use &#39;range&#39; as long as MDAnalysis uses it so that</span>
     <span class="c1"># the user interface remains consistent</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">ags</span><span class="p">,</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">ags</span><span class="p">,</span>
                  <span class="n">nbins</span><span class="o">=</span><span class="mi">75</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">atomgroups</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">ags</span><span class="p">:</span>
@@ -306,7 +304,6 @@
         <span class="c1"># List of pairs of AtomGroups</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_density</span> <span class="o">=</span> <span class="n">density</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ags</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nf</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">n_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rdf_settings</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bins&#39;</span><span class="p">:</span> <span class="n">nbins</span><span class="p">,</span>
                              <span class="s1">&#39;range&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">}</span>
         <span class="n">ag_shape</span> <span class="o">=</span> <span class="p">[]</span>
@@ -364,13 +361,13 @@
             <span class="n">N</span> <span class="o">=</span> <span class="n">nA</span> <span class="o">*</span> <span class="n">nB</span>
 
             <span class="c1"># Average number density</span>
-            <span class="n">box_vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span>
+            <span class="n">box_vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span>
             <span class="n">density</span> <span class="o">=</span> <span class="n">N</span> <span class="o">/</span> <span class="n">box_vol</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_density</span><span class="p">:</span>
-                <span class="n">rdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">))</span>
+                <span class="n">rdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">rdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">))</span>
+                <span class="n">rdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">vol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf</span>
 
@@ -396,7 +393,7 @@
 
         <span class="c1"># cdf is a list of cdf between pairs of AtomGroups in ags</span>
         <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
-            <span class="n">cdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nf</span><span class="p">)</span>
+            <span class="n">cdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">cdf</span>
 
@@ -484,7 +481,7 @@
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

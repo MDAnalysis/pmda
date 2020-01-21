@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pmda.rms.rmsd &#8212; PMDA 0.3.0+2.g1ad4a53 documentation</title>
+    <title>pmda.rms.rmsd &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+2.g1ad4a53 documentation"
+          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
           href="../../../_static/opensearch.xml"/>
     <link rel="shortcut icon" href="../../../_static/mdanalysis-logo.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -67,13 +67,13 @@
 <span class="sd">MDAnalysis.analysis.rms.RMSD</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">MDAnalysis.analysis</span> <span class="k">import</span> <span class="n">rms</span>
+<span class="kn">from</span> <span class="nn">MDAnalysis.analysis</span> <span class="kn">import</span> <span class="n">rms</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pmda.parallel</span> <span class="k">import</span> <span class="n">ParallelAnalysisBase</span>
+<span class="kn">from</span> <span class="nn">pmda.parallel</span> <span class="kn">import</span> <span class="n">ParallelAnalysisBase</span>
 
 
 <div class="viewcode-block" id="RMSD"><a class="viewcode-back" href="../../../api/rmsd.html#pmda.rms.rmsd.RMSD">[docs]</a><span class="k">class</span> <span class="nc">RMSD</span><span class="p">(</span><span class="n">ParallelAnalysisBase</span><span class="p">):</span>
@@ -167,7 +167,7 @@
 <span class="sd">        fig.savefig(&quot;rmsd_all_CORE_LID_NMP_ref1AKE.pdf&quot;)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mobile</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">superposition</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mobile</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">superposition</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">universe</span> <span class="o">=</span> <span class="n">mobile</span><span class="o">.</span><span class="n">universe</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RMSD</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="p">(</span><span class="n">mobile</span><span class="p">,</span> <span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ref_pos</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -256,7 +256,7 @@
       &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
