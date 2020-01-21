@@ -25,6 +25,7 @@ Fixes
     - multiprocessing --> processes
     - single-threaded --> synchronous
     - threaded --> threads
+  * fixed RDF functions (gave wrong results if step != 1) (#114)
 
 
 10/14/2019 VOD555, nawtrey

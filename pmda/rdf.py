@@ -96,10 +96,8 @@ class InterRDF(ParallelAnalysisBase):
         super(InterRDF, self).__init__(u, (g1, g2))
 
         # collect all atomgroups with the same trajectory object as universe
-        trajectory = u.trajectory
         self.nA = len(g1)
         self.nB = len(g2)
-        self.nf = trajectory.n_frames
         self.rdf_settings = {'bins': nbins,
                              'range': range}
         self._exclusion_block = exclusion_block
@@ -155,10 +153,10 @@ class InterRDF(ParallelAnalysisBase):
         vol *= 4/3.0 * np.pi
 
         # Average number density
-        box_vol = self.volume / self.nf
+        box_vol = self.volume / self.n_frames
         density = N / box_vol
 
-        rdf = self.count / (density * vol * self.nf)
+        rdf = self.count / (density * vol * self.n_frames)
         self.rdf = rdf
 
     @property
@@ -175,7 +173,7 @@ class InterRDF(ParallelAnalysisBase):
 
         .. versionadded:: 0.3.0
         """
-        cdf = np.cumsum(self.count) / self.nf
+        cdf = np.cumsum(self.count) / self.n_frames
 
         return cdf
 
@@ -268,7 +266,6 @@ class InterRDF_s(ParallelAnalysisBase):
         # List of pairs of AtomGroups
         self._density = density
         self.n = len(ags)
-        self.nf = u.trajectory.n_frames
         self.rdf_settings = {'bins': nbins,
                              'range': range}
         ag_shape = []
@@ -326,13 +323,13 @@ class InterRDF_s(ParallelAnalysisBase):
             N = nA * nB
 
             # Average number density
-            box_vol = self.volume / self.nf
+            box_vol = self.volume / self.n_frames
             density = N / box_vol
 
             if self._density:
-                rdf.append(self.count[i] / (density * vol * self.nf))
+                rdf.append(self.count[i] / (density * vol * self.n_frames))
             else:
-                rdf.append(self.count[i] / (vol * self.nf))
+                rdf.append(self.count[i] / (vol * self.n_frames))
 
         self.rdf = rdf
 
@@ -358,7 +355,7 @@ class InterRDF_s(ParallelAnalysisBase):
 
         # cdf is a list of cdf between pairs of AtomGroups in ags
         for count in self.count:
-            cdf.append(np.cumsum(count, axis=2) / self.nf)
+            cdf.append(np.cumsum(count, axis=2) / self.n_frames)
 
         return cdf
 

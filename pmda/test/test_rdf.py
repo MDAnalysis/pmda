@@ -83,11 +83,21 @@ def test_same_result(sels, n_blocks):
     assert_almost_equal(nrdf.rdf, prdf.rdf)
 
 
+@pytest.mark.parametrize("step", [1, 2, 3])
+def test_trj_len(sels, step):
+    # should see same results from analysis.rdf and pmda.rdf
+    s1, s2 = sels
+    nrdf = rdf.InterRDF(s1, s2).run(step=step)
+    prdf = InterRDF(s1, s2).run(step=step)
+    assert_almost_equal(nrdf.n_frames, prdf.n_frames)
+    assert_almost_equal(nrdf.rdf, prdf.rdf)
+
+
 def test_cdf(sels):
     s1, s2 = sels
     rdf = InterRDF(s1, s2).run()
-    cdf = np.cumsum(rdf.count) / rdf.nf
-    assert_almost_equal(rdf.cdf[-1], rdf.count.sum()/rdf.nf)
+    cdf = np.cumsum(rdf.count) / rdf.n_frames
+    assert_almost_equal(rdf.cdf[-1], rdf.count.sum()/rdf.n_frames)
     assert_almost_equal(rdf.cdf, cdf)
 
 

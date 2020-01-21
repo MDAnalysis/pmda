@@ -86,7 +86,7 @@ def test_double_run(rdf_s):
 
 def test_cdf(rdf_s):
     assert_almost_equal(rdf_s.cdf[0][0][0][-1],
-                        rdf_s.count[0][0][0].sum()/rdf_s.nf)
+                        rdf_s.count[0][0][0].sum()/rdf_s.n_frames)
 
 
 def test_reduce(rdf_s):
@@ -106,6 +106,15 @@ def test_same_result(u, sels, n_blocks):
     nrdf = rdf.InterRDF_s(u, sels).run()
     prdf = InterRDF_s(u, sels).run(n_blocks=n_blocks)
     assert_almost_equal(nrdf.count[0][0][0], prdf.count[0][0][0])
+    assert_almost_equal(nrdf.rdf[0][0][0], prdf.rdf[0][0][0])
+
+
+@pytest.mark.parametrize("step", [1, 2, 3])
+def test_trj_len(u, sels, step):
+    # should see same results from analysis.rdf and pmda.rdf
+    nrdf = rdf.InterRDF_s(u, sels).run(step=step)
+    prdf = InterRDF_s(u, sels).run(step=step)
+    assert_almost_equal(nrdf.n_frames, prdf.n_frames)
     assert_almost_equal(nrdf.rdf[0][0][0], prdf.rdf[0][0][0])
 
 
