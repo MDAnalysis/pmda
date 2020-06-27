@@ -318,13 +318,13 @@ class InterRDF_s(ParallelAnalysisBase):
         # Empty lists to restore indices, RDF
         rdf = []
 
-        for i, (nA, nB) in enumerate(self.ag_shape):
+        for i in range(len(self.ag_shape)):
             # Number of each selection
             N = 1
 
             # Average number density
             box_vol = self.volume / self.n_frames
-            density = 1 / box_vol
+            density = N / box_vol
 
             if self._density:
                 rdf.append(self.count[i] / (density * vol * self.n_frames))
