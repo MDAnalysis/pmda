@@ -320,11 +320,11 @@ class InterRDF_s(ParallelAnalysisBase):
 
         for i, (nA, nB) in enumerate(self.ag_shape):
             # Number of each selection
-            N = nA * nB
+            N = 1
 
             # Average number density
             box_vol = self.volume / self.n_frames
-            density = N / box_vol
+            density = 1 / box_vol
 
             if self._density:
                 rdf.append(self.count[i] / (density * vol * self.n_frames))
