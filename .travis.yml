@@ -53,7 +53,7 @@ matrix:
            MAIN_CMD="python setup.py"
            SETUP_CMD="build_sphinx"
            BUILD_DOCS=true
-           PIP_DEPENDENCIES="${PIP_DEPENDENCIES} sphinx-sitemap"
+           PIP_DEPENDENCIES="${PIP_DEPENDENCIES} sphinx-sitemap sphinx-rtd-theme"
 
 install:
   - git clone --depth 1 git://github.com/astropy/ci-helpers.git

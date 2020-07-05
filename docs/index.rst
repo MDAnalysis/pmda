@@ -185,7 +185,6 @@ If you use PMDA in published work please cite [Fan2019]_.
 
 .. toctree::
    :maxdepth: 4
-   :numbered:
    :hidden:      
 
    userguide

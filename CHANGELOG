@@ -13,11 +13,13 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-MM/DD/YYYY VOD555, orbeckst
+=======
+MM/DD/YYYY VOD555, lilyminium, orbeckst
 
   * 0.4.0
 
 Enhancements
+  * Update doc theme to use sphinx-rtd-theme (Issue #124, PR #126)
   * add parallel hbond analysis class (Issue #95)
 
 Fixes
