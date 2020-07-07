@@ -16,11 +16,8 @@ This module contains parallel versions of analysis tasks in
 
 .. autoclass:: RMSF
     :members:
+    :inherited-members:
 
-    .. attribute:: rmsf
-
-        Results are stored in this N-length :class:`numpy.ndarray` array,
-        giving RMSFs for each of the given atoms.
 
 See Also
 --------
@@ -45,9 +42,9 @@ class RMSF(ParallelAnalysisBase):
     Attributes
     ----------
     rmsf : array
-         N-length :class:`numpy.ndarray` array of RMSF values, where `N` is
-         the number of atoms in the atomgroup of interest. Returned values
-         have units of ångströms.
+         ``N``-length :class:`numpy.ndarray` array of RMSF values,
+         where ``N`` is the number of atoms in the `atomgroup` of
+         interest. Returned values have units of ångströms.
 
     Parameters
     ----------
