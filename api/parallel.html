@@ -1,49 +1,188 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>2.1.1. Parallel Analysis building blocks — pmda.parallel &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
-          href="../_static/opensearch.xml"/>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Parallel Analysis building blocks — pmda.parallel &mdash; PMDA 0.3.0+13.g328b8fe documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.3.0+13.g328b8fe documentation"
+          href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.1.2. Parallel Analysis helper — pmda.custom" href="custom.html" />
-    <link rel="prev" title="2. API for pmda" href="../api.html" />
+    <link rel="next" title="Parallel Analysis helper — pmda.custom" href="custom.html" />
+    <link rel="prev" title="API for pmda" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/pmda-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#building-blocks">Building blocks</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Parallel Analysis building blocks — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.parallel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom.html">Parallel Analysis helper — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.custom</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="util.html">Utility functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.util</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">Pre-defined parallel analysis tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PMDA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a> &raquo;</li>
+        
+      <li>Parallel Analysis building blocks — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.parallel</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/parallel.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <span class="target" id="module-pmda.parallel"></span><div class="section" id="parallel-analysis-building-blocks-pmda-parallel">
-<h1><span class="section-number">2.1.1. </span>Parallel Analysis building blocks — <a class="reference internal" href="#module-pmda.parallel" title="pmda.parallel"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.parallel</span></code></a><a class="headerlink" href="#parallel-analysis-building-blocks-pmda-parallel" title="Permalink to this headline">¶</a></h1>
+<h1>Parallel Analysis building blocks — <a class="reference internal" href="#module-pmda.parallel" title="pmda.parallel"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.parallel</span></code></a><a class="headerlink" href="#parallel-analysis-building-blocks-pmda-parallel" title="Permalink to this headline">¶</a></h1>
 <p>A collection of useful building blocks for creating Analysis
 classes.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="pmda.parallel.ParallelAnalysisBase">
-<em class="property">class </em><code class="sig-prename descclassname">pmda.parallel.</code><code class="sig-name descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em class="sig-param">universe</em>, <em class="sig-param">atomgroups</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.parallel.</code><code class="sig-name descname">ParallelAnalysisBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">universe</span></em>, <em class="sig-param"><span class="n">atomgroups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for defining parallel multi frame analysis</p>
 <p>The class it is designed as a template for creating multiframe analyses.
 This class will automatically take care of setting up the trajectory
@@ -123,11 +262,11 @@ for custom reduce operation on the work blocks. See the example below.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Universe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroups</cite> must belong to this Universe)</p></li>
-<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
+<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pmda.parallel.ParallelAnalysisBase._results">
 <code class="sig-name descname">_results</code><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase._results" title="Permalink to this definition">¶</a></dt>
 <dd><p>The raw data from each process are stored as a list of
@@ -140,7 +279,7 @@ lists, with each sublist containing the return values from
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.ParallelAnalysisBase.readonly_attributes">
 <code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.readonly_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
@@ -152,9 +291,9 @@ lists, with each sublist containing the return values from
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.ParallelAnalysisBase.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=1</em>, <em class="sig-param">n_blocks=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stop</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">n_blocks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#ParallelAnalysisBase.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.ParallelAnalysisBase.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -174,29 +313,29 @@ to n_jobs or number of available workers in scheduler.</p></li>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pmda.parallel.Timing">
-<em class="property">class </em><code class="sig-prename descclassname">pmda.parallel.</code><code class="sig-name descname">Timing</code><span class="sig-paren">(</span><em class="sig-param">io</em>, <em class="sig-param">compute</em>, <em class="sig-param">total</em>, <em class="sig-param">universe</em>, <em class="sig-param">prepare</em>, <em class="sig-param">conclude</em>, <em class="sig-param">wait=None</em>, <em class="sig-param">io_block=None</em>, <em class="sig-param">compute_block=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.parallel.</code><code class="sig-name descname">Timing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">io</span></em>, <em class="sig-param"><span class="n">compute</span></em>, <em class="sig-param"><span class="n">total</span></em>, <em class="sig-param"><span class="n">universe</span></em>, <em class="sig-param"><span class="n">prepare</span></em>, <em class="sig-param"><span class="n">conclude</span></em>, <em class="sig-param"><span class="n">wait</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">io_block</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">compute_block</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/parallel.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.parallel.Timing" title="Permalink to this definition">¶</a></dt>
 <dd><p>store various timeing results of obtained during a parallel analysis run</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.compute">
 <em class="property">property </em><code class="sig-name descname">compute</code><a class="headerlink" href="#pmda.parallel.Timing.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>compute time per frame</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.compute_block">
 <em class="property">property </em><code class="sig-name descname">compute_block</code><a class="headerlink" href="#pmda.parallel.Timing.compute_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>compute time per block</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.conclude">
 <em class="property">property </em><code class="sig-name descname">conclude</code><a class="headerlink" href="#pmda.parallel.Timing.conclude" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to conclude</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.cumulate_time">
 <em class="property">property </em><code class="sig-name descname">cumulate_time</code><a class="headerlink" href="#pmda.parallel.Timing.cumulate_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>cumulative time of io and compute for each frame. This isn’t equal to
@@ -204,37 +343,37 @@ to n_jobs or number of available workers in scheduler.</p></li>
 overhead</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.io">
 <em class="property">property </em><code class="sig-name descname">io</code><a class="headerlink" href="#pmda.parallel.Timing.io" title="Permalink to this definition">¶</a></dt>
 <dd><p>io time per frame</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.io_block">
 <em class="property">property </em><code class="sig-name descname">io_block</code><a class="headerlink" href="#pmda.parallel.Timing.io_block" title="Permalink to this definition">¶</a></dt>
 <dd><p>io time per block</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.prepare">
 <em class="property">property </em><code class="sig-name descname">prepare</code><a class="headerlink" href="#pmda.parallel.Timing.prepare" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to prepare</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.total">
 <em class="property">property </em><code class="sig-name descname">total</code><a class="headerlink" href="#pmda.parallel.Timing.total" title="Permalink to this definition">¶</a></dt>
 <dd><p>wall time</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.universe">
 <em class="property">property </em><code class="sig-name descname">universe</code><a class="headerlink" href="#pmda.parallel.Timing.universe" title="Permalink to this definition">¶</a></dt>
 <dd><p>time to create a universe for each block</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.parallel.Timing.wait">
 <em class="property">property </em><code class="sig-name descname">wait</code><a class="headerlink" href="#pmda.parallel.Timing.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>time for blocks to start working</p>
@@ -245,102 +384,59 @@ overhead</p>
 </div>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="custom.html" class="btn btn-neutral float-right" title="Parallel Analysis helper — pmda.custom" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../api.html" class="btn btn-neutral float-left" title="API for pmda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-    <h1 class="logo logo-name">PMDA</h1>
-    
-  </a>
-</p>
+   
 
-
-
-<p class="blurb">Parallel Molecular Dynamics Analysis</p>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../userguide.html">1. User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.1.1. Parallel Analysis building blocks — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.parallel</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="custom.html">2.1.2. Parallel Analysis helper — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.custom</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="util.html">2.1.3. Utility functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.util</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
-</ul>
-
-
-<hr />
-<ul>
-    
-    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
-    
-    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
-    
-    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
-    
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html"><span class="section-number">2. </span>API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
-      <li>Previous: <a href="../api.html" title="previous chapter"><span class="section-number">2. </span>API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
-      <li>Next: <a href="custom.html" title="next chapter"><span class="section-number">2.1.2. </span>Parallel Analysis helper — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.custom</span></code></a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/api/parallel.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-    <a href="https://github.com/MDAnalysis/pmda" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
-    
-
-    
-  </body>
+</body>
 </html>

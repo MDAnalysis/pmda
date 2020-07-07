@@ -1,44 +1,191 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>2.2.3. Native contacts analysis — pmda.contacts &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
-          href="../_static/opensearch.xml"/>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Native contacts analysis — pmda.contacts &mdash; PMDA 0.3.0+13.g328b8fe documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.3.0+13.g328b8fe documentation"
+          href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.2.4. Radial Distribution Functions — pmda.rdf" href="rdf.html" />
-    <link rel="prev" title="2.2.2. Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf" href="rmsf.html" />
+    <link rel="next" title="Radial Distribution Functions — pmda.rdf" href="rdf.html" />
+    <link rel="prev" title="Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf" href="rmsf.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/pmda-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">Building blocks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">Pre-defined parallel analysis tasks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmsf.html">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples-for-contact-analysis">Examples for contact analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaflet.html">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PMDA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a> &raquo;</li>
+        
+      <li>Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/contacts.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <span class="target" id="module-pmda.contacts"></span><div class="section" id="native-contacts-analysis-pmda-contacts">
-<h1><span class="section-number">2.2.3. </span>Native contacts analysis — <a class="reference internal" href="#module-pmda.contacts" title="pmda.contacts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a><a class="headerlink" href="#native-contacts-analysis-pmda-contacts" title="Permalink to this headline">¶</a></h1>
+<h1>Native contacts analysis — <a class="reference internal" href="#module-pmda.contacts" title="pmda.contacts"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a><a class="headerlink" href="#native-contacts-analysis-pmda-contacts" title="Permalink to this headline">¶</a></h1>
 <p>This module contains classes to analyze native contacts <em>Q</em> over a
 trajectory. Native contacts of a conformation are contacts that exist
 in a reference structure and in the conformation. Contacts in the
@@ -60,9 +207,9 @@ apart than some distance <cite>radius</cite>.</p></li>
 calculated as the total number of native contacts for a given time frame
 divided by the total number of contacts in the reference structure.</p>
 <div class="section" id="examples-for-contact-analysis">
-<h2><span class="section-number">2.2.3.1. </span>Examples for contact analysis<a class="headerlink" href="#examples-for-contact-analysis" title="Permalink to this headline">¶</a></h2>
+<h2>Examples for contact analysis<a class="headerlink" href="#examples-for-contact-analysis" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="one-dimensional-contact-analysis">
-<h3><span class="section-number">2.2.3.1.1. </span>One-dimensional contact analysis<a class="headerlink" href="#one-dimensional-contact-analysis" title="Permalink to this headline">¶</a></h3>
+<h3>One-dimensional contact analysis<a class="headerlink" href="#one-dimensional-contact-analysis" title="Permalink to this headline">¶</a></h3>
 <p>As an example we analyze the opening (“unzipping”) of salt bridges
 when the AdK enzyme opens up; this is one of the example trajectories
 in MDAnalysis.</p>
@@ -111,7 +258,7 @@ opens. They open in a step-wise fashion (made more clear by the movie
 </ul>
 </div>
 <div class="section" id="two-dimensional-contact-analysis-q1-q2">
-<h3><span class="section-number">2.2.3.1.2. </span>Two-dimensional contact analysis (q1-q2)<a class="headerlink" href="#two-dimensional-contact-analysis-q1-q2" title="Permalink to this headline">¶</a></h3>
+<h3>Two-dimensional contact analysis (q1-q2)<a class="headerlink" href="#two-dimensional-contact-analysis-q1-q2" title="Permalink to this headline">¶</a></h3>
 <p>Analyze a single DIMS transition of AdK between its closed and open
 conformation and plot the trajectory projected on q1-q2 <a class="reference internal" href="#franklin2007" id="id1"><span>[Franklin2007]</span></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
@@ -133,7 +280,7 @@ conformation and plot the trajectory projected on q1-q2 <a class="reference inte
 <a class="reference internal" href="#franklin2007" id="id2"><span>[Franklin2007]</span></a>.</p>
 </div>
 <div class="section" id="writing-your-own-contact-analysis">
-<h3><span class="section-number">2.2.3.1.3. </span>Writing your own contact analysis<a class="headerlink" href="#writing-your-own-contact-analysis" title="Permalink to this headline">¶</a></h3>
+<h3>Writing your own contact analysis<a class="headerlink" href="#writing-your-own-contact-analysis" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="#pmda.contacts.Contacts" title="pmda.contacts.Contacts"><code class="xref py py-class docutils literal notranslate"><span class="pre">Contacts</span></code></a> class has been designed to be extensible for your own
 analysis. As an example we will analyze when the acidic and basic groups of AdK
 are in contact which each other; this means that at least one of the contacts
@@ -180,10 +327,10 @@ analysis:</p>
 </div>
 </div>
 <div class="section" id="functions">
-<h2><span class="section-number">2.2.3.2. </span>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
 <dt id="pmda.contacts.q1q2">
-<code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">q1q2</code><span class="sig-paren">(</span><em class="sig-param">atomgroup</em>, <em class="sig-param">radius=4.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#q1q2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.q1q2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">q1q2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atomgroup</span></em>, <em class="sig-param"><span class="n">radius</span><span class="o">=</span><span class="default_value">4.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#q1q2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.q1q2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a q1-q2 analysis.</p>
 <p>Compares native contacts between the starting structure and final structure
 of a trajectory <a class="reference internal" href="#franklin2007" id="id3"><span>[Franklin2007]</span></a>.</p>
@@ -215,10 +362,10 @@ doi: <a class="reference external" href="http://doi.org/10.1093/nar/gkm342">10.1
 
 </div>
 <div class="section" id="classes">
-<h2><span class="section-number">2.2.3.3. </span>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
 <dt id="pmda.contacts.Contacts">
-<em class="property">class </em><code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">Contacts</code><span class="sig-paren">(</span><em class="sig-param">mobiles</em>, <em class="sig-param">refs</em>, <em class="sig-param">method='hard_cut'</em>, <em class="sig-param">radius=4.5</em>, <em class="sig-param">kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#Contacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.Contacts" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pmda.contacts.</code><code class="sig-name descname">Contacts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mobiles</span></em>, <em class="sig-param"><span class="n">refs</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'hard_cut'</span></em>, <em class="sig-param"><span class="n">radius</span><span class="o">=</span><span class="default_value">4.5</span></em>, <em class="sig-param"><span class="n">kwargs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/contacts.html#Contacts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.contacts.Contacts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate contacts based observables.</p>
 <p>The standard methods used in this class calculate the fraction of native
 contacts <em>Q</em> from a trajectory.</p>
@@ -227,7 +374,7 @@ that only depend on the distances and a possible reference distance. The
 <strong>Contact API</strong> prescribes that this method must be a function with call
 signature <code class="docutils literal notranslate"><span class="pre">func(r,</span> <span class="pre">r0,</span> <span class="pre">**kwargs)</span></code> and must be provided in the keyword
 argument <cite>method</cite>.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pmda.contacts.Contacts.timeseries">
 <code class="sig-name descname">timeseries</code><a class="headerlink" href="#pmda.contacts.Contacts.timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>list containing <em>Q</em> for all refgroup pairs and analyzed frames</p>
@@ -252,7 +399,7 @@ respective functions for reasonable values.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.contacts.Contacts.readonly_attributes">
 <code class="sig-name descname">readonly_attributes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.readonly_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the attributes of this class to be read only</p>
@@ -264,9 +411,9 @@ respective functions for reasonable values.</p></li>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pmda.contacts.Contacts.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">start=None</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">n_jobs=1</em>, <em class="sig-param">n_blocks=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stop</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">n_blocks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pmda.contacts.Contacts.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the calculation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -290,110 +437,59 @@ to n_jobs or number of available workers in scheduler.</p></li>
 </div>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rdf.html" class="btn btn-neutral float-right" title="Radial Distribution Functions — pmda.rdf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rmsf.html" class="btn btn-neutral float-left" title="Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-    <h1 class="logo logo-name">PMDA</h1>
-    
-  </a>
-</p>
+   
 
-
-
-<p class="blurb">Parallel Molecular Dynamics Analysis</p>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../userguide.html">1. User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">2.1. Building blocks</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">2.2. Pre-defined parallel analysis tasks</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="rmsd.html">2.2.1. Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="rmsf.html">2.2.2. Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">2.2.3. Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#examples-for-contact-analysis">2.2.3.1. Examples for contact analysis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#functions">2.2.3.2. Functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#classes">2.2.3.3. Classes</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="rdf.html">2.2.4. Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="leaflet.html">2.2.5. LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="density.html">2.2.6. Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
-</ul>
-
-
-<hr />
-<ul>
-    
-    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
-    
-    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
-    
-    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
-    
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html"><span class="section-number">2. </span>API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul>
-      <li>Previous: <a href="rmsf.html" title="previous chapter"><span class="section-number">2.2.2. </span>Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
-      <li>Next: <a href="rdf.html" title="next chapter"><span class="section-number">2.2.4. </span>Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/api/contacts.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-    <a href="https://github.com/MDAnalysis/pmda" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
-    
-
-    
-  </body>
+</body>
 </html>

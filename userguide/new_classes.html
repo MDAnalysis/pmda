@@ -1,54 +1,196 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>1.3. Writing new parallel analysis &#8212; PMDA 0.3.0+3.g26eb31e documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+3.g26eb31e documentation"
-          href="../_static/opensearch.xml"/>
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Writing new parallel analysis &mdash; PMDA 0.3.0+13.g328b8fe documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.3.0+13.g328b8fe documentation"
+          href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2. API for pmda" href="../api.html" />
-    <link rel="prev" title="1.2. Parallelization" href="parallelization.html" />
+    <link rel="next" title="API for pmda" href="../api.html" />
+    <link rel="prev" title="Parallelization" href="parallelization.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/pmda-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../userguide.html">User Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pmda_classes.html">Using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code> analysis classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallelization.html">Parallelization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Writing new parallel analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#wrapping-existing-analysis-functions">Wrapping existing analysis functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#example-parallelizing-radius-of-gyration">Example: Parallelizing radius of gyration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#building-pmda-analysis-classes">Building PMDA analysis classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PMDA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../userguide.html">User Guide</a> &raquo;</li>
+        
+      <li>Writing new parallel analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/userguide/new_classes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="writing-new-parallel-analysis">
-<span id="example-new-parallel-analysis"></span><h1><span class="section-number">1.3. </span>Writing new parallel analysis<a class="headerlink" href="#writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h1>
+<span id="example-new-parallel-analysis"></span><h1>Writing new parallel analysis<a class="headerlink" href="#writing-new-parallel-analysis" title="Permalink to this headline">¶</a></h1>
 <p>At the core of PMDA is the idea that a common interface makes it easy
 to create code that can be easily parallelized, especially if the
 analysis can be split into independent work over multiple trajectory
 segments (or “slices”)  and a final step in which all data from the
 trajectory slices is combined.</p>
 <div class="section" id="wrapping-existing-analysis-functions">
-<span id="wrapping-functions"></span><h2><span class="section-number">1.3.1. </span>Wrapping existing analysis functions<a class="headerlink" href="#wrapping-existing-analysis-functions" title="Permalink to this headline">¶</a></h2>
+<span id="wrapping-functions"></span><h2>Wrapping existing analysis functions<a class="headerlink" href="#wrapping-existing-analysis-functions" title="Permalink to this headline">¶</a></h2>
 <p>If you already have a function that</p>
 <ol class="arabic simple">
-<li><p>takes one or more <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
+<li><p>takes one or more <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
 instances as input</p></li>
 <li><p>analyzes one frame in a trajectory and returns the result for this
 frame</p></li>
@@ -57,7 +199,7 @@ frame</p></li>
 create a parallel analysis class that follows the <a class="reference internal" href="pmda_classes.html#pmda-basics"><span class="std std-ref">common PMDA
 API</span></a>.</p>
 <div class="section" id="example-parallelizing-radius-of-gyration">
-<h3><span class="section-number">1.3.1.1. </span>Example: Parallelizing radius of gyration<a class="headerlink" href="#example-parallelizing-radius-of-gyration" title="Permalink to this headline">¶</a></h3>
+<h3>Example: Parallelizing radius of gyration<a class="headerlink" href="#example-parallelizing-radius-of-gyration" title="Permalink to this headline">¶</a></h3>
 <p>For example, we want to calculate the radius of gyration of a
 protein. We first create the protein <code class="docutils literal notranslate"><span class="pre">AtomGroup</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
@@ -85,7 +227,7 @@ in the <code class="xref py py-attr docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="section" id="building-pmda-analysis-classes">
-<h2><span class="section-number">1.3.2. </span>Building PMDA analysis classes<a class="headerlink" href="#building-pmda-analysis-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Building PMDA analysis classes<a class="headerlink" href="#building-pmda-analysis-classes" title="Permalink to this headline">¶</a></h2>
 <p>With the help of <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a> one can
 write new analysis functions that automatically parallelize. This
 approach provides more freedom than <a class="reference internal" href="#wrapping-functions"><span class="std std-ref">Wrapping existing analysis functions</span></a>
@@ -93,12 +235,12 @@ described above.</p>
 <ol class="arabic simple">
 <li><p>Define the <em>single frame</em> analysis function, i.e., how to compute
 the observable for a single time step from a given
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>.</p></li>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>.</p></li>
 <li><p>Derive a class from <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParallelAnalysisBase</span></code></a>
 that uses the single frame function.</p></li>
 </ol>
 <p>As an example, we show how one can parallelize the RMSF function (from
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v0.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
+<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
 <ul class="simple">
 <li><p>TODO</p></li>
 <li><p>more TODO</p></li>
@@ -108,105 +250,59 @@ that uses the single frame function.</p></li>
 </div>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api.html" class="btn btn-neutral float-right" title="API for pmda" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="parallelization.html" class="btn btn-neutral float-left" title="Parallelization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logos/pmda-logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-    <h1 class="logo logo-name">PMDA</h1>
-    
-  </a>
-</p>
+   
 
-
-
-<p class="blurb">Parallel Molecular Dynamics Analysis</p>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../userguide.html">1. User Guide</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="pmda_classes.html">1.1. Using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code> analysis classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="parallelization.html">1.2. Parallelization</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">1.3. Writing new parallel analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#wrapping-existing-analysis-functions">1.3.1. Wrapping existing analysis functions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#example-parallelizing-radius-of-gyration">1.3.1.1. Example: Parallelizing radius of gyration</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#building-pmda-analysis-classes">1.3.2. Building PMDA analysis classes</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../api.html">2. API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../references.html">3. References</a></li>
-</ul>
-
-
-<hr />
-<ul>
-    
-    <li class="toctree-l1"><a href="https://www.mdanalysis.org">MDAnalysis</a></li>
-    
-    <li class="toctree-l1"><a href="https://dask.org">Dask</a></li>
-    
-    <li class="toctree-l1"><a href="https://distributed.readthedocs.io/">distributed</a></li>
-    
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../userguide.html"><span class="section-number">1. </span>User Guide</a><ul>
-      <li>Previous: <a href="parallelization.html" title="previous chapter"><span class="section-number">1.2. </span>Parallelization</a></li>
-      <li>Next: <a href="../api.html" title="next chapter"><span class="section-number">2. </span>API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/userguide/new_classes.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-    <a href="https://github.com/MDAnalysis/pmda" class="github">
-        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
-    </a>
-    
-
-    
-  </body>
+</body>
 </html>
