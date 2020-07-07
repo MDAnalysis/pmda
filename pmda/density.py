@@ -27,13 +27,16 @@ from __future__ import absolute_import
 
 import numpy as np
 
-import MDAnalysis as mda
-
 from MDAnalysis.lib.util import fixedwidth_bins
+from MDAnalysis.analysis import density as serial_density
 
-from MDAnalysis.analysis.density import Density
-
-from MDAnalysis.analysis.density import _set_user_grid
+try:
+    # MDAnalysis < 2.0.0
+    from MDAnalysis.analysis.density import _set_user_grid as set_user_grid
+except ImportError:
+    # MDAnalysis >= 2.0.0
+    # pylint: disable=protected-access
+    set_user_grid = serial_density.DensityAnalysis._set_user_grid
 
 from .parallel import ParallelAnalysisBase
 
@@ -266,8 +269,9 @@ class DensityAnalysis(ParallelAnalysisBase):
             smin = np.min(coord, axis=0)
             smax = np.max(coord, axis=0)
             # Overwrite smin/smax with user defined values
-            smin, smax = _set_user_grid(self._gridcenter, self._xdim,
-                                        self._ydim, self._zdim, smin, smax)
+            smin, smax = set_user_grid(
+                self._gridcenter, self._xdim,
+                self._ydim, self._zdim, smin, smax)
         else:
             # Make the box bigger to avoid as much as possible 'outlier'. This
             # is important if the sites are defined at a high density: in this
@@ -307,13 +311,14 @@ class DensityAnalysis(ParallelAnalysisBase):
         metadata['n_frames'] = self.n_frames
         metadata['totaltime'] = self._atomgroup.universe.trajectory.totaltime
         metadata['dt'] = self._trajectory.dt
-        metadata['time_unit'] = mda.core.flags['time_unit']
+        metadata['time_unit'] = "ps"
         parameters = self._parameters if self._parameters is not None else {}
         parameters['isDensity'] = False  # must override
-        density = Density(grid=self._grid, edges=self._edges,
-                          units={'length': "Angstrom"},
-                          parameters=parameters,
-                          metadata=metadata)
+        density = serial_density.Density(
+            grid=self._grid, edges=self._edges,
+            units={'length': "Angstrom"},
+            parameters=parameters,
+            metadata=metadata)
         density.make_density()
         self.density = density
 

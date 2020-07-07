@@ -13,7 +13,8 @@ The rules for this file:
   * release numbers follow "Semantic Versioning" http://semver.org
 
 ------------------------------------------------------------------------------
-MM/DD/YYYY VOD555, lilyminium
+=======
+MM/DD/YYYY VOD555, lilyminium, orbeckst
 
   * 0.4.0
 
@@ -27,6 +28,10 @@ Fixes
     - single-threaded --> synchronous
     - threaded --> threads
   * fixed RDF functions (gave wrong results if step != 1) (#114)
+
+Changes
+  * requires MDAnalysis >= 1.0.0 (#122)
+  * dropped official support for Python 3.5 (2.7 and >= 3.6 are supported)
 
 
 10/14/2019 VOD555, nawtrey
