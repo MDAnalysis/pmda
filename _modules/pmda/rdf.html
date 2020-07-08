@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pmda.rdf &mdash; PMDA 0.3.0+15.ge98ebcc documentation</title>
+  <title>pmda.rdf &mdash; PMDA 0.3.0+16.g99104d7 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+15.ge98ebcc documentation"
+          title="Search within PMDA 0.3.0+16.g99104d7 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -482,9 +482,9 @@
         <span class="c1"># Empty lists to restore indices, RDF</span>
         <span class="n">rdf</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">nA</span><span class="p">,</span> <span class="n">nB</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ag_shape</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ag_shape</span><span class="p">)):</span>
             <span class="c1"># Number of each selection</span>
-            <span class="n">N</span> <span class="o">=</span> <span class="n">nA</span> <span class="o">*</span> <span class="n">nB</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="mi">1</span>
 
             <span class="c1"># Average number density</span>
             <span class="n">box_vol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_frames</span>
