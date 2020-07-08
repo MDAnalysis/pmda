@@ -141,7 +141,8 @@ class RMSD(ParallelAnalysisBase):
     def _conclude(self):
         self.rmsd = np.vstack(self._results)
 
-    def _single_frame(self, ts, atomgroups):
+    def _single_frame(self, i):
+        ts = self._universe.trajectory[i]
         return (ts.frame, ts.time,
-                rms.rmsd(atomgroups[0].positions, self._ref_pos,
+                rms.rmsd(self._atomgroups[0].positions, self._ref_pos,
                          superposition=self.superposition))
