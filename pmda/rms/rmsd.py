@@ -14,19 +14,14 @@ Calculating Root-Mean-Square Deviations (RMSD) --- :mod:`pmda.rms`
 This module contains parallel versions of analysis tasks in
 :mod:`MDAnalysis.analysis.rms.RMSD`.
 
-.. autoclass:: RMSD
-    :members:
-
-    .. attribute:: rmsd
-
-        Contains the time series of the RMSD as a `Tx3` :class:`numpy.ndarray`
-        array with content ``[[frame, time (ps), RMSD (Å)], [...], ...]``,
-        where `T` is the number of time steps selected in the :meth:`run`
-        method.
-
 See Also
 --------
-MDAnalysis.analysis.rms.RMSD
+:mod:`MDAnalysis.analysis.rms`
+
+
+.. autoclass:: RMSD
+    :members:
+    :inherited-members:
 
 """
 from __future__ import absolute_import
@@ -51,9 +46,10 @@ class RMSD(ParallelAnalysisBase):
     Attributes
     ----------
     rmsd : array
-         `Tx3` array where each row contains
-         `[frame, time (ps), RMSD (Å)]`, and `T` is the number of time steps
-         selected in the :meth:`run` method.
+          Contains the time series of the RMSD as a `Tx3`
+          :class:`numpy.ndarray` array with content ``[[frame, time
+          (ps), RMSD (Å)], [...], ...]``, where `T` is the number of
+          time steps selected in the :meth:`run` method.
 
     Parameters
     ----------

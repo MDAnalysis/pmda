@@ -36,9 +36,9 @@ setup(
                  'Programming Language :: Python :: 2',
                  'Programming Language :: Python :: 2.7',
                  'Programming Language :: Python :: 3',
-                 'Programming Language :: Python :: 3.4',
-                 'Programming Language :: Python :: 3.5',
                  'Programming Language :: Python :: 3.6',
+                 'Programming Language :: Python :: 3.7',
+                 'Programming Language :: Python :: 3.8',
     ],
     project_urls={
         'Documentation': 'https://www.mdanalysis.org/pmda/',
@@ -48,7 +48,7 @@ setup(
     },
     packages=find_packages(),
     install_requires=[
-        'MDAnalysis>=0.19.0',
+        'MDAnalysis>=1.0.0',
         'dask>=0.18',
         'distributed',
         'six',
@@ -58,5 +58,5 @@ setup(
     ],
     tests_require=[
         'pytest',
-        'MDAnalysisTests>=0.19.0',  # keep
+        'MDAnalysisTests>=1.0.0',  # keep
     ], )
