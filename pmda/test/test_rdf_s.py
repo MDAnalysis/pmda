@@ -128,7 +128,7 @@ def test_trj_len(u, sels, step):
 def test_density(u, sels, density):
     s1 = u.select_atoms('name ZND and resid 289')
     s2 = u.select_atoms(
-            'name OD1 and resid 51 and sphzone 5.0 (resid 289)')
+         'name OD1 and resid 51 and sphzone 5.0 (resid 289)')
     prdf = InterRDF_s(u, sels, density=density).run()
     if density:
         rdf_ref = rdf.InterRDF(s1, s2).run()
