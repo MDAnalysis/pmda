@@ -35,7 +35,7 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, universe, prepare,
+    def __init__(self, io, compute, total, prepare,
                  conclude, wait=None, io_block=None,
                  compute_block=None):
         self._io = io
@@ -44,7 +44,6 @@ class Timing(object):
         self._compute_block = compute_block
         self._total = total
         self._cumulate = np.sum(io) + np.sum(compute)
-        self._universe = universe
         self._prepare = prepare
         self._conclude = conclude
         self._wait = wait
@@ -82,11 +81,6 @@ class Timing(object):
 
         """
         return self._cumulate
-
-    @property
-    def universe(self):
-        """time to create a universe for each block"""
-        return self._universe
 
     @property
     def prepare(self):
