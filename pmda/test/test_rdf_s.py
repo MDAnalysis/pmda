@@ -41,6 +41,14 @@ def rdf_s(u, sels, scheduler):
     return InterRDF_s(u, sels).run()
 
 
+@pytest.fixture(scope='module')
+def rdf_ref(u):
+    s1 = u.select_atoms('name ZND and resid 289')
+    s2 = u.select_atoms(
+         'name OD1 and resid 51 and sphzone 5.0 (resid 289)')
+    return rdf.InterRDF(s1, s2).run()
+
+
 def test_nbins(u, sels):
     rdf = InterRDF_s(u, sels, nbins=412).run()
 
@@ -100,13 +108,12 @@ def test_reduce(rdf_s):
 
 
 @pytest.mark.parametrize("n_blocks", [1, 2, 3, 4])
-def test_same_result(u, sels, n_blocks):
+def test_same_result(u, sels, n_blocks, rdf_ref):
     # should see same results from analysis.rdf.InterRDF_s
     # and pmda.rdf.InterRDF_s
-    nrdf = rdf.InterRDF_s(u, sels).run()
     prdf = InterRDF_s(u, sels).run(n_blocks=n_blocks)
-    assert_almost_equal(nrdf.count[0][0][0], prdf.count[0][0][0])
-    assert_almost_equal(nrdf.rdf[0][0][0], prdf.rdf[0][0][0])
+    assert_almost_equal(rdf_ref.count, prdf.count[0][0][0])
+    assert_almost_equal(rdf_ref.rdf, prdf.rdf[0][0][0])
 
 
 @pytest.mark.parametrize("step", [1, 2, 3])
@@ -115,12 +122,17 @@ def test_trj_len(u, sels, step):
     nrdf = rdf.InterRDF_s(u, sels).run(step=step)
     prdf = InterRDF_s(u, sels).run(step=step)
     assert_almost_equal(nrdf.n_frames, prdf.n_frames)
-    assert_almost_equal(nrdf.rdf[0][0][0], prdf.rdf[0][0][0])
 
 
-@pytest.mark.parametrize("density, value", [
-    (True, 13275.775440503656),
-    (False, 0.021915460340071267)])
-def test_density(u, sels, density, value):
-    rdf = InterRDF_s(u, sels, density=density).run()
-    assert_almost_equal(max(rdf.rdf[0][0][0]), value)
+@pytest.mark.parametrize("density", [True, False])
+def test_density(u, sels, density):
+    s1 = u.select_atoms('name ZND and resid 289')
+    s2 = u.select_atoms(
+         'name OD1 and resid 51 and sphzone 5.0 (resid 289)')
+    prdf = InterRDF_s(u, sels, density=density).run()
+    if density:
+        rdf_ref = rdf.InterRDF(s1, s2).run()
+        assert_almost_equal(rdf_ref.rdf, prdf.rdf[0][0][0])
+    else:
+        nrdf = rdf.InterRDF_s(u, sels, density=density).run()
+        assert_almost_equal(nrdf.rdf[0][0][0], prdf.rdf[0][0][0])
