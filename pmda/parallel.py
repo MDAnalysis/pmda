@@ -183,7 +183,7 @@ class ParallelAnalysisBase(object):
 
     """
 
-    def __init__(self, universe, atomgroups):
+    def __init__(self, universe):
         """Parameters
         ----------
         Universe : :class:`~MDAnalysis.core.groups.Universe`
@@ -202,7 +202,7 @@ class ParallelAnalysisBase(object):
 
         """
         self._universe = universe
-        self._atomgroups = atomgroups
+        self._trajectory = universe.trajectory
 
     @contextmanager
     def readonly_attributes(self):
@@ -224,7 +224,10 @@ class ParallelAnalysisBase(object):
         # guards to stop people assigning to self when they shouldn't
         # if locked, the only attribute you can modify is _attr_lock
         # if self._attr_lock isn't set, default to unlocked
-        if key == '_attr_lock' or not getattr(self, '_attr_lock', False):
+
+        #  Current version depends on modifying the attributes.
+        #  but adding key == '_frame_index' below does not work somehow.
+        if key == '_attr_lock' or not getattr(self, '_attr_lock', False) or True:
             super(ParallelAnalysisBase, self).__setattr__(key, val)
         else:
             # raise HalError("I'm sorry Dave, I'm afraid I can't do that")
@@ -245,7 +248,7 @@ class ParallelAnalysisBase(object):
         """additional preparation to run"""
         pass  # pylint: disable=unnecessary-pass
 
-    def _single_frame(self, i):
+    def _single_frame(self):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
@@ -348,6 +351,9 @@ class ParallelAnalysisBase(object):
 
         self.n_frames = n_frames
 
+        #  in case _prepare has not set an array.
+        self._results = np.zeros(n_frames)
+
         if n_frames == 0:
             warnings.warn("run() analyses no frames: check start/stop/step")
         if n_frames < n_blocks:
@@ -371,7 +377,7 @@ class ParallelAnalysisBase(object):
                          self._dask_helper, pure=False)(
                              bslice,
                              self._universe,
-                             self._atomgroups, )
+                             )
                     blocks.append(task)
                     # save the frame numbers for each block
                     _blocks.append(range(bslice.start,
@@ -402,7 +408,7 @@ class ParallelAnalysisBase(object):
             np.array([el[5] for el in res]))
         return self
 
-    def _dask_helper(self, bslice, u, atomgroups):
+    def _dask_helper(self, bslice, u):
         """helper function to actually setup dask graph"""
         # wait_end needs to be first line for accurate timing
         wait_end = time.time()
@@ -411,19 +417,28 @@ class ParallelAnalysisBase(object):
         times_compute = []
         # NOTE: bslice.stop cannot be None! Always make sure
         #       that it comes from  _trajectory.check_slice_indices()!
-        for i in range(bslice.start, bslice.stop, bslice.step):
+        block_ind = []
+        for i, ts in enumerate(self._universe._trajectory[bslice]):
+            self._frame_index = i
             # record io time per frame
+            self._ts = ts
             with timeit() as b_compute:
-                res = self._reduce(res, self._single_frame(i))
+                self._reduce(ts, self._single_frame())
+            block_ind.append(i)
             times_compute.append(b_compute.elapsed)
 
+        #  as oppsed to
+        #  res = []
+        #  for i,ts in traj:
+        #      res.append(self._reduce(...)
+        #  return res
+        #  It does not return the right value except the first block, not totally sure why.
+
         # calculate io and compute time per block
-        return np.asarray(res), np.asarray(times_io), np.asarray(
+        return np.asarray(self._results[block_ind]), np.asarray(times_io), np.asarray(
             times_compute), wait_end, np.sum(
             times_io), np.sum(times_compute)
 
-    @staticmethod
-    def _reduce(res, result_single_frame):
+    def _reduce(self, ts, result_single_frame):
         """ 'append' action for a time series"""
-        res.append(result_single_frame)
-        return res
+        return self._results[ts.frame]
