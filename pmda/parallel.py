@@ -412,7 +412,6 @@ class ParallelAnalysisBase(object):
         """helper function to actually setup dask graph"""
         # wait_end needs to be first line for accurate timing
         wait_end = time.time()
-        res = []
         times_io = []
         times_compute = []
         # NOTE: bslice.stop cannot be None! Always make sure
@@ -423,7 +422,8 @@ class ParallelAnalysisBase(object):
             # record io time per frame
             self._ts = ts
             with timeit() as b_compute:
-                self._reduce(ts, self._single_frame())
+                self._single_frame()
+
             block_ind.append(i)
             times_compute.append(b_compute.elapsed)
 
@@ -438,7 +438,3 @@ class ParallelAnalysisBase(object):
         return np.asarray(self._results[block_ind]), np.asarray(times_io), np.asarray(
             times_compute), wait_end, np.sum(
             times_io), np.sum(times_compute)
-
-    def _reduce(self, ts, result_single_frame):
-        """ 'append' action for a time series"""
-        return self._results[ts.frame]
