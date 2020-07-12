@@ -312,7 +312,8 @@ class DensityAnalysis(ParallelAnalysisBase):
 
     def _conclude(self):
 
-        self._grid = self._results[:].sum(axis=0)[0]
+        # sum both inside and among blocks. 
+        self._grid = self._results[:].sum(axis=(0, 1))
         self._grid /= float(self.n_frames)
         metadata = self._metadata if self._metadata is not None else {}
         metadata['psf'] = self._atomgroup.universe.filename
