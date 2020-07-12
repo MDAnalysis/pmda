@@ -387,6 +387,7 @@ class ParallelAnalysisBase(object):
                 # record the time when scheduler starts working
                 wait_start = time.time()
                 res = blocks.compute(**scheduler_kwargs)
+                self._res_dask = res
             # hack to handle n_frames == 0 in this framework
             if len(res) == 0:
                 # everything else wants list of block tuples
@@ -435,6 +436,6 @@ class ParallelAnalysisBase(object):
         #  It does not return the right value except the first block, not totally sure why.
 
         # calculate io and compute time per block
-        return np.asarray(self._results[block_ind]), np.asarray(times_io), np.asarray(
+        return np.asarray(np.asarray(self._results)[block_ind]), np.asarray(times_io), np.asarray(
             times_compute), wait_end, np.sum(
             times_io), np.sum(times_compute)
