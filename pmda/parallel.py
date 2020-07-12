@@ -35,7 +35,7 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, prepare,
+    def __init__(self, io, compute, total, prepare, prepare_dask,
                  conclude, wait=None, io_block=None,
                  compute_block=None):
         self._io = io
@@ -45,6 +45,7 @@ class Timing(object):
         self._total = total
         self._cumulate = np.sum(io) + np.sum(compute)
         self._prepare = prepare
+        self._prepare_dask = prepare_dask
         self._conclude = conclude
         self._wait = wait
 
@@ -86,6 +87,11 @@ class Timing(object):
     def prepare(self):
         """time to prepare"""
         return self._prepare
+
+    @property
+    def prepare_dask(self):
+        """time for blocks to start working"""
+        return self._prepare_dask
 
     @property
     def conclude(self):
@@ -372,17 +378,19 @@ class ParallelAnalysisBase(object):
             blocks = []
             _blocks = []
             with self.readonly_attributes():
-                for bslice in slices:
-                    task = delayed(
-                         self._dask_helper, pure=False)(
-                             bslice,
-                             self._universe,
-                             )
-                    blocks.append(task)
-                    # save the frame numbers for each block
-                    _blocks.append(range(bslice.start,
-                                   bslice.stop, bslice.step))
-                blocks = delayed(blocks)
+                with timeit() as prepare_dask:
+                    for bslice in slices:
+                        task = delayed(
+                             self._dask_helper, pure=False)(
+                                 bslice,
+                                 self._universe,
+                                 )
+                        blocks.append(task)
+                        # save the frame numbers for each block
+                        _blocks.append(range(bslice.start,
+                                       bslice.stop, bslice.step))
+                    blocks = delayed(blocks)
+                time_prepare_dask = prepare_dask.elapsed
 
                 # record the time when scheduler starts working
                 wait_start = time.time()
@@ -402,10 +410,12 @@ class ParallelAnalysisBase(object):
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare,
+             time_prepare,
+            time_prepare_dask,
             conclude.elapsed,
             # waiting time = wait_end - wait_start
-            np.array([el[4]-wait_start for el in res]),
+            np.array([el[3]-wait_start for el in res]),
+            np.array([el[4] for el in res]),
             np.array([el[5] for el in res]))
         return self
 
@@ -418,17 +428,22 @@ class ParallelAnalysisBase(object):
         # NOTE: bslice.stop cannot be None! Always make sure
         #       that it comes from  _trajectory.check_slice_indices()!
         block_ind = []
-        for i, ts in enumerate(self._universe._trajectory[bslice]):
+
+        for i in range(bslice.start, bslice.stop, bslice.step):
             self._frame_index = i
             # record io time per frame
-            self._ts = ts
+            # explicit instead of 'for ts in u.trajectory[bslice]'
+            # so that we can get accurate timing.
+            with timeit() as b_io:
+                self._ts = u.trajectory[i]
             with timeit() as b_compute:
                 self._single_frame()
+            times_io.append(b_io.elapsed)
 
             block_ind.append(i)
             times_compute.append(b_compute.elapsed)
 
-        #  as oppsed to
+        #  as opposed to
         #  res = []
         #  for i,ts in traj:
         #      res.append(self._reduce(...)
