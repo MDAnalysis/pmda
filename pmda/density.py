@@ -290,8 +290,7 @@ class DensityAnalysis(ParallelAnalysisBase):
                                      range=arange, normed=False)
         grid *= 0.0
 
-        self._tmp = [[0, 0, grid]] * self.n_frames
-        self._results = [[0, 0, grid]] * self.n_frames
+        self._results = [grid] * self.n_frames
         self._edges = edges
         self._arange = arange
         self._bins = bins
@@ -306,13 +305,14 @@ class DensityAnalysis(ParallelAnalysisBase):
         # serial code can simply do
 
         # the current timestep of the trajectory is self._ts
-        self._results[self._frame_index][0] = self._ts.frame
+#        self._results[self._frame_index][0] = self._ts.frame
         # the actual trajectory is at self._trajectory
-        self._results[self._frame_index][1] = self._trajectory.time
-        self._results[self._frame_index][2] = h
+#        self._results[self._frame_index][1] = self._trajectory.time
+        self._results[self._frame_index] = h
 
     def _conclude(self):
-        self._grid = self._results[:].sum(axis=0)
+
+        self._grid = self._results[:].sum(axis=0)[0]
         self._grid /= float(self.n_frames)
         metadata = self._metadata if self._metadata is not None else {}
         metadata['psf'] = self._atomgroup.universe.filename

@@ -436,6 +436,6 @@ class ParallelAnalysisBase(object):
         #  It does not return the right value except the first block, not totally sure why.
 
         # calculate io and compute time per block
-        return np.asarray(np.asarray(self._results)[block_ind]), np.asarray(times_io), np.asarray(
+        return np.asarray(self._results)[block_ind], np.asarray(times_io), np.asarray(
             times_compute), wait_end, np.sum(
             times_io), np.sum(times_compute)
