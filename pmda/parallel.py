@@ -429,7 +429,8 @@ class ParallelAnalysisBase(object):
         #       that it comes from  _trajectory.check_slice_indices()!
         block_ind = []
 
-        for i in range(bslice.start, bslice.stop, bslice.step):
+        for block_i, i in enumerate(range(bslice.start, bslice.stop, bslice.step)):
+            self._block_i = block_i
             self._frame_index = i
             # record io time per frame
             # explicit instead of 'for ts in u.trajectory[bslice]'
