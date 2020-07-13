@@ -383,7 +383,6 @@ class ParallelAnalysisBase(object):
                         task = delayed(
                              self._dask_helper, pure=False)(
                                  bslice,
-                                 self._universe,
                                  )
                         blocks.append(task)
                         # save the frame numbers for each block
@@ -419,7 +418,7 @@ class ParallelAnalysisBase(object):
             np.array([el[5] for el in res]))
         return self
 
-    def _dask_helper(self, bslice, u):
+    def _dask_helper(self, bslice):
         """helper function to actually setup dask graph"""
         # wait_end needs to be first line for accurate timing
         wait_end = time.time()
@@ -436,7 +435,7 @@ class ParallelAnalysisBase(object):
             # explicit instead of 'for ts in u.trajectory[bslice]'
             # so that we can get accurate timing.
             with timeit() as b_io:
-                self._ts = u.trajectory[i]
+                self._ts = self._universe.trajectory[i]
             with timeit() as b_compute:
                 self._single_frame()
             times_io.append(b_io.elapsed)
