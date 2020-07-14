@@ -358,7 +358,7 @@ class ParallelAnalysisBase(object):
         self.n_frames = n_frames
 
         #  in case _prepare has not set an array.
-        self._results = np.zeros(n_frames)
+        self._results = [None] * self.n_frames
 
         if n_frames == 0:
             warnings.warn("run() analyses no frames: check start/stop/step")

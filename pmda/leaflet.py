@@ -76,7 +76,7 @@ class LeafletFinder(ParallelAnalysisBase):
 
         super(LeafletFinder, self).__init__(universe, (atomgroups,))
 
-    def _find_connected_components(self, data, cutoff=15.0):
+    def _find_connected_components(self, data_list, cutoff=15.0):
         """Perform the Connected Components discovery for the atoms in data.
 
         Parameters
@@ -99,62 +99,66 @@ class LeafletFinder(ParallelAnalysisBase):
 
         """
         # pylint: disable=unsubscriptable-object
-        window, index = data[0]
-        num = window[0].shape[0]
-        i_index = index[0]
-        j_index = index[1]
-        graph = nx.Graph()
+        #raise TypeError(data)
+        comp_s = []
+        for data in data_list:
+            window, index = data
+            num = window[0].shape[0]
+            i_index = index[0]
+            j_index = index[1]
+            graph = nx.Graph()
 
-        if i_index == j_index:
-            train = window[0]
-            test = window[1]
-        else:
-            train = np.vstack([window[0], window[1]])
-            test = np.vstack([window[0], window[1]])
+            if i_index == j_index:
+                train = window[0]
+                test = window[1]
+            else:
+                train = np.vstack([window[0], window[1]])
+                test = np.vstack([window[0], window[1]])
 
-        tree = cKDTree(train, leafsize=40)
-        edges = tree.query_ball_point(test, cutoff)
-        edge_list = [list(zip(np.repeat(idx, len(dest_list)), dest_list))
-                     for idx, dest_list in enumerate(edges)]
+            tree = cKDTree(train, leafsize=40)
+            edges = tree.query_ball_point(test, cutoff)
+            edge_list = [list(zip(np.repeat(idx, len(dest_list)), dest_list))
+                         for idx, dest_list in enumerate(edges)]
 
-        edge_list_flat = np.array([list(item) for sublist in edge_list for
-                                   item in sublist])
+            edge_list_flat = np.array([list(item) for sublist in edge_list for
+                                       item in sublist])
 
-        if i_index == j_index:
-            res = edge_list_flat.transpose()
-            res[0] = res[0] + i_index - 1
-            res[1] = res[1] + j_index - 1
-        else:
-            removed_elements = list()
-            for i in range(edge_list_flat.shape[0]):
-                if (edge_list_flat[i, 0] >= 0 and
-                    edge_list_flat[i, 0] <= num - 1) and \
-                    (edge_list_flat[i, 1] >= 0 and
-                     edge_list_flat[i, 1] <= num - 1) or \
-                    (edge_list_flat[i, 0] >= num and
-                     edge_list_flat[i, 0] <= 2 * num - 1) and \
-                    (edge_list_flat[i, 1] >= num and
-                     edge_list_flat[i, 1] <= 2 * num - 1) or \
-                    (edge_list_flat[i, 0] >= num and
-                     edge_list_flat[i, 0] <= 2 * num - 1) and \
-                    (edge_list_flat[i, 1] >= 0 and
-                     edge_list_flat[i, 1] <= num - 1):
-                    removed_elements.append(i)
-            res = np.delete(edge_list_flat, removed_elements,
-                            axis=0).transpose()
-            res[0] = res[0] + i_index - 1
-            res[1] = res[1] - num + j_index - 1
-        if res.shape[1] == 0:
-            res = np.zeros((2, 1), dtype=np.int)
+            if i_index == j_index:
+                res = edge_list_flat.transpose()
+                res[0] = res[0] + i_index - 1
+                res[1] = res[1] + j_index - 1
+            else:
+                removed_elements = list()
+                for i in range(edge_list_flat.shape[0]):
+                    if (edge_list_flat[i, 0] >= 0 and
+                        edge_list_flat[i, 0] <= num - 1) and \
+                        (edge_list_flat[i, 1] >= 0 and
+                         edge_list_flat[i, 1] <= num - 1) or \
+                        (edge_list_flat[i, 0] >= num and
+                         edge_list_flat[i, 0] <= 2 * num - 1) and \
+                        (edge_list_flat[i, 1] >= num and
+                         edge_list_flat[i, 1] <= 2 * num - 1) or \
+                        (edge_list_flat[i, 0] >= num and
+                         edge_list_flat[i, 0] <= 2 * num - 1) and \
+                        (edge_list_flat[i, 1] >= 0 and
+                         edge_list_flat[i, 1] <= num - 1):
+                        removed_elements.append(i)
+                res = np.delete(edge_list_flat, removed_elements,
+                                axis=0).transpose()
+                res[0] = res[0] + i_index - 1
+                res[1] = res[1] - num + j_index - 1
+            if res.shape[1] == 0:
+                res = np.zeros((2, 1), dtype=np.int)
 
-        edges = [(res[0, k], res[1, k]) for k in range(0, res.shape[1])]
-        graph.add_edges_from(edges)
+            edges = [(res[0, k], res[1, k]) for k in range(0, res.shape[1])]
+            graph.add_edges_from(edges)
 
-        # partial connected components
+            # partial connected components
 
-        subgraphs = nx.connected_components(graph)
-        comp = [g for g in subgraphs]
-        return comp
+            subgraphs = nx.connected_components(graph)
+            comp = [g for g in subgraphs]
+            comp_s.append(comp)
+        return comp_s
 
     # pylint: disable=arguments-differ
     def _single_frame(self, ts, atomgroups, scheduler_kwargs, n_jobs,
@@ -200,12 +204,13 @@ class LeafletFinder(ParallelAnalysisBase):
         # Distribute the data over the available cores, apply the map function
         # and execute.
         parAtoms = db.from_sequence(arranged_coord,
-                                    npartitions=len(arranged_coord))
+                                    npartitions=n_jobs)
         parAtomsMap = parAtoms.map_partitions(self._find_connected_components,
                                               cutoff=cutoff)
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
         # Gather the results and start the reduction. TODO: think if it can go
+        Components = [item for sublist in Components for item in sublist]
         # to the private _reduce method of the based class.
         result = list(Components)
 
