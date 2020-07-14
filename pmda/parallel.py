@@ -252,7 +252,7 @@ class ParallelAnalysisBase(object):
 
     def _prepare(self):
         """additional preparation to run"""
-        pass  # pylint: disable=unnecessary-pass
+        self._results = [None] * self.n_frames
 
     def _single_frame(self):
         """Perform computation on a single trajectory frame.
@@ -356,9 +356,6 @@ class ParallelAnalysisBase(object):
         self.start, self.stop, self.step = start, stop, step
 
         self.n_frames = n_frames
-
-        #  in case _prepare has not set an array.
-        self._results = [None] * self.n_frames
 
         if n_frames == 0:
             warnings.warn("run() analyses no frames: check start/stop/step")
