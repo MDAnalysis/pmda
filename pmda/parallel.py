@@ -228,7 +228,11 @@ class ParallelAnalysisBase(object):
         # guards to stop people assigning to self when they shouldn't
         # if locked, the only attribute you can modify is _attr_lock
         # if self._attr_lock isn't set, default to unlocked
-        if key == '_ts' or key == '_attr_lock' or not getattr(self, '_attr_lock', False):
+
+        # keys that can be changed
+        if key == '_ts' or \
+           key == '_attr_lock' or \
+           not getattr(self, '_attr_lock', False):
             super().__setattr__(key, val)
         else:
             # raise HalError("I'm sorry Dave, I'm afraid I can't do that")
@@ -372,9 +376,7 @@ class ParallelAnalysisBase(object):
             with self.readonly_attributes():
                 with timeit() as prepare_dask:
                     for bslice in slices:
-                        task = delayed(
-                             self._dask_helper, pure=False)(
-                                 bslice)
+                        task = delayed(self._dask_helper, pure=False)(bslice)
                         blocks.append(task)
                         # save the frame numbers for each block
                         _blocks.append(range(bslice.start,
@@ -403,7 +405,7 @@ class ParallelAnalysisBase(object):
             time_prepare_dask,
             conclude.elapsed,
             # waiting time = wait_end - wait_start
-            np.array([el[3]-wait_start for el in res]),
+            np.array([el[3] - wait_start for el in res]),
             np.array([el[4] for el in res]),
             np.array([el[5] for el in res]))
         return self
