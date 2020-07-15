@@ -237,7 +237,8 @@ class Contacts(ParallelAnalysisBase):
             respective functions for reasonable values.
         """
         universe = mobiles[0].universe
-        super(Contacts, self).__init__(universe, mobiles)
+        super().__init__(universe)
+        self._mobiles = mobiles
 
         if method == 'hard_cut':
             self.fraction_contacts = hard_cut_q
@@ -267,13 +268,13 @@ class Contacts(ParallelAnalysisBase):
     def _prepare(self):
         self.timeseries = None
 
-    def _single_frame(self, ts, atomgroups):
-        grA, grB = atomgroups
+    def _single_frame(self):
+        grA, grB = self._mobiles
         # compute distance array for a frame
         d = distance_array(grA.positions, grB.positions)
 
         y = np.empty(len(self.r0) + 1)
-        y[0] = ts.frame
+        y[0] = self._ts.frame
         for i, (initial_contacts,
                 r0) in enumerate(zip(self.initial_contacts, self.r0)):
             # select only the contacts that were formed in the reference state
