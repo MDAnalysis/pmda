@@ -25,9 +25,6 @@ Classes
    :inherited-members:
 
 """
-
-from __future__ import absolute_import, division
-
 import numpy as np
 
 from MDAnalysis.lib import distances
@@ -93,8 +90,9 @@ class InterRDF(ParallelAnalysisBase):
     def __init__(self, g1, g2,
                  nbins=75, range=(0.0, 15.0), exclusion_block=None):
         u = g1.universe
-        super(InterRDF, self).__init__(u, (g1, g2))
+        super().__init__(u)
 
+        self._atomgroups = (g1, g2)
         # collect all atomgroups with the same trajectory object as universe
         self.nA = len(g1)
         self.nB = len(g2)
@@ -117,13 +115,12 @@ class InterRDF(ParallelAnalysisBase):
         # Set the max range to filter the search radius
         self._maxrange = self.rdf_settings['range'][1]
 
-    def _single_frame(self, ts, atomgroups):
-        g1, g2 = atomgroups
-        u = g1.universe
+    def _single_frame(self):
+        g1, g2 = self._atomgroups
         pairs, dist = distances.capped_distance(g1.positions,
                                                 g2.positions,
                                                 self._maxrange,
-                                                box=u.dimensions)
+                                                box=self._universe.dimensions)
         # If provided exclusions, create a mask of _result which
         # lets us take these out.
         if self._exclusion_block is not None:
@@ -132,7 +129,7 @@ class InterRDF(ParallelAnalysisBase):
             mask = np.where(idxA != idxB)[0]
             dist = dist[mask]
         count = np.histogram(dist, **self.rdf_settings)[0]
-        volume = u.trajectory.ts.volume
+        volume = self._universe.trajectory.ts.volume
 
         return np.array([count, np.array(volume, dtype=np.float64)])
 
@@ -261,7 +258,9 @@ class InterRDF_s(ParallelAnalysisBase):
         for pair in ags:
             atomgroups.append(pair[0])
             atomgroups.append(pair[1])
-        super(InterRDF_s, self).__init__(u, atomgroups)
+        super().__init__(u)
+
+        self._atomgroups = atomgroups
 
         # List of pairs of AtomGroups
         self._density = density
@@ -289,22 +288,22 @@ class InterRDF_s(ParallelAnalysisBase):
         self.volume = 0.0
         self._maxrange = self.rdf_settings['range'][1]
 
-    def _single_frame(self, ts, atomgroups):
-        ags = [[atomgroups[2*i], atomgroups[2*i+1]] for i in range(self.n)]
+    def _single_frame(self):
+        ags = [[self._atomgroups[2*i], self._atomgroups[2*i+1]]
+                                        for i in range(self.n)]
         count = [np.zeros((ag1.n_atoms, ag2.n_atoms, self.len),
                  dtype=np.float64) for ag1, ag2 in ags]
         for i, (ag1, ag2) in enumerate(ags):
-            u = ag1.universe
             pairs, dist = distances.capped_distance(ag1.positions,
                                                     ag2.positions,
                                                     self._maxrange,
-                                                    box=u.dimensions)
+                                                    box=self._universe.dimensions)
 
             for j, (idx1, idx2) in enumerate(pairs):
                 count[i][idx1, idx2, :] = np.histogram(dist[j],
                                                        **self.rdf_settings)[0]
 
-        volume = u.trajectory.ts.volume
+        volume = self._universe.trajectory.ts.volume
 
         return np.array([np.array(count), np.array(volume, dtype=np.float64)])
 
