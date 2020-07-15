@@ -24,8 +24,6 @@ Classes
    :members:
 
 """
-from __future__ import absolute_import, division
-
 import numpy as np
 
 from MDAnalysis.lib.distances import capped_distance, calc_angles
@@ -172,7 +170,8 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         """
 
         ag = universe.atoms
-        super(HydrogenBondAnalysis, self).__init__(universe, (ag, ))
+        super().__init__(universe)
+        self._atomgroup = ag
         self.donors_sel = donors_sel
         self.hydrogens_sel = hydrogens_sel
         self.acceptors_sel = acceptors_sel
@@ -218,7 +217,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         :attr:`hydrogens_sel`.
         """
 
-        u = self._universe()
+        u = self._universe
         ag = u.select_atoms(selection)
         hydrogens_ag = ag[
             np.logical_and(
@@ -282,7 +281,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
             hydrogens_sel = self.guess_hydrogens()
         else:
             hydrogens_sel = self.hydrogens_sel
-        u = self._universe()
+        u = self._universe
         hydrogens_ag = u.select_atoms(hydrogens_sel)
 
         ag = hydrogens_ag.residues.atoms.select_atoms(
@@ -335,7 +334,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         attribute :attr:`acceptors_sel`.
         """
 
-        u = self._universe()
+        u = self._universe
         ag = u.select_atoms(selection)
         acceptors_ag = ag[ag.charges < max_charge]
         acceptors_list = np.unique(
@@ -393,7 +392,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         return donors, hydrogens
 
     def _prepare(self):
-        u = mda.Universe(self._top, self._traj)
+        u = self._universe
         self.hbonds = []
         self.frames = np.arange(self.start, self.stop, self.step)
         self.timesteps = (self.frames*u.trajectory.dt) + u.trajectory[0].time
@@ -410,10 +409,9 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         self._donors_ids = donors.ids
         self._hydrogens_ids = hydrogens.ids
 
-    def _single_frame(self, ts, atomgroups):
-        u = atomgroups[0].universe
-
-        box = ts.dimensions
+    def _single_frame(self):
+        u = self._universe
+        box = self._ts.dimensions
 
         # Update donor-hydrogen pairs if necessary
         if self.update_selections:
@@ -459,7 +457,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
 
         # Store data on hydrogen bonds found at this frame
         hbonds = [[], [], [], [], [], []]
-        hbonds[0].extend(np.full_like(hbond_donors, ts.frame))
+        hbonds[0].extend(np.full_like(hbond_donors, self._ts.frame))
         hbonds[1].extend(hbond_donors.ids)
         hbonds[2].extend(hbond_hydrogens.ids)
         hbonds[3].extend(hbond_acceptors.ids)
@@ -508,7 +506,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         resname and atom type of the donor and acceptor atoms in a hydrogen
         bond.
         """
-        u = self._universe()
+        u = self._universe
         d = u.atoms[self.hbonds[:, 1].astype(np.int)]
         a = u.atoms[self.hbonds[:, 3].astype(np.int)]
 
@@ -541,7 +539,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         hydrogen atom id and acceptor atom id in a hydrogen bond.
         """
 
-        u = self._universe()
+        u = self._universe
         d = u.atoms[self.hbonds[:, 1].astype(np.int)]
         h = u.atoms[self.hbonds[:, 2].astype(np.int)]
         a = u.atoms[self.hbonds[:, 3].astype(np.int)]
@@ -557,14 +555,6 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         unique_hbonds = unique_hbonds[unique_hbonds[:, 3].argsort()[::-1]]
 
         return unique_hbonds
-
-    def _universe(self):
-        # A Universe containing position information is needed for guessing
-        # donors and acceptors.
-        u = mda.Universe(self._top)
-        if not hasattr(u.atoms, 'positions'):
-            u.load_new(self._positions)
-        return u
 
     @staticmethod
     def _reduce(res, result_single_frame):

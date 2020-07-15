@@ -236,7 +236,7 @@ class ParallelAnalysisBase(object):
             super().__setattr__(key, val)
         else:
             # raise HalError("I'm sorry Dave, I'm afraid I can't do that")
-            raise AttributeError("Can't set attribute at this time")
+            raise AttributeError("Can't set '{}' at this time".format(key))
 
     def _conclude(self):
         """Finalise the results you've gathered.
