@@ -408,6 +408,10 @@ class ParallelAnalysisBase(object):
             np.array([el[3] - wait_start for el in res]),
             np.array([el[4] for el in res]),
             np.array([el[5] for el in res]))
+
+        #  this is crucial if the analysis does not iterate over
+        #  the whole trajectory.
+        self._trajectory.rewind()
         return self
 
     def _dask_helper(self, bslice):

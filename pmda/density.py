@@ -22,9 +22,6 @@ See Also
 MDAnalysis.analysis.density.density_from_Universe
 
 """
-
-from __future__ import absolute_import
-
 import numpy as np
 
 from MDAnalysis.lib.util import fixedwidth_bins
@@ -241,7 +238,7 @@ class DensityAnalysis(ParallelAnalysisBase):
                  parameters=None, gridcenter=None, xdim=None, ydim=None,
                  zdim=None):
         u = atomgroup.universe
-        super(DensityAnalysis, self).__init__(u, (atomgroup, ))
+        super().__init__(u)
         self._atomgroup = atomgroup
         self._delta = delta
         self._atomselection = atomselection
@@ -259,10 +256,15 @@ class DensityAnalysis(ParallelAnalysisBase):
         elif not updating and atomselection is not None:
             raise ValueError("""With updating=False, the atomselection='{}' is
                         not used and should be None""".format(atomselection))
+        elif updating and atomselection is not None:
+            self._select_atomgroup = atomgroup.select_atoms(atomselection,
+                                                            updating=True)
+        else:
+            self._select_atomgroup = atomgroup
+
 
     def _prepare(self):
-        coord = self.current_coordinates(self._atomgroup, self._atomselection,
-                                         self._updating)
+        coord = self._select_atomgroup.positions
         if self._gridcenter is not None:
             # Generate a copy of smin/smax from coords to later check if the
             # defined box might be too small for the selection
@@ -294,10 +296,10 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._arange = arange
         self._bins = bins
 
-    def _single_frame(self, ts, atomgroups):
-        coord = self.current_coordinates(atomgroups[0], self._atomselection,
-                                         self._updating)
-        result = np.histogramdd(coord, bins=self._bins, range=self._arange,
+    def _single_frame(self):
+        result = np.histogramdd(self._select_atomgroup.positions,
+                                bins=self._bins,
+                                range=self._arange,
                                 normed=False)
         return result[0]
 
@@ -330,12 +332,3 @@ class DensityAnalysis(ParallelAnalysisBase):
         else:
             res += result_single_frame
         return res
-
-    @staticmethod
-    def current_coordinates(atomgroup, atomselection, updating):
-        """Retrieves the current coordinates of all atoms in the chosen atom
-        selection.
-        Note: currently required to allow for updating selections"""
-        ag = atomgroup if not updating else atomgroup.select_atoms(
-                                                            atomselection)
-        return ag.positions
