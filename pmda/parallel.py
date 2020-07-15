@@ -230,7 +230,7 @@ class ParallelAnalysisBase(object):
         # if self._attr_lock isn't set, default to unlocked
 
         # keys that can be changed
-        if key == '_ts' or \
+        if key in ['_ts', 'prepare_dask_total'] or \
            key == '_attr_lock' or \
            not getattr(self, '_attr_lock', False):
             super().__setattr__(key, val)

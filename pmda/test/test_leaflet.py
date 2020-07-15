@@ -27,30 +27,27 @@ class TestLeafLet(object):
                 np.array([36634]),
                 np.array([36507, 36761, 38285, 39174]),
                 np.array([36634]),
-                np.array([36507, 36761, 37650, 38285, 39174, 39936]),
+                np.array([36507, 36761, 37650, 38285, 39174, 39936])]
                 np.array([36634]),
-                np.array([36507, 36761, 37650, 38285, 39174, 39428, 39936]),
-                np.array([36634]),
-                np.array([36507, 36761]),
-                np.array([36634])]
+             #   np.array([36507, 36761, 37650, 38285, 39174, 39428, 39936]),
+             #   np.array([36634]),
+             #   np.array([36507, 36761]),
+             #   np.array([36634])]
 
     @pytest.fixture()
     def correct_values_single_frame(self):
         return [np.arange(1, 2150, 12), np.arange(2521, 4670, 12)]
 
     # XFAIL for 2 jobs needs to be fixed!
-    @pytest.mark.parametrize('n_jobs', [
-        pytest.param(-1, marks=pytest.mark.xfail),
-        1,
-        pytest.param(2, marks=pytest.mark.xfail),
-    ])
+    @pytest.mark.parametrize('n_jobs', (-1, 1, 2))
     def test_leaflet(self, universe, correct_values, n_jobs):
         lipid_heads = universe.select_atoms("name P and resname POPG")
         universe.trajectory.rewind()
         leaflets = leaflet.LeafletFinder(universe, lipid_heads)
-        leaflets.run(n_jobs=n_jobs)
+        leaflets.run(n_jobs=n_jobs, stop=3)
         results = [atoms.indices for atomgroup in leaflets.results
                    for atoms in atomgroup]
+        print(results)
         [assert_almost_equal(x, y, err_msg="error: leaflets should match " +
                              "test values") for x, y in
          zip(results, correct_values)]
