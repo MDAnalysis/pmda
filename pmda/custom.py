@@ -16,8 +16,6 @@ be run in parallel from functions that take one or more atom groups from the
 same universe and return a value.
 
 """
-from __future__ import absolute_import
-
 from MDAnalysis.core.groups import AtomGroup
 from MDAnalysis.core.universe import Universe
 from MDAnalysis.coordinates.base import ProtoReader
@@ -77,27 +75,15 @@ class AnalysisFromFunction(ParallelAnalysisBase):
         """
 
         self.function = function
-
-        # collect all atomgroups with the same trajectory object as universe
-        trajectory = universe.trajectory
-        arg_ags = []
-        self.other_args = []
-        for arg in args:
-            if isinstance(arg,
-                          AtomGroup) and arg.universe.trajectory == trajectory:
-                arg_ags.append(arg)
-            else:
-                self.other_args.append(arg)
-
-        super(AnalysisFromFunction, self).__init__(universe, arg_ags)
+        super().__init__(universe)
+        self.args = args
         self.kwargs = kwargs
 
     def _prepare(self):
         self.results = []
 
-    def _single_frame(self, ts, atomgroups):
-        args = atomgroups + self.other_args
-        return self.function(*args, **self.kwargs)
+    def _single_frame(self):
+        return self.function(*self.args, **self.kwargs)
 
     def _conclude(self):
         self.results = np.concatenate(self._results)
