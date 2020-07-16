@@ -26,7 +26,7 @@ env:
     - CONDA_CHANNEL_PRIORITY=True
     # install development version of MDAnalysis (needed until the test
     # files for analysis.rdf are available in release 0.19.0)
-    - PIP_DEPENDENCIES="git+https://github.com/yuxuanzhuang/mdanalysis.git@serialize_io&subdirectory=package git+https://github.com/yuxuanzhuang/mdanalysis.git@serialize_io&#egg=mdanalysistests&subdirectory=testsuite"
+    - PIP_DEPENDENCIES="git+https://github.com/yuxuanzhuang/mdanalysis#egg=mdanalysis&subdirectory=package@serialize_io git+https://github.com/yuxuanzhuang/mdanalysis#egg=mdanalysistests&subdirectory=testsuite@serialize_io"
     - NUMPY_VERSION=stable
     - BUILD_CMD='python setup.py develop'
     - CODECOV=false
