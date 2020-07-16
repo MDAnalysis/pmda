@@ -96,7 +96,6 @@ def test_no_frames(analysis, n_jobs):
     np.testing.assert_equal(analysis.timing.io_block, [0])
     np.testing.assert_equal(analysis.timing.compute_block, [0])
     np.testing.assert_equal(analysis.timing.wait, [0])
-    assert analysis.timing.universe == 0
 
 
 def test_scheduler(analysis, scheduler):

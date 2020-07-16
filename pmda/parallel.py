@@ -390,7 +390,7 @@ class ParallelAnalysisBase(object):
             # hack to handle n_frames == 0 in this framework
             if len(res) == 0:
                 # everything else wants list of block tuples
-                res = [([], [], [], 0, wait_start, 0, 0)]
+                res = [([], [], [], wait_start, 0, 0)]
             # record conclude time
             with timeit() as conclude:
                 self._results = np.asarray([el[0] for el in res])
