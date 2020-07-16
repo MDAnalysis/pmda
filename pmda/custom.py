@@ -18,7 +18,6 @@ same universe and return a value.
 """
 from __future__ import absolute_import
 
-from MDAnalysis.core.groups import AtomGroup
 from MDAnalysis.core.universe import Universe
 from MDAnalysis.coordinates.base import ProtoReader
 import numpy as np
@@ -75,32 +74,19 @@ class AnalysisFromFunction(ParallelAnalysisBase):
            analyze can not be passed as keyword arguments currently.
 
         """
-
         self.function = function
-
-        # collect all atomgroups with the same trajectory object as universe
-        trajectory = universe.trajectory
-        arg_ags = []
-        self.other_args = []
-        for arg in args:
-            if isinstance(arg,
-                          AtomGroup) and arg.universe.trajectory == trajectory:
-                arg_ags.append(arg)
-            else:
-                self.other_args.append(arg)
-
-        super(AnalysisFromFunction, self).__init__(universe, arg_ags)
+        super().__init__(universe)
+        self.args = args
         self.kwargs = kwargs
 
     def _prepare(self):
-        self.results = []
+        self._results = [None] * self.n_frames
 
-    def _single_frame(self, ts, atomgroups):
-        args = atomgroups + self.other_args
-        return self.function(*args, **self.kwargs)
+    def _single_frame(self):
+        self._results[self._frame_index] = self.function(*self.args, **self.kwargs)
 
     def _conclude(self):
-        self.results = np.concatenate(self._results)
+        self.results = self._results
 
 
 def analysis_class(function):
@@ -144,13 +130,12 @@ def analysis_class(function):
     class WrapperClass(AnalysisFromFunction):
         """Custom Analysis Function"""
 
-        def __init__(self, trajectory=None, *args, **kwargs):
-            if not (isinstance(trajectory, ProtoReader) or isinstance(
-                    trajectory, Universe)):
-                print(type(trajectory))
+        def __init__(self, universe=None, *args, **kwargs):
+            if not isinstance(universe, Universe):
+                print(type(universe))
                 raise ValueError(
-                    "First argument needs to be an MDAnalysis reader object.")
-            super(WrapperClass, self).__init__(function, trajectory, *args,
-                                               **kwargs)
+                        "First argument needs to be an MDAnalysis Universe.")
+                super().__init__(function, universe, *args,
+                                                   **kwargs)
 
     return WrapperClass

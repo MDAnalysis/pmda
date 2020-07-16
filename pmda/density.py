@@ -240,8 +240,8 @@ class DensityAnalysis(ParallelAnalysisBase):
                  metadata=None, padding=2.0, updating=False,
                  parameters=None, gridcenter=None, xdim=None, ydim=None,
                  zdim=None):
-        u = atomgroup.universe
-        super(DensityAnalysis, self).__init__(u, (atomgroup, ))
+        universe = atomgroup.universe
+        super().__init__(universe)
         self._atomgroup = atomgroup
         self._delta = delta
         self._atomselection = atomselection
@@ -253,7 +253,7 @@ class DensityAnalysis(ParallelAnalysisBase):
         self._xdim = xdim
         self._ydim = ydim
         self._zdim = zdim
-        self._trajectory = u.trajectory
+        self._trajectory = universe.trajectory
         if updating and atomselection is None:
             raise ValueError("updating=True requires a atomselection string")
         elif not updating and atomselection is not None:
@@ -289,20 +289,31 @@ class DensityAnalysis(ParallelAnalysisBase):
         grid, edges = np.histogramdd(np.zeros((1, 3)), bins=bins,
                                      range=arange, normed=False)
         grid *= 0.0
-        self._grid = grid
+
+        self._results = [grid] * self.n_frames
         self._edges = edges
         self._arange = arange
         self._bins = bins
 
-    def _single_frame(self, ts, atomgroups):
-        coord = self.current_coordinates(atomgroups[0], self._atomselection,
-                                         self._updating)
-        result = np.histogramdd(coord, bins=self._bins, range=self._arange,
-                                normed=False)
-        return result[0]
+    def _single_frame(self):
+        h, _ = np.histogramdd(self._atomgroup.positions,
+                              bins=self._bins, range=self._arange,
+                              normed=False)
+        # reduce (proposed change #2542 to match the parallel version in pmda.density)
+        # return self._reduce(self._grid, h)
+        #
+        # serial code can simply do
+
+        # the current timestep of the trajectory is self._ts
+#        self._results[self._frame_index][0] = self._ts.frame
+        # the actual trajectory is at self._trajectory
+#        self._results[self._frame_index][1] = self._trajectory.time
+        self._results[self._frame_index] = h
 
     def _conclude(self):
-        self._grid = self._results[:].sum(axis=0)
+
+        # sum both inside and among blocks. 
+        self._grid = self._results[:].sum(axis=(0, 1))
         self._grid /= float(self.n_frames)
         metadata = self._metadata if self._metadata is not None else {}
         metadata['psf'] = self._atomgroup.universe.filename
@@ -322,14 +333,6 @@ class DensityAnalysis(ParallelAnalysisBase):
         density.make_density()
         self.density = density
 
-    @staticmethod
-    def _reduce(res, result_single_frame):
-        """ 'accumulate' action for a time series"""
-        if isinstance(res, list) and len(res) == 0:
-            res = result_single_frame
-        else:
-            res += result_single_frame
-        return res
 
     @staticmethod
     def current_coordinates(atomgroup, atomselection, updating):

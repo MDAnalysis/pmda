@@ -127,17 +127,23 @@ class RMSD(ParallelAnalysisBase):
     """
     def __init__(self, mobile, ref, superposition=True):
         universe = mobile.universe
-        super(RMSD, self).__init__(universe, (mobile, ))
+        super(RMSD, self).__init__(universe)
+        self._atomgroups = (mobile, )
         self._ref_pos = ref.positions.copy()
         self.superposition = superposition
 
     def _prepare(self):
+        self._results = np.zeros((self.n_frames, 3))
         self.rmsd = None
 
     def _conclude(self):
         self.rmsd = np.vstack(self._results)
 
-    def _single_frame(self, ts, atomgroups):
-        return (ts.frame, ts.time,
-                rms.rmsd(atomgroups[0].positions, self._ref_pos,
-                         superposition=self.superposition))
+    def _single_frame(self):
+        # the current timestep of the trajectory is self._ts
+        self._results[self._frame_index, 0] = self._ts.frame
+        # the actual trajectory is at self._trajectory
+        self._results[self._frame_index, 1] = self._trajectory.time
+        self._results[self._frame_index, 2] = rms.rmsd(self._atomgroups[0].positions,
+                                                       self._ref_pos,
+                                                       superposition=self.superposition)

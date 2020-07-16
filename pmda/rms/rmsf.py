@@ -169,73 +169,45 @@ class RMSF(ParallelAnalysisBase):
     .. _`Issue #15`: https://github.com/MDAnalysis/pmda/issues/15
 
     """
+    def __init__(self, atomgroup, **kwargs):
+        super().__init__(atomgroup.universe, **kwargs)
+        self.atomgroup = atomgroup
 
-    def __init__(self, atomgroup):
-        u = atomgroup.universe
-        super(RMSF, self).__init__(u, (atomgroup, ))
-        self._atomgroup = atomgroup
-        self._top = u.filename
-        self._traj = u.trajectory.filename
+    def _prepare(self):
+        self.sumsquares = np.zeros((self.atomgroup.n_atoms, 3))
+        self.mean = self.sumsquares.copy()
+        self._results = [self.sumsquares, self.mean] * self.n_frames
 
-    def _single_frame(self, ts, atomgroups):
-        # mean and sum of squares calculations done in _reduce()
-        return atomgroups[0]
+    def _single_frame(self):
+        k = self._block_i
+        if k == 0:
+            self.sumsquares = np.zeros((self.atomgroup.n_atoms, 3))
+            self.mean = self.atomgroup.positions
+        else:
+            self.sumsquares += (k / (k+1.0)) * (self.atomgroup.positions - self.mean) ** 2
+            self.mean = (k * self.mean + self.atomgroup.positions) / (k + 1)
+        self._results[self._frame_index] = np.asarray([self.sumsquares, self.mean])
 
     def _conclude(self):
-        """
-        self._results : Array
-            (n_blocks x 2 x N x 3) array
-        """
         n_blocks = len(self._results)
         # serial case
         if n_blocks == 1:
             # get length of trajectory slice
-            self.mean = self._results[0, 0]
-            self.sumsquares = self._results[0, 1]
+            self.mean = self._results[0][-1][1]
+            self.sumsquares = self._results[0][-1][0]
             self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.n_frames)
         # parallel case
         else:
-            mean = self._results[:, 0]
-            sos = self._results[:, 1]
-            # create list of (timesteps, mean, sumsq tuples for each block
             vals = []
             for i in range(n_blocks):
-                vals.append((len(self._blocks[i]), mean[i], sos[i]))
+                vals.append((len(self._blocks[i]), self._results[i][-1][1],
+                                 self._results[i][-1][0]))
             # combine block results using fold method
             results = fold_second_order_moments(vals)
             self.mean = results[1]
             self.sumsquares = results[2]
             self.rmsf = np.sqrt(self.sumsquares.sum(axis=1) / self.n_frames)
             self._negative_rmsf(self.rmsf)
-
-    @staticmethod
-    def _reduce(res, result_single_frame):
-        """
-        'sum' action for time series
-        """
-        atoms = result_single_frame
-        positions = atoms.positions.astype(np.float64)
-        # initial time step case
-        if isinstance(res, list) and len(res) == 0:
-            # initial mean position = initial position
-            mean = positions
-            # create new zero-array for sum of squares to prevent blocks from
-            # using data from previous blocks
-            sumsq = np.zeros((atoms.n_atoms, 3))
-            # set initial time step for each block to zero
-            k = 0
-            # assign initial (sum of squares and mean) zero-arrays to res
-            res = [mean, sumsq, k]
-        else:
-            # update time step
-            k = res[2] + 1
-            # update sum of squares
-            res[1] += (k / (k + 1)) * (positions - res[0]) ** 2
-            # update mean
-            res[0] = (k * res[0] + positions) / (k + 1)
-            # update time step in res
-            res[2] = k
-        return res
 
     @staticmethod
     def _negative_rmsf(rmsf):
