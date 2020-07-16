@@ -289,8 +289,8 @@ class InterRDF_s(ParallelAnalysisBase):
         self._maxrange = self.rdf_settings['range'][1]
 
     def _single_frame(self):
-        ags = [[self._atomgroups[2*i], self._atomgroups[2*i+1]]
-                                        for i in range(self.n)]
+        ags = [[self._atomgroups[2 * i], self._atomgroups[2 * i + 1]]
+                                                         for i in range(self.n)]
         count = [np.zeros((ag1.n_atoms, ag2.n_atoms, self.len),
                  dtype=np.float64) for ag1, ag2 in ags]
         for i, (ag1, ag2) in enumerate(ags):

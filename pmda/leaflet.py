@@ -19,6 +19,8 @@ This module contains parallel versions of analysis tasks in
    :inherited-members:
 
 """
+from __future__ import absolute_import, division
+
 import numpy as np
 import dask.bag as db
 import networkx as nx
@@ -68,11 +70,11 @@ class LeafletFinder(ParallelAnalysisBase):
 
     """
 
-    def __init__(self, universe, atomgroup):
+    def __init__(self, universe, atomgroups):
         super().__init__(universe)
-
-        self._atomgroup = atomgroup
+        self._atomgroup = atomgroups
         self._results = list()
+
 
     def _find_connected_components(self, data, cutoff=15.0):
         """Perform the Connected Components discovery for the atoms in data.
@@ -97,7 +99,6 @@ class LeafletFinder(ParallelAnalysisBase):
 
         """
         # pylint: disable=unsubscriptable-object
-        # raise TypeError(data[0])
         window, index = data[0]
         num = window[0].shape[0]
         i_index = index[0]
@@ -191,32 +192,25 @@ class LeafletFinder(ParallelAnalysisBase):
         arranged_coord = list()
         part_size = int(matrix_size / n_jobs)
         # Partition the data based on a 2-dimensional partitioning
-        i = np.linspace(0, matrix_size, n_jobs+1).astype(int)
-        print(i)
-        if len(i) == 2:
-            arranged_coord.append(([atoms,
-                                atoms],
-                                  [1,1]))
-        else:
-            for index_i in range(len(i)-1):
-                j = i[1:]
-                for index_j in range(len(j)-1):
-                    arranged_coord.append(([atoms[i[index_i]:i[index_i+1]],
-                                        atoms[j[index_j]:j[index_j+1]]],
-                                          [i[index_i]+1, j[index_j]+1]))
+        for i in range(1, matrix_size + 1, part_size):
+            for j in range(i, matrix_size + 1, part_size):
+                arranged_coord.append(([atoms[i - 1:i - 1 + part_size],
+                                       atoms[j - 1:j - 1 + part_size]],
+                                      [i, j]))
         # Distribute the data over the available cores, apply the map function
         # and execute.
         with timeit() as prepare_dask:
             parAtoms = db.from_sequence(arranged_coord,
                                         npartitions=len(arranged_coord))
-            parAtomsMap = parAtoms.map_partitions(self._find_connected_components,
-                                                  cutoff=cutoff)
+            parAtomsMap = parAtoms.map_partitions(
+                                   self._find_connected_components,
+                                   cutoff=cutoff)
         self.prepare_dask_total += prepare_dask.elapsed
         Components = parAtomsMap.compute(**scheduler_kwargs)
+
         # Gather the results and start the reduction. TODO: think if it can go
         # to the private _reduce method of the based class.
         result = list(Components)
-        raise TypeError(Components)
 
         # Create the overall connected components of the graph
         while len(result) != 0:
