@@ -75,7 +75,6 @@ class LeafletFinder(ParallelAnalysisBase):
         self._atomgroup = atomgroups
         self._results = list()
 
-
     def _find_connected_components(self, data, cutoff=15.0):
         """Perform the Connected Components discovery for the atoms in data.
 

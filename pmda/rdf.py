@@ -124,8 +124,8 @@ class InterRDF(ParallelAnalysisBase):
         # If provided exclusions, create a mask of _result which
         # lets us take these out.
         if self._exclusion_block is not None:
-            idxA = pairs[:, 0]//self._exclusion_block[0]
-            idxB = pairs[:, 1]//self._exclusion_block[1]
+            idxA = pairs[:, 0] // self._exclusion_block[0]
+            idxB = pairs[:, 1] // self._exclusion_block[1]
             mask = np.where(idxA != idxB)[0]
             dist = dist[mask]
         count = np.histogram(dist, **self.rdf_settings)[0]
@@ -147,7 +147,7 @@ class InterRDF(ParallelAnalysisBase):
 
         # Volume in each radial shell
         vol = np.power(self.edges[1:], 3) - np.power(self.edges[:-1], 3)
-        vol *= 4/3.0 * np.pi
+        vol *= 4 / 3.0 * np.pi
 
         # Average number density
         box_vol = self.volume / self.n_frames
@@ -289,15 +289,18 @@ class InterRDF_s(ParallelAnalysisBase):
         self._maxrange = self.rdf_settings['range'][1]
 
     def _single_frame(self):
-        ags = [[self._atomgroups[2 * i], self._atomgroups[2 * i + 1]]
-                                                         for i in range(self.n)]
+        ags = [
+            [self._atomgroups[2 * i],
+             self._atomgroups[2 * i + 1]]
+            for i in range(self.n)]
         count = [np.zeros((ag1.n_atoms, ag2.n_atoms, self.len),
                  dtype=np.float64) for ag1, ag2 in ags]
         for i, (ag1, ag2) in enumerate(ags):
             pairs, dist = distances.capped_distance(ag1.positions,
                                                     ag2.positions,
                                                     self._maxrange,
-                                                    box=self._universe.dimensions)
+                                                    box=self._universe
+                                                            .dimensions)
 
             for j, (idx1, idx2) in enumerate(pairs):
                 count[i][idx1, idx2, :] = np.histogram(dist[j],
@@ -312,7 +315,7 @@ class InterRDF_s(ParallelAnalysisBase):
         self.volume = np.sum(self._results[:, 1])
         # Volume in each radial shell
         vol = np.power(self.edges[1:], 3) - np.power(self.edges[:-1], 3)
-        vol *= 4/3.0 * np.pi
+        vol *= 4 / 3.0 * np.pi
 
         # Empty lists to restore indices, RDF
         rdf = []

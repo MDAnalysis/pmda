@@ -262,7 +262,6 @@ class DensityAnalysis(ParallelAnalysisBase):
         else:
             self._select_atomgroup = atomgroup
 
-
     def _prepare(self):
         coord = self._select_atomgroup.positions
         if self._gridcenter is not None:
