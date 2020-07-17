@@ -182,8 +182,6 @@ Classes
    :inherited-members:
 
 """
-from __future__ import absolute_import, division
-
 import MDAnalysis as mda
 from MDAnalysis.analysis.contacts import (contact_matrix, hard_cut_q,
                                           radius_cut_q, soft_cut_q)

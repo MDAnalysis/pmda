@@ -88,7 +88,7 @@ class Timing(object):
 
     @property
     def prepare_dask(self):
-        """time for blocks to start working"""
+        """time to submit jobs to dask"""
         return self._prepare_dask
 
     @property
@@ -134,7 +134,7 @@ class ParallelAnalysisBase(object):
        class NewAnalysis(ParallelAnalysisBase):
            def __init__(self, atomgroup, parameter):
                self._ag = atomgroup
-               super(NewAnalysis, self).__init__(atomgroup.universe,
+               super().__init__(atomgroup.universe,
                                                  self._ag)
 
            def _single_frame(self, ts, agroups):
@@ -190,12 +190,9 @@ class ParallelAnalysisBase(object):
     def __init__(self, universe):
         """Parameters
         ----------
-        Universe : :class:`~MDAnalysis.core.groups.Universe`
+        universe : :class:`~MDAnalysis.core.groups.Universe`
             a :class:`MDAnalysis.core.groups.Universe` (the
             `atomgroups` must belong to this Universe)
-
-        atomgroups : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            atomgroups that are iterated in parallel
 
         Attributes
         ----------
@@ -258,18 +255,9 @@ class ParallelAnalysisBase(object):
 
         Must return computed values as a list. You can only **read**
         from member variables stored in ``self``. Changing them during
-        a run will result in undefined behavior. `ts` and any of the
+        a run will result in undefined behavior. `self._ts` and any of the
         atomgroups can be changed (but changes will be overwritten
         when the next time step is read).
-
-        Parameters
-        ----------
-        ts : :class:`~MDAnalysis.coordinates.base.Timestep`
-            The current coordinate frame (time step) in the
-            trajectory.
-        atomgroups : tuple
-            Tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            instances that are updated to the current frame.
 
         Returns
         -------
@@ -445,3 +433,13 @@ class ParallelAnalysisBase(object):
         """ 'append' action for a time series"""
         res.append(result_single_frame)
         return res
+
+    def __getstate__(self):
+        #  To make sure Universe is pickled before Atomgroup,
+        base_dict = self.__dict__
+        universe_dict = {}
+        for key, item in base_dict.items():
+            if(isinstance(item, mda.Universe)):
+                universe_dict[key] = item
+        universe_dict.update(base_dict)
+        return universe_dict

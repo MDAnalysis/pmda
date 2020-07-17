@@ -16,7 +16,6 @@ be run in parallel from functions that take one or more atom groups from the
 same universe and return a value.
 
 """
-from MDAnalysis.core.groups import AtomGroup
 from MDAnalysis.core.universe import Universe
 from MDAnalysis.coordinates.base import ProtoReader
 import numpy as np
@@ -42,7 +41,7 @@ class AnalysisFromFunction(ParallelAnalysisBase):
     >>>     return mda.analysis.align.rotation_matrix(mobile, ref)[0]
     >>> # now run an analysis using the standalone function
     >>> rot = AnalysisFromFunction(rotation_matrix,
-                                   trajectory, mobile, ref).run()
+                                   universe, mobile, ref).run()
     >>> print(rot.results)
 
     Raises
@@ -62,18 +61,14 @@ class AnalysisFromFunction(ParallelAnalysisBase):
             to be 'mobile' Atomgroups if they belong to the same universe. All
             other Atomgroups are assumed to be reference. Here 'mobile' means
             they will be iterated over.
-        Universe : :class:`~MDAnalysis.core.groups.Universe`
+        universe : :class:`~MDAnalysis.core.groups.Universe`
             a :class:`MDAnalysis.core.groups.Universe` (the
-            `atomgroups` must belong to this Universe)
+            `atomgroups` in other args must belong to this Universe)
         *args : list
            arguments for ``function``
         **kwargs : dict
-           keyword arguments for ``function``. keyword arguments with name
-           'universe' or 'atomgroups' will be ignored! Mobile atomgroups to
-           analyze can not be passed as keyword arguments currently.
-
+           keyword arguments for ``function``.
         """
-
         self.function = function
         super().__init__(universe)
         self.args = args
@@ -118,7 +113,7 @@ def analysis_class(function):
     >>> def RotationMatrix(mobile, ref):
     >>>     return mda.analysis.align.rotation_matrix(mobile, ref)[0]
 
-    >>> rot = RotationMatrix(u.trajectory, mobile, ref, step=2).run()
+    >>> rot = RotationMatrix(u, mobile, ref, step=2).run()
     >>> print(rot.results)
 
     See Also
@@ -130,13 +125,12 @@ def analysis_class(function):
     class WrapperClass(AnalysisFromFunction):
         """Custom Analysis Function"""
 
-        def __init__(self, trajectory=None, *args, **kwargs):
-            if not (isinstance(trajectory, ProtoReader) or isinstance(
-                    trajectory, Universe)):
-                print(type(trajectory))
+        def __init__(self, universe=None, *args, **kwargs):
+            if not isinstance(universe, Universe):
+                print(type(universe))
                 raise ValueError(
-                    "First argument needs to be an MDAnalysis reader object.")
-            super(WrapperClass, self).__init__(function, trajectory, *args,
+                    "First argument needs to be an MDAnalysis Universe.")
+            super().__init__(function, universe, *args,
                                                **kwargs)
 
     return WrapperClass
