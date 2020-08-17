@@ -19,13 +19,11 @@ import warnings
 
 import time
 import MDAnalysis as mda
-from dask.delayed import delayed
 import dask
 from dask.base import DaskMethodsMixin
 import dask.distributed
 from dask.utils import funcname
 from dask.base import tokenize
-from dask.highlevelgraph import HighLevelGraph
 from joblib import cpu_count
 import numpy as np
 
@@ -288,6 +286,20 @@ class ParallelAnalysisBase(DaskMethodsMixin):
                      stop=None,
                      step=None,
                      n_blocks=None):
+        """Prepare the jobs
+
+        Parameters
+        ----------
+        start : int, optional
+            start frame of analysis
+        stop : int, optional
+            stop frame of analysis
+        step : int, optional
+            number of frames to skip between each analysed frame
+        n_blocks : int, optional
+            number of blocks to divide trajectory into. If ``None`` set equal
+            to n_jobs or number of available workers in scheduler.
+        """
         start, stop, step = self._universe.trajectory.check_slice_indices(start,
                                                                      stop, step)
         n_frames = len(range(start, stop, step))
@@ -304,10 +316,11 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         if n_blocks is None:
             n_blocks = cpu_count()
         if n_frames == 0:
-            warnings.warn("run() analyses no frames: check start/stop/step")
+            warnings.warn("analyses no frames: check start/stop/step")
         if n_frames < n_blocks:
-            warnings.warn("run() uses more blocks than frames: "
-                          "decrease n_blocks")
+            warnings.warn("uses more blocks than frames: "
+                          "will decrease n_blocks")
+            n_blocks = n_frames
         self.n_blocks = n_blocks
 
         slices = make_balanced_slices(n_frames, n_blocks,
@@ -317,6 +330,7 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         with timeit() as prepare_dask:
             for bslice in slices:
                 self._frame_index = bslice
+
                 self._keys.append(self._append_job_to_dsk(self._map_chunk,
                                                           bslice))
 
@@ -327,6 +341,7 @@ class ParallelAnalysisBase(DaskMethodsMixin):
 
         self.time_prepare_dask = prepare_dask.elapsed
         self._job_prepared = True
+        self.wait_start = time.time()
         return self
 
     def run(self,
@@ -357,8 +372,10 @@ class ParallelAnalysisBase(DaskMethodsMixin):
             if not self._job_prepared:
                 self.prepare_jobs(start, stop, step, n_blocks)
 
-            self.wait_start = time.time()
-            _ = self.compute()
+            scheduler_kwargs = {'num_workers': n_jobs}
+
+            _ = self.compute(**scheduler_kwargs)
+
             #  empty the dask jobs
             self._dsk = {}
             self._keys = []
@@ -409,19 +426,21 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         universe_dict.update(base_dict)
         return universe_dict
 
+    #  dask-related functions
+
     def __dask_graph__(self):
         return self._dsk
 
     def __dask_keys__(self):
         return self._keys
 
+    #  it uses multiprocessing scheduler in default
     __dask_scheduler__ = staticmethod(dask.multiprocessing.get)
 
     def __dask_postcompute__(self):
         return self._post_reduce, ()
 
     def _post_reduce(self, res):
-        self._results = list(res)
         # hack to handle n_frames == 0 in this framework
         if len(res) == 0:
             # everything else wants list of block tuples
@@ -448,17 +467,23 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         self._trajectory.rewind()
         self._dsk = {}
         self._keys = []
+        self._job_prepared = False
 
     def __dask_postpersist__(self):
-        return self._post_reduce, (self._keys)
+        #  we don't need persist implementation.
+        raise NotImplementedError
 
     def __dask_tokenize__(self):
         return tuple(self._keys)
 
     def _append_job_to_dsk(self, func, *args, **kwargs):
+        #  the name has to be identical for each jobs
+        #  args, current_frame_index, func will all be used for tokenization.
         name = "%s-%s" % (funcname(func), tokenize(func,
                                                    args,
                                                    kwargs,
                                                    self._frame_index))
         self._dsk[name] = (func, *args)
+        #  return name to be added to self._keys
+        #  which means this function itself does not modify the _keys
         return name
