@@ -202,8 +202,8 @@ class LeafletFinder(ParallelAnalysisBase):
             parAtoms = db.from_sequence(arranged_coord,
                                         npartitions=len(arranged_coord))
             parAtomsMap = parAtoms.map_partitions(
-                                   self._find_connected_components,
-                                   cutoff=cutoff)
+                self._find_connected_components,
+                cutoff=cutoff)
         self.prepare_dask_total += prepare_dask.elapsed
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
@@ -297,9 +297,10 @@ class LeafletFinder(ParallelAnalysisBase):
                     times_io.append(b_io.elapsed)
                     with timeit() as b_compute:
                         components = self. \
-                               _single_frame(scheduler_kwargs=scheduler_kwargs,
-                                             n_jobs=n_jobs,
-                                             cutoff=cutoff)
+                            _single_frame(
+                                scheduler_kwargs=scheduler_kwargs,
+                                n_jobs=n_jobs,
+                                cutoff=cutoff)
                     timings.append(b_compute.elapsed)
                     leaflet1 = self._atomgroup[components[0]]
                     leaflet2 = self._atomgroup[components[1]]
