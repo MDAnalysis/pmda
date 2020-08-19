@@ -130,7 +130,9 @@ def analysis_class(function):
                 print(type(universe))
                 raise ValueError(
                     "First argument needs to be an MDAnalysis Universe.")
-            super().__init__(function, universe, *args,
-                                               **kwargs)
+            super().__init__(function,
+                             universe,
+                             *args,
+                             **kwargs)
 
     return WrapperClass
