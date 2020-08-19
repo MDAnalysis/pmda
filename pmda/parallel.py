@@ -281,7 +281,7 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         """
         raise NotImplementedError
 
-    def prepare_jobs(self,
+    def prepare(self,
                      start=None,
                      stop=None,
                      step=None,
@@ -309,9 +309,9 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         self.n_frames = n_frames
 
         # record prepare time
-        with timeit() as prepare:
+        with timeit() as prepare_time:
             self._prepare()
-        self.time_prepare = prepare.elapsed
+        self.time_prepare = prepare_time.elapsed
 
         if n_blocks is None:
             n_blocks = cpu_count()
@@ -320,8 +320,6 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         if n_frames < n_blocks:
             warnings.warn("uses more blocks than frames: "
                           "will decrease n_blocks")
-            n_blocks = n_frames
-        self.n_blocks = n_blocks
 
         slices = make_balanced_slices(n_frames, n_blocks,
                                       start=start, stop=stop, step=step)
@@ -370,8 +368,10 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         """
         with timeit() as total:
             if not self._job_prepared:
-                self.prepare_jobs(start, stop, step, n_blocks)
+                self.prepare(start, stop, step, n_blocks)
 
+            if n_jobs == -1:
+                n_jobs = cpu_count()
             scheduler_kwargs = {'num_workers': n_jobs}
 
             _ = self.compute(**scheduler_kwargs)
@@ -380,7 +380,6 @@ class ParallelAnalysisBase(DaskMethodsMixin):
             self._dsk = {}
             self._keys = []
         self.timing._total = total.elapsed
-
         return self
 
     def _map_chunk(self, bslice):
@@ -415,16 +414,6 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         """ 'append' action for a time series"""
         res.append(result_single_frame)
         return res
-
-    def __getstate__(self):
-        #  To make sure Universe is pickled before Atomgroup,
-        base_dict = self.__dict__
-        universe_dict = {}
-        for key, item in base_dict.items():
-            if(isinstance(item, mda.Universe)):
-                universe_dict[key] = item
-        universe_dict.update(base_dict)
-        return universe_dict
 
     #  dask-related functions
 
@@ -462,8 +451,10 @@ class ParallelAnalysisBase(DaskMethodsMixin):
             np.array([el[4] for el in res]),
             np.array([el[5] for el in res]))
 
-        #  this is crucial if the analysis does not iterate over
-        #  the whole trajectory.
+        #  To make sure the trajectory is reset to initial state,
+        #  if we are not running the analysis through the whole trajectory.
+        #  With this,  we get the same result (state of the trajectory) from
+        #  ParallelAnalysisBase and MDAnalysis.AnalaysisBase.
         self._trajectory.rewind()
         self._dsk = {}
         self._keys = []
