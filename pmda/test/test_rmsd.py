@@ -50,3 +50,10 @@ class TestRMSD(object):
         assert_almost_equal(RMSD1.rmsd, correct_values_frame_5, 4,
                             err_msg="error: rmsd profile should match " +
                             "test values")
+
+    @pytest.mark.parametrize('n_blocks', [1, 2, 3])
+    def test_rmsd_different_blocks(self, universe, n_blocks):
+        ca = universe.select_atoms("name CA")
+        universe.trajectory.rewind()
+        RMSD1 = RMSD(ca, ca).run(n_blocks=n_blocks)
+        assert_array_equal(RMSD1.rmsd.shape, (universe.trajectory.n_frames, 3))

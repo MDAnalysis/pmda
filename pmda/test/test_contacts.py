@@ -63,12 +63,13 @@ class TestContacts(object):
                       start=None,
                       step=None,
                       stop=None,
+                      n_blocks=1,
                       **kwargs):
         acidic = universe.select_atoms(self.sel_acidic)
         basic = universe.select_atoms(self.sel_basic)
         return contacts.Contacts(
             (acidic, basic), (acidic, basic), radius=6.0, **kwargs).run(
-                start=start, stop=stop, step=step)
+                start=start, stop=stop, step=step, n_blocks=n_blocks)
 
     def test_startframe(self, universe):
         """test_startframe: TestContactAnalysis1: start frame set to 0 (resolution of
@@ -76,6 +77,11 @@ class TestContacts(object):
 
         """
         CA1 = self._run_Contacts(universe)
+        assert len(CA1.timeseries) == universe.trajectory.n_frames
+
+    def test_uneven_blocks(self, universe):
+        """ Issue #140"""
+        CA1 = self._run_Contacts(universe, n_blocks=3)
         assert len(CA1.timeseries) == universe.trajectory.n_frames
 
     def test_end_zero(self, universe):
