@@ -433,13 +433,3 @@ class ParallelAnalysisBase(object):
         """ 'append' action for a time series"""
         res.append(result_single_frame)
         return res
-
-    def __getstate__(self):
-        #  To make sure Universe is pickled before Atomgroup,
-        base_dict = self.__dict__
-        universe_dict = {}
-        for key, item in base_dict.items():
-            if(isinstance(item, mda.Universe)):
-                universe_dict[key] = item
-        universe_dict.update(base_dict)
-        return universe_dict
