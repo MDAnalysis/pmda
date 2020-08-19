@@ -33,6 +33,14 @@ Fixes
 Changes
   * requires MDAnalysis >= 1.0.0 (#122)
   * dropped official support for Python 3.5 (2.7 and >= 3.6 are supported)
+  * requires MDAnalysis >= 2.0.0 (#132)
+  * dropped official support for Python<=3.5
+  * with support of serialization of Universe, in ParallelAnalysisBase: (#132)
+	-  we pickle/unpickle Universes, instead of creating new ones.
+	- __init__ only takes Universe as arguments 
+        - _single_frame takes no extra arguments.
+	- timing for generating universe is ditched.
+	- timing for creating dask graph is added.
 
 
 10/14/2019 VOD555, nawtrey
