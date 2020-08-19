@@ -55,7 +55,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         #  'MDAnalysis>=2.0.0',
-        'mdanalysis @ git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysis&subdirectory=package' 
+        'mdanalysis @ git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysis&subdirectory=package',
         'dask>=0.18',
         'distributed',
         'six',

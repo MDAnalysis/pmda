@@ -397,8 +397,10 @@ class ParallelAnalysisBase(object):
             np.array([el[4] for el in res]),
             np.array([el[5] for el in res]))
 
-        #  this is crucial if the analysis does not iterate over
-        #  the whole trajectory.
+        #  To make sure the trajectory is reset to initial state,
+        #  if we are not running the analysis through the whole trajectory.
+        #  With this,  we get the same result (state of the trajectory) from 
+        #  ParallelAnalysisBase and MDAnalysis.AnalaysisBase.
         self._trajectory.rewind()
         return self
 
