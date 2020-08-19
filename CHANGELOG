@@ -14,7 +14,7 @@ The rules for this file:
 
 ------------------------------------------------------------------------------
 =======
-MM/DD/YYYY VOD555, lilyminium, orbeckst
+MM/DD/YYYY VOD555, lilyminium, orbeckst, yuxuanzhuang
 
   * 0.4.0
 
@@ -29,6 +29,7 @@ Fixes
     - threaded --> threads
   * fixed RDF functions (gave wrong results if step != 1) (#114)
   * fixed InterRDF_s function (gave wrong results if density=True) (#120)
+  * fixed Contact fails with uneven blocks. (#140)
 
 Changes
   * requires MDAnalysis >= 1.0.0 (#122)
