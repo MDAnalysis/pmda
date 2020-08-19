@@ -29,6 +29,7 @@ Fixes
     - threaded --> threads
   * fixed RDF functions (gave wrong results if step != 1) (#114)
   * fixed InterRDF_s function (gave wrong results if density=True) (#120)
+  * raise ValueError when n_blocks > n_frames (Issue #137, PR #138)
 
 Changes
   * requires MDAnalysis >= 1.0.0 (#122)
