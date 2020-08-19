@@ -83,7 +83,7 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
         `start`, `stop, and `step` are not the defaults (left empty or
         set to ``None``) they must be provided as parameters.
     n_blocks : int
-        number of blocks (>0)
+        number of blocks (>0 and <n_frames)
     start : int or None
         The first index of the trajectory (default is ``None``, which
         is interpreted as "first frame", i.e., 0).
@@ -138,8 +138,10 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
     For a `step` > 1, we use ``m[i] *= step``. The last slice will
     never go beyond the original `stop` if a value was provided.
 
-    .. versionadded:: 0.2.0
 
+    .. versionadded:: 0.2.0
+    .. versionchanged:: 0.3.0
+        raise ValueError when n_blocks is larger than n_frames
     """
 
     start = int(start) if start is not None else 0
@@ -150,6 +152,9 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
         raise ValueError("n_frames must be >= 0")
     elif n_blocks < 1:
         raise ValueError("n_blocks must be > 0")
+    elif n_frames != 0 and n_blocks > n_frames:
+        raise ValueError(f"n_blocks must be smaller than n_frames: "
+                         f"{n_frames}")
     elif start < 0:
         raise ValueError("start must be >= 0 or None")
     elif stop is not None and stop < start:
