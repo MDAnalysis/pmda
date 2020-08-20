@@ -15,16 +15,17 @@ classes.
 
 """
 from contextlib import contextmanager
-import warnings
-
+from joblib import cpu_count
 import time
+import warnings
+import uuid
+
 import MDAnalysis as mda
 import dask
 from dask.base import DaskMethodsMixin
 import dask.distributed
 from dask.utils import funcname
 from dask.base import tokenize
-from joblib import cpu_count
 import numpy as np
 
 from .util import timeit, make_balanced_slices
@@ -282,10 +283,11 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         raise NotImplementedError
 
     def prepare(self,
-                     start=None,
-                     stop=None,
-                     step=None,
-                     n_blocks=None):
+                start=None,
+                stop=None,
+                step=None,
+                n_jobs=1,
+                n_blocks=None):
         """Prepare the jobs
 
         Parameters
@@ -313,8 +315,38 @@ class ParallelAnalysisBase(DaskMethodsMixin):
             self._prepare()
         self.time_prepare = prepare_time.elapsed
 
+        #  get global scheduler
+        scheduler = dask.config.get('scheduler', None)
+        if scheduler == 'processes':
+            self.__dask_scheduler__ = dask.multiprocessing.get
+        elif scheduler == 'synchronous':
+            self.__dask_scheduler__ = dask.get
+        elif isinstance(scheduler, dask.distributed.Client):
+            self.__dask_scheduler__ = dask.distributed.Client.get
+        elif scheduler is not None:
+            raise ValueError(f"PMDA doesn't support other"
+                             f"schedulers: {scheduler}")
+
+        if n_jobs == -1:
+            n_jobs = cpu_count()
+
+        if scheduler is None and n_jobs == 1:
+            #  synchronous
+            self.__dask_scheduler__ = dask.get
+
+        #  setting n_blocks
         if n_blocks is None:
-            n_blocks = cpu_count()
+            if self.__dask_scheduler__ == dask.multiprocessing.get:
+                n_blocks = n_jobs
+            elif self.__dask_scheduler__ == dask.distributed.Client.get:
+                n_blocks = len(dask.distributed.worker.get_client().ncores())
+            else:
+                n_blocks = 1
+                warnings.warn(
+                    "Couldn't guess ideal number of blocks from scheduler. "
+                    "Setting n_blocks=1. "
+                    "Please provide `n_blocks` in call to method.")
+
         if n_frames == 0:
             warnings.warn("analyses no frames: check start/stop/step")
         if n_frames < n_blocks:
@@ -368,7 +400,7 @@ class ParallelAnalysisBase(DaskMethodsMixin):
         """
         with timeit() as total:
             if not self._job_prepared:
-                self.prepare(start, stop, step, n_blocks)
+                self.prepare(start, stop, step, n_jobs, n_blocks)
 
             if n_jobs == -1:
                 n_jobs = cpu_count()
@@ -467,13 +499,22 @@ class ParallelAnalysisBase(DaskMethodsMixin):
     def __dask_tokenize__(self):
         return tuple(self._keys)
 
-    def _append_job_to_dsk(self, func, *args, **kwargs):
-        #  the name has to be identical for each jobs
-        #  args, current_frame_index, func will all be used for tokenization.
-        name = "%s-%s" % (funcname(func), tokenize(func,
-                                                   args,
-                                                   kwargs,
-                                                   self._frame_index))
+    def _append_job_to_dsk(self, func, *args, pure=False, **kwargs):
+        #  If pure is True, a consistent hash function is tried on the input.
+        #  If False (default), then a unique identifier is always used.
+
+        #  When True, args, current_frame_index, func will all be
+        #  used for tokenization. This is much slower and requires the class
+        #  to be pickled during this process.
+        #  (any reason to use tokenize instead of uuid?
+
+        if not pure:
+            name = "%s-%s" % (funcname(func), str(uuid.uuid4()))
+        else:
+            name = "%s-%s" % (funcname(func), tokenize(func,
+                                                       args,
+                                                       kwargs,
+                                                       self._frame_index))
         self._dsk[name] = (func, *args)
         #  return name to be added to self._keys
         #  which means this function itself does not modify the _keys
