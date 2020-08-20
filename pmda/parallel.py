@@ -134,16 +134,16 @@ class ParallelAnalysisBase(object):
        class NewAnalysis(ParallelAnalysisBase):
            def __init__(self, atomgroup, parameter):
                self._ag = atomgroup
-               super().__init__(atomgroup.universe,
-                                                 self._ag)
+               self.parameter = parameter
+               super().__init__(atomgroup.universe)
 
-           def _single_frame(self, ts, agroups):
+           def _single_frame(self):
                # REQUIRED
-               # called for every frame. ``ts`` contains the current time step
-               # and ``agroups`` a tuple of atomgroups that are updated to the
-               # current frame. Return result of `some_function` for a single
-               # frame
-               return some_function(agroups[0], self._parameter)
+               # called for every frame. It can read all the attributes of
+               # of itself e.g. current timestep (``self._ts``), atomgroups
+               # (``self._ag``) that are updated to the current frame and etc.
+               # Return result of `some_function` for a single frame
+               return some_function(self._ag, self._parameter)
 
            def _conclude(self):
                # REQUIRED
@@ -151,9 +151,9 @@ class ParallelAnalysisBase(object):
                # for each frame are stored in ``self._results`` in a per block
                # basis. Here those results should be moved and reshaped into a
                # sensible new variable.
-               self.results = np.hstack(self._results)
+               self.results = np.concatenate(self._results)
                # Apply normalisation and averaging to results here if wanted.
-               self.results /= np.sum(self.results
+               self.results /= np.sum(self.results)
 
            @staticmethod
            def _reduce(res, result_single_frame):
@@ -399,7 +399,7 @@ class ParallelAnalysisBase(object):
 
         #  To make sure the trajectory is reset to initial state,
         #  if we are not running the analysis through the whole trajectory.
-        #  With this,  we get the same result (state of the trajectory) from 
+        #  With this, we get the same result (state of the trajectory) from
         #  ParallelAnalysisBase and MDAnalysis.AnalaysisBase.
         self._trajectory.rewind()
         return self
