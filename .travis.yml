@@ -21,6 +21,7 @@ env:
     #- CONDA_DEPENDENCIES="mdanalysis mdanalysistests dask joblib mock codecov cython hypothesis sphinx"
     #- CONDA_MDANALYSIS_DEPENDENCIES="cython mmtf-python six biopython networkx scipy griddataformats gsd hypothesis"
     - CONDA_MDANALYSIS_DEPENDENCIES="mdanalysis mdanalysistests"
+    # pin to matplotlib 3.2 should be removed once mda > 1.0.0 is available.
     - CONDA_DEPENDENCIES="${CONDA_MDANALYSIS_DEPENDENCIES} dask distributed joblib mock codecov matplotlib=3.2"
     - CONDA_CHANNELS='conda-forge'
     - CONDA_CHANNEL_PRIORITY=True
