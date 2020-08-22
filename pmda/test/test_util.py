@@ -61,39 +61,35 @@ def _test_make_balanced_slices(n_blocks, start, stop, step, scale):
     frames = traj_frames[start:stop:step]
     n_frames = len(frames)
 
-    slices = make_balanced_slices(n_frames, n_blocks,
-                                  start=start, stop=stop, step=step)
-
-    assert len(slices) == n_blocks
-
-    # assemble frames again by blocks and show that we have all
-    # the original frames; get the sizes of the blocks
-
-    block_frames = []
-    block_sizes = []
-    for bslice in slices:
-        bframes = traj_frames[bslice]
-        block_frames.extend(list(bframes))
-        block_sizes.append(len(bframes))
-    block_sizes = np.array(block_sizes)
-
-    # check that we have all the frames accounted for
-    assert_equal(np.asarray(block_frames), np.asarray(frames))
-
-    # check that the distribution is balanced
     if n_frames >= n_blocks:
+        slices = make_balanced_slices(n_frames, n_blocks,
+                                      start=start, stop=stop, step=step)
+
+        assert len(slices) == n_blocks
+
+        # assemble frames again by blocks and show that we have all
+        # the original frames; get the sizes of the blocks
+
+        block_frames = []
+        block_sizes = []
+        for bslice in slices:
+            bframes = traj_frames[bslice]
+            block_frames.extend(list(bframes))
+            block_sizes.append(len(bframes))
+        block_sizes = np.array(block_sizes)
+
+        # check that we have all the frames accounted for
+        assert_equal(np.asarray(block_frames), np.asarray(frames))
+
+        # check that the distribution is balanced
         assert np.all(block_sizes > 0)
         minsize = n_frames // n_blocks
         assert len(np.setdiff1d(block_sizes, [minsize, minsize+1])) == 0, \
             "For n_blocks <= n_frames, block sizes are not balanced"
     else:
-        # pathological case; we will have blocks with length 0
-        # and n_blocks with 1 frame
-        zero_blocks = block_sizes == 0
-        assert np.sum(zero_blocks) == n_blocks - n_frames
-        assert np.sum(~zero_blocks) == n_frames
-        assert len(np.setdiff1d(block_sizes[~zero_blocks], [1])) == 0, \
-            "For n_blocks>n_frames, some blocks contain != 1 frame"
+        with pytest.raises(ValueError, match="n_blocks must be smaller"):
+            slices = make_balanced_slices(n_frames, n_blocks,
+                                          start=start, stop=stop, step=step)
 
 
 @pytest.mark.parametrize('n_blocks', [1, 2, 3, 4, 5, 7, 10, 11])
@@ -125,7 +121,8 @@ def test_make_balanced_slices_empty(n_blocks, start, step):
                           (5, 4, -1, None, None), (0, 5, -1, None, None),
                           (5, 0, -1, None, None),
                           (5, 4, None, -1, None), (5, 4, 3, 2, None),
-                          (5, 4, None, None, -1), (5, 4, None, None, 0)])
+                          (5, 4, None, None, -1), (5, 4, None, None, 0),
+                          (4, 5, None, None, None)])
 def test_make_balanced_slices_ValueError(n_frames, n_blocks,
                                          start, stop, step):
     with pytest.raises(ValueError):
