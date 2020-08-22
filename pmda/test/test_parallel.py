@@ -56,7 +56,7 @@ class NoneAnalysis(parallel.ParallelAnalysisBase):
         pass
 
     def _conclude(self):
-        self.res = np.hstack(self._results)
+        self.res = np.concatenate(self._results)
 
     def _single_frame(self, ts, atomgroups):
         return ts.frame

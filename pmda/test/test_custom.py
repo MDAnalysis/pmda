@@ -35,6 +35,10 @@ def custom_function_tensor(ag):
     return ag.moment_of_inertia()
 
 
+def custom_function_scalar_tensor(ag):
+    return [ag.radius_of_gyration(), ag.moment_of_inertia()]
+
+
 @pytest.mark.parametrize('custom_function', [
     custom_function_vector,
     custom_function_scalar,
@@ -55,6 +59,28 @@ def test_AnalysisFromFunction(scheduler, universe, custom_function, step):
     results = []
     for ts in universe.trajectory[::step]:
         results.append(custom_function(universe.atoms))
+    results = np.asarray(results)
+
+    for ana in (ana1, ana2, ana3):
+        assert_equal(results, ana.results)
+
+
+@pytest.mark.parametrize('n_blocks', [1, 3])
+def test_different_blocks(scheduler, universe, n_blocks):
+    #  This test will fail with np.hstack() #PR 88
+    ana1 = custom.AnalysisFromFunction(
+        custom_function_tensor, universe, universe.atoms).run(
+        n_blocks=n_blocks)
+    ana2 = custom.AnalysisFromFunction(
+        custom_function_tensor, universe, universe.atoms).run(
+        n_blocks=n_blocks)
+    ana3 = custom.AnalysisFromFunction(
+        custom_function_tensor, universe, universe.atoms).run(
+        n_blocks=n_blocks)
+
+    results = []
+    for ts in universe.trajectory:
+        results.append(custom_function_tensor(universe.atoms))
     results = np.asarray(results)
 
     for ana in (ana1, ana2, ana3):
