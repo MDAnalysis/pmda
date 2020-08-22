@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pmda.util &mdash; PMDA 0.3.0+19.g9b3b566 documentation</title>
+  <title>pmda.util &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+19.g9b3b566 documentation"
+          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -247,7 +247,7 @@
 <span class="sd">        `start`, `stop, and `step` are not the defaults (left empty or</span>
 <span class="sd">        set to ``None``) they must be provided as parameters.</span>
 <span class="sd">    n_blocks : int</span>
-<span class="sd">        number of blocks (&gt;0)</span>
+<span class="sd">        number of blocks (&gt;0 and &lt;n_frames)</span>
 <span class="sd">    start : int or None</span>
 <span class="sd">        The first index of the trajectory (default is ``None``, which</span>
 <span class="sd">        is interpreted as &quot;first frame&quot;, i.e., 0).</span>
@@ -302,8 +302,10 @@
 <span class="sd">    For a `step` &gt; 1, we use ``m[i] *= step``. The last slice will</span>
 <span class="sd">    never go beyond the original `stop` if a value was provided.</span>
 
-<span class="sd">    .. versionadded:: 0.2.0</span>
 
+<span class="sd">    .. versionadded:: 0.2.0</span>
+<span class="sd">    .. versionchanged:: 0.3.0</span>
+<span class="sd">        raise ValueError when n_blocks is larger than n_frames</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
@@ -314,6 +316,9 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_frames must be &gt;= 0&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">n_blocks</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_blocks must be &gt; 0&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">n_frames</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_blocks</span> <span class="o">&gt;</span> <span class="n">n_frames</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_blocks must be smaller than n_frames: &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_frames</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;start must be &gt;= 0 or None&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stop</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>

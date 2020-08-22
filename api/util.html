@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utility functions — pmda.util &mdash; PMDA 0.3.0+19.g9b3b566 documentation</title>
+  <title>Utility functions — pmda.util &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+19.g9b3b566 documentation"
+          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -223,7 +223,7 @@ number of frames <em>after</em> the trajectory has been sliced,
 i.e. <code class="docutils literal notranslate"><span class="pre">len(u.trajectory[start:stop:step])</span></code>. If any of
 <cite>start</cite>, <cite>stop, and `step</cite> are not the defaults (left empty or
 set to <code class="docutils literal notranslate"><span class="pre">None</span></code>) they must be provided as parameters.</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of blocks (&gt;0)</p></li>
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of blocks (&gt;0 and &lt;n_frames)</p></li>
 <li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The first index of the trajectory (default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 is interpreted as “first frame”, i.e., 0).</p></li>
 <li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The index of the last frame + 1 (default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which is
@@ -275,6 +275,9 @@ size 0) with the algorithm</p>
 never go beyond the original <cite>stop</cite> if a value was provided.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.2.0.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.3.0: </span>raise ValueError when n_blocks is larger than n_frames</p>
 </div>
 </dd></dl>
 
