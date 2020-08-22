@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pmda.parallel &mdash; PMDA 0.3.0+18.gfde0088 documentation</title>
+  <title>pmda.parallel &mdash; PMDA 0.3.0+19.g9b3b566 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+18.gfde0088 documentation"
+          title="Search within PMDA 0.3.0+19.g9b3b566 documentation"
           href="../../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -317,7 +317,7 @@
 <span class="sd">               # for each frame are stored in ``self._results`` in a per block</span>
 <span class="sd">               # basis. Here those results should be moved and reshaped into a</span>
 <span class="sd">               # sensible new variable.</span>
-<span class="sd">               self.results = np.hstack(self._results)</span>
+<span class="sd">               self.results = np.concatenate(self._results)</span>
 <span class="sd">               # Apply normalisation and averaging to results here if wanted.</span>
 <span class="sd">               self.results /= np.sum(self.results</span>
 
