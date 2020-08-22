@@ -105,7 +105,7 @@ def test_scheduler(analysis, scheduler):
 def test_nframes_less_nblocks_warning(analysis):
     u = mda.Universe(analysis._top, analysis._traj)
     n_frames = u.trajectory.n_frames
-    with pytest.warns(ValueError):
+    with pytest.raises(ValueError):
         analysis.run(stop=2, n_blocks=4, n_jobs=2)
 
 
