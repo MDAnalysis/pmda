@@ -57,7 +57,7 @@ class NoneAnalysis(parallel.ParallelAnalysisBase):
         pass
 
     def _conclude(self):
-        self.res = np.hstack(self._results)
+        self.res = np.concatenate(self._results)
 
     def _single_frame(self):
         return self._ts.frame
@@ -105,9 +105,8 @@ def test_scheduler(analysis, scheduler):
 def test_nframes_less_nblocks_warning(analysis):
     u = analysis._universe
     n_frames = u.trajectory.n_frames
-    with pytest.warns(UserWarning):
+    with pytest.raises(ValueError):
         analysis.run(stop=2, n_blocks=4, n_jobs=2)
-    assert len(analysis.res) == 2
 
 
 @pytest.mark.parametrize('n_blocks', np.arange(1, 11))

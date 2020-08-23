@@ -154,7 +154,7 @@ class ParallelAnalysisBase(DaskMethodsMixin):
                # for each frame are stored in ``self._results`` in a per block
                # basis. Here those results should be moved and reshaped into a
                # sensible new variable.
-               self.results = np.hstack(self._results)
+               self.results = np.concatenate(self._results)
                # Apply normalisation and averaging to results here if wanted.
                self.results /= np.sum(self.results
 
