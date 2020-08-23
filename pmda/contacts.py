@@ -285,7 +285,7 @@ class Contacts(ParallelAnalysisBase):
         return y
 
     def _conclude(self):
-        self.timeseries = np.hstack(self._results)
+        self.timeseries = np.concatenate(self._results)
 
 
 def q1q2(atomgroup, radius=4.5):
