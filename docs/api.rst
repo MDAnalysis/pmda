@@ -43,6 +43,7 @@ also function as examples for how to implement your own functions with
    api/rmsd
    api/rmsf
    api/contacts
+   api/hbond_analysis
    api/rdf
    api/leaflet
    api/density
