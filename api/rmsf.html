@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="contacts.html">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hbond_analysis.html">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="leaflet.html">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
@@ -182,7 +183,7 @@
   <span class="target" id="module-pmda.rms.rmsf"></span><div class="section" id="calculating-root-mean-square-fluctuations-rmsf-pmda-rmsf">
 <h1>Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code><a class="headerlink" href="#calculating-root-mean-square-fluctuations-rmsf-pmda-rmsf" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v1.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/rms.html#module-MDAnalysis.analysis.rms" title="(in MDAnalysis v1.0.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms</span></code></a>.</p>
 <dl class="py class">
 <dt id="pmda.rms.rmsf.RMSF">
 <em class="property">class </em><code class="sig-prename descclassname">pmda.rms.rmsf.</code><code class="sig-name descname">RMSF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atomgroup</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/rms/rmsf.html#RMSF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.rms.rmsf.RMSF" title="Permalink to this definition">¶</a></dt>
@@ -206,13 +207,13 @@ interest. Returned values have units of ångströms.</p>
 <dd class="field-odd"><p><strong>atomgroup</strong> (<em>AtomGroup</em>) – Atoms for which RMSF is calculated</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><strong>ValueError</strong></a> – raised if negative values are calculated, which indicates that a
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – raised if negative values are calculated, which indicates that a
     numerical overflow or underflow occured</p>
 </dd>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a></p>
+<p><a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a></p>
 </div>
 <p class="rubric">Notes</p>
 <p>No RMSD-superposition is performed; it is assumed that the user is
@@ -250,9 +251,9 @@ to the average structure as a reference. That requires calculating the
 average structure first. Because we need to analyze and manipulate the
 same trajectory multiple times, we are going to load it into memory
 using the <code class="xref py py-mod docutils literal notranslate"><span class="pre">MemoryReader</span></code>. (If your
-trajectory does not fit into memory, you will need to <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/coordinates/init.html#writing-trajectories" title="(in MDAnalysis v1.0)"><span class="xref std std-ref">write out
+trajectory does not fit into memory, you will need to <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/coordinates/init.html#writing-trajectories" title="(in MDAnalysis v1.0.0)"><span class="xref std std-ref">write out
 intermediate trajectories</span></a> to disk or
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/coordinates/memory.html#creating-in-memory-trajectory-label" title="(in MDAnalysis v1.0)"><span class="xref std std-ref">generate an in-memory universe</span></a> that only contains, say, the
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/coordinates/memory.html#creating-in-memory-trajectory-label" title="(in MDAnalysis v1.0.0)"><span class="xref std std-ref">generate an in-memory universe</span></a> that only contains, say, the
 protein):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span> <span class="k">as</span> <span class="nn">mda</span>
 <span class="kn">from</span> <span class="nn">MDAnalysis.analysis</span> <span class="kn">import</span> <span class="n">align</span>
@@ -279,7 +280,7 @@ protein):</p>
 <p>We created a new universe <code class="docutils literal notranslate"><span class="pre">reference</span></code> that contains a single frame
 with the averaged coordinates of the protein.  Now we need to fit the
 whole trajectory to the reference by minimizing the RMSD. We use
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/align.html#MDAnalysis.analysis.align.AlignTraj" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.align.AlignTraj</span></code></a>:</p>
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/align.html#MDAnalysis.analysis.align.AlignTraj" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.align.AlignTraj</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aligner</span> <span class="o">=</span> <span class="n">align</span><span class="o">.</span><span class="n">AlignTraj</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s2">&quot;protein and name CA&quot;</span><span class="p">,</span>
                           <span class="n">in_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <span class="c1"># need to write the trajectory to disk for PMDA 0.3.0 (see issue #15)</span>
@@ -314,7 +315,7 @@ trajectory to the file “rmsfit.xtc”.)</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Universe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroups</cite> must belong to this Universe)</p></li>
-<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
+<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
 </ul>
 </dd>
 </dl>
@@ -326,7 +327,7 @@ lists, with each sublist containing the return values from
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -350,13 +351,13 @@ lists, with each sublist containing the return values from
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
 to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </dd>

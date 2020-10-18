@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Writing new parallel analysis &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>Writing new parallel analysis &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -190,7 +190,7 @@ trajectory slices is combined.</p>
 <span id="wrapping-functions"></span><h2>Wrapping existing analysis functions<a class="headerlink" href="#wrapping-existing-analysis-functions" title="Permalink to this headline">¶</a></h2>
 <p>If you already have a function that</p>
 <ol class="arabic simple">
-<li><p>takes one or more <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
+<li><p>takes one or more <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>
 instances as input</p></li>
 <li><p>analyzes one frame in a trajectory and returns the result for this
 frame</p></li>
@@ -235,12 +235,12 @@ described above.</p>
 <ol class="arabic simple">
 <li><p>Define the <em>single frame</em> analysis function, i.e., how to compute
 the observable for a single time step from a given
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>.</p></li>
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>.</p></li>
 <li><p>Derive a class from <a class="reference internal" href="../api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParallelAnalysisBase</span></code></a>
 that uses the single frame function.</p></li>
 </ol>
 <p>As an example, we show how one can parallelize the RMSF function (from
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSF" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rms.RMSF</span></code></a>):</p>
 <ul class="simple">
 <li><p>TODO</p></li>
 <li><p>more TODO</p></li>

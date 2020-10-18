@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API for pmda &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>API for pmda &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="_static/opensearch.xml"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -109,6 +109,7 @@
 <li class="toctree-l3"><a class="reference internal" href="api/rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/rmsf.html">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contacts.html">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/hbond_analysis.html">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/leaflet.html">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
@@ -192,7 +193,7 @@ user should be familiar with <a class="reference external" href="https://www.mda
 <h2>Building blocks<a class="headerlink" href="#building-blocks" title="Permalink to this headline">¶</a></h2>
 <p>Building new parallel analysis classes is easy with the
 <a class="reference internal" href="api/custom.html#pmda.custom.AnalysisFromFunction" title="pmda.custom.AnalysisFromFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.custom.AnalysisFromFunction</span></code></a> base class if you can formulate the
-problem as a calculation over one <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> for
+problem as a calculation over one <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a> for
 a single frame. If your need more flexibility you can use the
 <a class="reference internal" href="api/parallel.html#pmda.parallel.ParallelAnalysisBase" title="pmda.parallel.ParallelAnalysisBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase</span></code></a>.</p>
 <div class="toctree-wrapper compound">
@@ -213,6 +214,7 @@ also function as examples for how to implement your own functions with
 <li class="toctree-l1"><a class="reference internal" href="api/rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/rmsf.html">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contacts.html">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/hbond_analysis.html">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/leaflet.html">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Radial Distribution Functions — pmda.rdf &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>Radial Distribution Functions — pmda.rdf &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,12 +39,12 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="LeafletFinder Analysis tool — pmda.leaflet" href="leaflet.html" />
-    <link rel="prev" title="Native contacts analysis — pmda.contacts" href="contacts.html" /> 
+    <link rel="prev" title="Hydrogen Bond Analysis — pmda.hbond_analysis" href="hbond_analysis.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rmsf.html">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="contacts.html">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hbond_analysis.html">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
 </ul>
@@ -185,10 +186,10 @@
   <span class="target" id="module-pmda.rdf"></span><div class="section" id="radial-distribution-functions-pmda-rdf">
 <h1>Radial Distribution Functions — <a class="reference internal" href="#module-pmda.rdf" title="pmda.rdf"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a><a class="headerlink" href="#radial-distribution-functions-pmda-rdf" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v1.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf</span></code></a>.</p>
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v1.0.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf</span></code></a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v1.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf</span></code></a></p>
+<p><a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/rdf.html#module-MDAnalysis.analysis.rdf" title="(in MDAnalysis v1.0.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf</span></code></a></p>
 </div>
 <div class="section" id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
@@ -226,9 +227,9 @@ the centers of the bins that were used for histogramming.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>g1</strong> (<em>AtomGroup</em>) – First AtomGroup</p></li>
 <li><p><strong>g2</strong> (<em>AtomGroup</em>) – Second AtomGroup</p></li>
-<li><p><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Number of bins in the histogram [75]</p></li>
-<li><p><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</p></li>
-<li><p><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
+<li><p><strong>nbins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> (</em><em>optional</em><em>)</em>) – Number of bins in the histogram [75]</p></li>
+<li><p><strong>range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em> (</em><em>optional</em><em>)</em>) – The size of the RDF [0.0, 15.0]</p></li>
+<li><p><strong>exclusion_block</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em> (</em><em>optional</em><em>)</em>) – A tuple representing the tile to exclude from the distance
 array. [None]</p></li>
 </ul>
 </dd>
@@ -250,7 +251,7 @@ within the same molecule.  For example, if there are 7 of each
 atom in each molecule, the exclusion mask <cite>(7, 7)</cite> can be used.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/rdf.html#MDAnalysis.analysis.rdf.InterRDF" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf.InterRDF</span></code></a></p>
+<p><a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/rdf.html#MDAnalysis.analysis.rdf.InterRDF" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.rdf.InterRDF</span></code></a></p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 0.2.0.</span></p>
@@ -260,7 +261,7 @@ atom in each molecule, the exclusion mask <cite>(7, 7)</cite> can be used.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Universe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroups</cite> must belong to this Universe)</p></li>
-<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
+<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
 </ul>
 </dd>
 </dl>
@@ -272,7 +273,7 @@ lists, with each sublist containing the return values from
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -315,13 +316,13 @@ Note that this is the actual count within a given radius, i.e.,
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
 to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </dd>
@@ -344,7 +345,7 @@ to n_jobs or number of available workers in scheduler.</p></li>
         <a href="leaflet.html" class="btn btn-neutral float-right" title="LeafletFinder Analysis tool — pmda.leaflet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="contacts.html" class="btn btn-neutral float-left" title="Native contacts analysis — pmda.contacts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="hbond_analysis.html" class="btn btn-neutral float-left" title="Hydrogen Bond Analysis — pmda.hbond_analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

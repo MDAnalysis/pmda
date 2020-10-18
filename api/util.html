@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utility functions — pmda.util &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>Utility functions — pmda.util &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -218,22 +218,22 @@ values for slices is supported: <code class="docutils literal notranslate"><span
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n_frames</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of frames in the trajectory (≥0). This must be the
+<li><p><strong>n_frames</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of frames in the trajectory (≥0). This must be the
 number of frames <em>after</em> the trajectory has been sliced,
 i.e. <code class="docutils literal notranslate"><span class="pre">len(u.trajectory[start:stop:step])</span></code>. If any of
 <cite>start</cite>, <cite>stop, and `step</cite> are not the defaults (left empty or
 set to <code class="docutils literal notranslate"><span class="pre">None</span></code>) they must be provided as parameters.</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of blocks (&gt;0 and &lt;n_frames)</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The first index of the trajectory (default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – number of blocks (&gt;0 and &lt;n_frames)</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – The first index of the trajectory (default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 is interpreted as “first frame”, i.e., 0).</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The index of the last frame + 1 (default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which is
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – The index of the last frame + 1 (default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which is
 interpreted as “up to and including the last frame”.</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Step size by which the trajectory is sliced; the default is
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – Step size by which the trajectory is sliced; the default is
 <code class="docutils literal notranslate"><span class="pre">None</span></code> which corresponds to <code class="docutils literal notranslate"><span class="pre">step=1</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><strong>slices</strong> – List of length <code class="docutils literal notranslate"><span class="pre">n_blocks</span></code> with one <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code></a>
+<dd class="field-even"><p><p><strong>slices</strong> – List of length <code class="docutils literal notranslate"><span class="pre">n_blocks</span></code> with one <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">slice</span></code></a>
 for each block.</p>
 <p>If <cite>n_frames</cite> = 0 then an empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code> is returned.</p>
 </p>
@@ -366,7 +366,7 @@ Technical Report SAND2008-6212, 2008.</p>
 <dt id="pmda.util.timeit">
 <em class="property">class </em><code class="sig-prename descclassname">pmda.util.</code><code class="sig-name descname">timeit</code><a class="reference internal" href="../_modules/pmda/util.html#timeit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.util.timeit" title="Permalink to this definition">¶</a></dt>
 <dd><p>measure time spend in context</p>
-<p><a class="reference internal" href="#pmda.util.timeit" title="pmda.util.timeit"><code class="xref py py-class docutils literal notranslate"><span class="pre">timeit</span></code></a> is a context manager (to be used with the <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html#with" title="(in Python v3.8)"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">with</span></code></a>
+<p><a class="reference internal" href="#pmda.util.timeit" title="pmda.util.timeit"><code class="xref py py-class docutils literal notranslate"><span class="pre">timeit</span></code></a> is a context manager (to be used with the <a class="reference external" href="https://docs.python.org/3/reference/compound_stmts.html#with" title="(in Python v3.9)"><code class="xref std std-keyword docutils literal notranslate"><span class="pre">with</span></code></a>
 statement) that records the execution time for the enclosed context block
 in <a class="reference internal" href="#pmda.util.timeit.elapsed" title="pmda.util.timeit.elapsed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elapsed</span></code></a>.</p>
 <dl class="py attribute">
@@ -376,7 +376,7 @@ in <a class="reference internal" href="#pmda.util.timeit.elapsed" title="pmda.ut
 and exiting the context.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -391,7 +391,7 @@ and exiting the context.</p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/time.html#time.time" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">time.time()</span></code></a></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/time.html#time.time" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">time.time()</span></code></a></p>
 </div>
 </dd></dl>
 

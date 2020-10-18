@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Native contacts analysis — pmda.contacts &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>Native contacts analysis — pmda.contacts &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,11 +39,11 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Radial Distribution Functions — pmda.rdf" href="rdf.html" />
+    <link rel="next" title="Hydrogen Bond Analysis — pmda.hbond_analysis" href="hbond_analysis.html" />
     <link rel="prev" title="Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf" href="rmsf.html" /> 
 </head>
 
@@ -109,6 +109,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="hbond_analysis.html">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="leaflet.html">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
@@ -338,7 +339,7 @@ of a trajectory <a class="reference internal" href="#franklin2007" id="id3"><spa
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>atomgroup</strong> (<em>mda.core.groups.AtomGroup</em>) – atomgroup to analyze</p></li>
-<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – distance at which contact is formed</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – distance at which contact is formed</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -380,7 +381,7 @@ argument <cite>method</cite>.</p>
 <dd><p>list containing <em>Q</em> for all refgroup pairs and analyzed frames</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -388,13 +389,13 @@ argument <cite>method</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mobiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting groups that change over time</p></li>
-<li><p><strong>refs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting atomgroups in their reference conformation. This
+<li><p><strong>mobiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting groups that change over time</p></li>
+<li><p><strong>refs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>(</em><em>AtomGroup</em><em>, </em><em>AtomGroup</em><em>)</em>) – two contacting atomgroups in their reference conformation. This
 can also be a list of tuples containing different atom groups</p></li>
-<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em><em> (</em><em>4.5 Angstroms</em><em>)</em>) – radius within which contacts exist in refgroup</p></li>
+<li><p><strong>radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em><em> (</em><em>4.5 Angstroms</em><em>)</em>) – radius within which contacts exist in refgroup</p></li>
 <li><p><strong>method</strong> (<em>string | callable</em><em> (</em><em>optional</em><em>)</em>) – Can either be one of <code class="docutils literal notranslate"><span class="pre">['hard_cut'</span> <span class="pre">,</span> <span class="pre">'soft_cut']</span></code> or a callable
 with call signature <code class="docutils literal notranslate"><span class="pre">func(r,</span> <span class="pre">r0,</span> <span class="pre">**kwargs)</span></code> (the “Contacts API”).</p></li>
-<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – dictionary of additional kwargs passed to <cite>method</cite>. Check
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em>, </em><em>optional</em>) – dictionary of additional kwargs passed to <cite>method</cite>. Check
 respective functions for reasonable values.</p></li>
 </ul>
 </dd>
@@ -418,13 +419,13 @@ respective functions for reasonable values.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of jobs to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</p></li>
-<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
+<li><p><strong>n_blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of blocks to divide trajectory into. If <code class="docutils literal notranslate"><span class="pre">None</span></code> set equal
 to n_jobs or number of available workers in scheduler.</p></li>
 </ul>
 </dd>
@@ -444,7 +445,7 @@ to n_jobs or number of available workers in scheduler.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="rdf.html" class="btn btn-neutral float-right" title="Radial Distribution Functions — pmda.rdf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="hbond_analysis.html" class="btn btn-neutral float-right" title="Hydrogen Bond Analysis — pmda.hbond_analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="rmsf.html" class="btn btn-neutral float-left" title="Calculating Root-Mean-Square Fluctuations (RMSF) — pmda.rmsf" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Hydrogen Bond Analysis — pmda.hbond_analysis &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/mdanalysis-logo.ico"/>
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Radial Distribution Functions — pmda.rdf" href="rdf.html" />
+    <link rel="prev" title="Native contacts analysis — pmda.contacts" href="contacts.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/pmda-logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../userguide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#building-blocks">Building blocks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#pre-defined-parallel-analysis-tasks">Pre-defined parallel analysis tasks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmsf.html">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="contacts.html">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaflet.html">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PMDA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../api.html">API for <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda</span></code></a> &raquo;</li>
+        
+      <li>Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/hbond_analysis.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-pmda.hbond_analysis"></span><div class="section" id="hydrogen-bond-analysis-pmda-hbond-analysis">
+<h1>Hydrogen Bond Analysis — <a class="reference internal" href="#module-pmda.hbond_analysis" title="pmda.hbond_analysis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a><a class="headerlink" href="#hydrogen-bond-analysis-pmda-hbond-analysis" title="Permalink to this headline">¶</a></h1>
+<p>This module contains parallel versions of analysis tasks in
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/hbond_analysis.html#module-MDAnalysis.analysis.hbonds.hbond_analysis" title="(in MDAnalysis v1.0.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.hbonds.hbond_analysis</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/hbond_analysis.html#module-MDAnalysis.analysis.hbonds.hbond_analysis" title="(in MDAnalysis v1.0.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.hbonds.hbond_analysis</span></code></a></p>
+</div>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis">
+<em class="property">class </em><code class="sig-prename descclassname">pmda.hbond_analysis.</code><code class="sig-name descname">HydrogenBondAnalysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">universe</span></em>, <em class="sig-param"><span class="n">donors_sel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hydrogens_sel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">acceptors_sel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">d_h_cutoff</span><span class="o">=</span><span class="default_value">1.2</span></em>, <em class="sig-param"><span class="n">d_a_cutoff</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">d_h_a_angle_cutoff</span><span class="o">=</span><span class="default_value">150</span></em>, <em class="sig-param"><span class="n">update_selections</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform an analysis of hydrogen bonds in a Universe.</p>
+<p>Set up atom selections and geometric criteria for finding hydrogen
+bonds in a Universe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>universe</strong> (<em>Universe</em>) – MDAnalysis Universe object</p></li>
+<li><p><strong>donors_sel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Selection string for the hydrogen bond donor atoms. If the
+universe topology contains bonding information, leave
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">donors_sel</span></code> as <cite>None</cite> so that donor-hydrogen pairs can be
+correctly identified.</p></li>
+<li><p><strong>hydrogens_sel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Selection string for the hydrogen bond hydrogen atoms. Leave as
+<cite>None</cite> to guess which hydrogens to use in the analysis using
+<a class="reference internal" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_hydrogens" title="pmda.hbond_analysis.HydrogenBondAnalysis.guess_hydrogens"><code class="xref py py-attr docutils literal notranslate"><span class="pre">guess_hydrogens</span></code></a>. If <code class="xref py py-attr docutils literal notranslate"><span class="pre">hydrogens_sel</span></code> is left as
+<cite>None</cite>, also leave <code class="xref py py-attr docutils literal notranslate"><span class="pre">donors_sel</span></code> as None so that
+donor-hydrogen pairs can be correctly identified.</p></li>
+<li><p><strong>acceptors_sel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Selection string for the hydrogen bond acceptor atoms. Leave as
+<cite>None</cite> to guess which atoms to use in the analysis using
+<a class="reference internal" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_acceptors" title="pmda.hbond_analysis.HydrogenBondAnalysis.guess_acceptors"><code class="xref py py-attr docutils literal notranslate"><span class="pre">guess_acceptors</span></code></a></p></li>
+<li><p><strong>d_h_cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Distance cutoff used for finding donor-hydrogen pairs [1.2]. Only
+used to find donor-hydrogen pairs if the universe topology does
+not contain bonding information</p></li>
+<li><p><strong>d_a_cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Distance cutoff for hydrogen bonds. This cutoff refers to the
+D-A distance. [3.0]</p></li>
+<li><p><strong>d_h_a_angle_cutoff</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – D-H-A angle cutoff for hydrogen bonds, in degrees. [150]</p></li>
+<li><p><strong>update_selections</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em> (</em><em>optional</em><em>)</em>) – Whether or not to update the acceptor, donor and hydrogen lists at
+each frame. [True]</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>The simplest use case is to allow <a class="reference internal" href="#pmda.hbond_analysis.HydrogenBondAnalysis" title="pmda.hbond_analysis.HydrogenBondAnalysis"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydrogenBondAnalysis</span></code></a> to
+guess the acceptor and hydrogen atoms, and to identify donor-hydrogen
+pairs via the bonding information in the topology:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span>
+<span class="kn">from</span> <span class="nn">pmda.hbond_analysis</span> <span class="kn">import</span> <span class="n">HydrogenBondAnalysis</span> <span class="k">as</span> <span class="n">HBA</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span>
+
+<span class="n">hbonds</span> <span class="o">=</span> <span class="n">HBA</span><span class="p">(</span><span class="n">universe</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It is also possible to specify which hydrogens and acceptors to use
+in the analysis. For example, to find all hydrogen bonds in water:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span>
+<span class="kn">from</span> <span class="nn">pmda.hbond_analysis</span> <span class="kn">import</span> <span class="n">HydrogenBondAnalysis</span> <span class="k">as</span> <span class="n">HBA</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span>
+
+<span class="n">hbonds</span> <span class="o">=</span> <span class="n">HBA</span><span class="p">(</span><span class="n">universe</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
+             <span class="n">hydrogens_sel</span><span class="o">=</span><span class="s1">&#39;resname TIP3 and name H1 H2&#39;</span><span class="p">,</span>
+             <span class="n">acceptors_sel</span><span class="o">=</span><span class="s1">&#39;resname TIP3 and name OH2&#39;</span><span class="p">)</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Alternatively, <code class="xref py py-attr docutils literal notranslate"><span class="pre">hydrogens_sel</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">acceptors_sel</span></code> may be
+generated via the <a class="reference internal" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_hydrogens" title="pmda.hbond_analysis.HydrogenBondAnalysis.guess_hydrogens"><code class="xref py py-attr docutils literal notranslate"><span class="pre">guess_hydrogens</span></code></a> and <a class="reference internal" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_acceptors" title="pmda.hbond_analysis.HydrogenBondAnalysis.guess_acceptors"><code class="xref py py-attr docutils literal notranslate"><span class="pre">guess_acceptors</span></code></a>.
+This selection strings may then be modified prior to calling
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">run</span></code>, or a subset of the universe may be used to guess the
+atoms. For example, find hydrogens and acceptors belonging to a
+protein:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span>
+<span class="kn">from</span> <span class="nn">pmda.hbond_analysis</span> <span class="kn">import</span> <span class="n">HydrogenBondAnalysis</span> <span class="k">as</span> <span class="n">HBA</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span>
+
+<span class="n">hbonds</span> <span class="o">=</span> <span class="n">HBA</span><span class="p">(</span><span class="n">universe</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">hydrogens_sel</span> <span class="o">=</span> <span class="n">hbonds</span><span class="o">.</span><span class="n">guess_hydrogens</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">acceptors_sel</span> <span class="o">=</span> <span class="n">hbonds</span><span class="o">.</span><span class="n">guess_acceptors</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Slightly more complex selection strings are also possible.
+For example, to find hydrogen bonds involving a protein and
+any water molecules within 10 Å of the protein (which may be useful
+for subsequently finding the lifetime of protein-water hydrogen bonds
+or finding water-bridging hydrogen bond paths):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span>
+<span class="kn">from</span> <span class="nn">pmda.hbond_analysis</span> <span class="kn">import</span> <span class="n">HydrogenBondAnalysis</span> <span class="k">as</span> <span class="n">HBA</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span>
+
+<span class="n">hbonds</span> <span class="o">=</span> <span class="n">HBA</span><span class="p">(</span><span class="n">universe</span><span class="o">=</span><span class="n">u</span><span class="p">)</span>
+
+<span class="n">protein_hydrogens_sel</span> <span class="o">=</span> <span class="n">hbonds</span><span class="o">.</span><span class="n">guess_hydrogens</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
+<span class="n">protein_acceptors_sel</span> <span class="o">=</span> <span class="n">hbonds</span><span class="o">.</span><span class="n">guess_acceptors</span><span class="p">(</span><span class="s2">&quot;protein&quot;</span><span class="p">)</span>
+
+<span class="n">water_hydrogens_sel</span> <span class="o">=</span> <span class="s2">&quot;resname TIP3 and name H1 H2&quot;</span>
+<span class="n">water_acceptors_sel</span> <span class="o">=</span> <span class="s2">&quot;resname TIP3 and name OH2&quot;</span>
+
+<span class="n">hbonds</span><span class="o">.</span><span class="n">hydrogens_sel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">protein_hydrogens_sel</span><span class="si">}</span><span class="s2">) or</span>
+          <span class="p">({</span><span class="n">water_hydrogens_sel</span><span class="p">}</span> <span class="ow">and</span> <span class="n">around</span> <span class="mi">10</span> <span class="ow">not</span> <span class="n">resname</span> <span class="n">TIP3</span><span class="p">})</span><span class="s2">&quot;</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">acceptors_sel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">protein_acceptors_sel</span><span class="si">}</span><span class="s2">) or</span>
+          <span class="p">({</span><span class="n">water_acceptors_sel</span><span class="p">}</span> <span class="ow">and</span> <span class="n">around</span> <span class="mi">10</span> <span class="ow">not</span> <span class="n">resname</span> <span class="n">TIP3</span><span class="p">})</span><span class="s2">&quot;</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It is highly recommended that a topology with bonding information is
+used to generate the universe, e.g <cite>PSF</cite>, <cite>TPR</cite>, or <cite>PRMTOP</cite> files.
+This is the only method by which it can be guaranteed that
+donor-hydrogen pairs are correctly identified. However, if, for
+example, a <cite>PDB</cite> file is used instead, a <code class="xref py py-attr docutils literal notranslate"><span class="pre">donors_sel</span></code> may be
+provided along with a <code class="xref py py-attr docutils literal notranslate"><span class="pre">hydrogens_sel</span></code> and the donor-hydrogen
+pairs will be identified via a distance cutoff, <code class="xref py py-attr docutils literal notranslate"><span class="pre">d_h_cutoff</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MDAnalysis</span>
+<span class="kn">from</span> <span class="nn">pmda.hbond_analysis</span> <span class="kn">import</span> <span class="n">HydrogenBondAnalysis</span> <span class="k">as</span> <span class="n">HBA</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">MDAnalysis</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span>
+
+<span class="n">hbonds</span> <span class="o">=</span> <span class="n">HBA</span><span class="p">(</span>
+  <span class="n">universe</span><span class="o">=</span><span class="n">u</span><span class="p">,</span>
+  <span class="n">donors_sel</span><span class="o">=</span><span class="s1">&#39;resname TIP3 and name OH2&#39;</span><span class="p">,</span>
+  <span class="n">hydrogens_sel</span><span class="o">=</span><span class="s1">&#39;resname TIP3 and name H1 H2&#39;</span><span class="p">,</span>
+  <span class="n">acceptors_sel</span><span class="o">=</span><span class="s1">&#39;resname TIP3 and name OH2&#39;</span><span class="p">,</span>
+  <span class="n">d_h_cutoff</span><span class="o">=</span><span class="mf">1.2</span>
+<span class="p">)</span>
+<span class="n">hbonds</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis.count_by_ids">
+<code class="sig-name descname">count_by_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis.count_by_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis.count_by_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the total number hydrogen bonds formed by unique
+combinations of donor, hydrogen and acceptor atoms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>counts</strong> – Each row of the array contains the donor atom id, hydrogen atom
+id, acceptor atom id and the total number of times the hydrogen
+bond was observed. The array is sorted by frequency of
+occurrence.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unique hydrogen bonds are determined through a consideration of the
+hydrogen atom id and acceptor atom id in a hydrogen bond.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis.count_by_time">
+<code class="sig-name descname">count_by_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis.count_by_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis.count_by_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of hydrogen bonds per timestep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>counts</strong> – Contains the total number of hydrogen bonds found at each
+timestep.
+Can be used along with <code class="xref py py-attr docutils literal notranslate"><span class="pre">HydrogenBondAnalysis.timesteps</span></code> to
+plot the number of hydrogen bonds over time.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis.count_by_type">
+<code class="sig-name descname">count_by_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis.count_by_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis.count_by_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the total number of each unique type of hydrogen bond.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>counts</strong> – Each row of the array contains the donor resname, donor atom
+type, acceptor resname, acceptor atom type and the total number
+of times the hydrogen bond was found.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unique hydrogen bonds are determined through a consideration of the
+resname and atom type of the donor and acceptor atoms in a hydrogen
+bond.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis.guess_acceptors">
+<code class="sig-name descname">guess_acceptors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selection</span><span class="o">=</span><span class="default_value">'all'</span></em>, <em class="sig-param"><span class="n">max_charge</span><span class="o">=</span><span class="default_value">- 0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis.guess_acceptors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_acceptors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guesses which atoms could be considered acceptors in the analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Selection string for atom group from which acceptors will be
+identified.</p></li>
+<li><p><strong>max_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Maximum allowed charge of an acceptor atom.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>potential_acceptors</strong> – String containing the <code class="xref py py-attr docutils literal notranslate"><span class="pre">resname</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code> of all
+atoms that potentially capable of forming hydrogen bonds.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function makes use of and atomic charges to identify which atoms
+could be considered acceptor atoms in the hydrogen bond analysis.
+If an atom has an atomic charge less than <code class="xref py py-attr docutils literal notranslate"><span class="pre">max_charge</span></code> then it
+is considered capable of participating in hydrogen bonds.</p>
+<p>If <code class="xref py py-attr docutils literal notranslate"><span class="pre">acceptors_sel</span></code> is <cite>None</cite>, this function is called to guess
+the selection.</p>
+<p>Alternatively, this function may be used to quickly generate a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> of potential acceptor atoms involved in hydrogen bonding.
+This <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> may then be modified before being used to set the
+attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">acceptors_sel</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis.guess_donors">
+<code class="sig-name descname">guess_donors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selection</span><span class="o">=</span><span class="default_value">'all'</span></em>, <em class="sig-param"><span class="n">max_charge</span><span class="o">=</span><span class="default_value">- 0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis.guess_donors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_donors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guesses which atoms could be considered donors in the analysis.
+Only use if the universe topology does not contain bonding
+information, otherwise donor-hydrogen pairs may be incorrectly
+assigned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Selection string for atom group from which donors will be
+identified.</p></li>
+<li><p><strong>max_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Maximum allowed charge of a donor atom.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>potential_donors</strong> – String containing the <code class="xref py py-attr docutils literal notranslate"><span class="pre">resname</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code> of all
+atoms that potentially capable of forming hydrogen bonds.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function makes use of and atomic charges to identify which atoms
+could be considered donor atoms in the hydrogen bond analysis. If an
+atom has an atomic charge less than <code class="xref py py-attr docutils literal notranslate"><span class="pre">max_charge</span></code>, and it is
+within <code class="xref py py-attr docutils literal notranslate"><span class="pre">d_h_cutoff</span></code> of a hydrogen atom, then it is considered
+capable of participating in hydrogen bonds.</p>
+<p>If <code class="xref py py-attr docutils literal notranslate"><span class="pre">donors_sel</span></code> is <cite>None</cite>, and the universe topology does not
+have bonding information, this function is called to guess the
+selection.</p>
+<p>Alternatively, this function may be used to quickly generate a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> of potential donor atoms involved in hydrogen bonding.
+This <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> may then be modified before being used to set the
+attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">donors_sel</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pmda.hbond_analysis.HydrogenBondAnalysis.guess_hydrogens">
+<code class="sig-name descname">guess_hydrogens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selection</span><span class="o">=</span><span class="default_value">'all'</span></em>, <em class="sig-param"><span class="n">max_mass</span><span class="o">=</span><span class="default_value">1.1</span></em>, <em class="sig-param"><span class="n">min_charge</span><span class="o">=</span><span class="default_value">0.3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/hbond_analysis.html#HydrogenBondAnalysis.guess_hydrogens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.hbond_analysis.HydrogenBondAnalysis.guess_hydrogens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guesses which hydrogen atoms should be used in the analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> (</em><em>optional</em><em>)</em>) – Selection string for atom group from which hydrogens will be
+identified.</p></li>
+<li><p><strong>max_mass</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Maximum allowed mass of a hydrogen atom.</p></li>
+<li><p><strong>min_charge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> (</em><em>optional</em><em>)</em>) – Minimum allowed charge of a hydrogen atom.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>potential_hydrogens</strong> – String containing the <code class="xref py py-attr docutils literal notranslate"><span class="pre">resname</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code> of all
+hydrogen atoms potentially capable of forming hydrogen bonds.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function makes use of atomic masses and atomic charges to
+identify which atoms are hydrogen atoms that are capable of
+participating in hydrogen bonding. If an atom has a mass less than
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">max_mass</span></code> and an atomic charge greater than <code class="xref py py-attr docutils literal notranslate"><span class="pre">min_charge</span></code>
+then it is considered capable of participating in hydrogen bonds.</p>
+<p>If <code class="xref py py-attr docutils literal notranslate"><span class="pre">hydrogens_sel</span></code> is <cite>None</cite>, this function is called to guess
+the selection.</p>
+<p>Alternatively, this function may be used to quickly generate a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> of potential hydrogen atoms involved in hydrogen bonding.
+This str may then be modified before being used to set the attribute
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">hydrogens_sel</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rdf.html" class="btn btn-neutral float-right" title="Radial Distribution Functions — pmda.rdf" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="contacts.html" class="btn btn-neutral float-left" title="Native contacts analysis — pmda.contacts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2018, Max Linke, Oliver Beckstein, Shujie Fan, Richard J. Gowers, Ioannis Paraskevakos, Michael Gecht, Nikolaus Awtrey
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+ 
+<div class="footer"><p>Please see
+    our <a href="https://www.mdanalysis.org/pages/privacy/">Privacy Policy</a>
+    to learn how <a href="https://www.mdanalysis.org">MDAnalysis</a> collects data.</p>
+    <script data-goatcounter="https://mdanalysis.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</div>
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

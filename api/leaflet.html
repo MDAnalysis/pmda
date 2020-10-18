@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>LeafletFinder Analysis tool — pmda.leaflet &mdash; PMDA 0.3.0+20.g6f2c77e documentation</title>
+  <title>LeafletFinder Analysis tool — pmda.leaflet &mdash; PMDA 0.3.0+21.g6c037c8 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
 
     
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within PMDA 0.3.0+20.g6f2c77e documentation"
+          title="Search within PMDA 0.3.0+21.g6c037c8 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="rmsd.html">Calculating Root-Mean-Square Deviations (RMSD) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rmsf.html">Calculating Root-Mean-Square Fluctuations (RMSF) — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rmsf</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="contacts.html">Native contacts analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.contacts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hbond_analysis.html">Hydrogen Bond Analysis — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.hbond_analysis</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rdf.html">Radial Distribution Functions — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.rdf</span></code></a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">LeafletFinder Analysis tool — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="density.html">Generating Densities from Trajectories — <code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.density</span></code></a></li>
@@ -182,7 +183,7 @@
   <span class="target" id="module-pmda.leaflet"></span><div class="section" id="leafletfinder-analysis-tool-pmda-leaflet">
 <h1>LeafletFinder Analysis tool — <a class="reference internal" href="#module-pmda.leaflet" title="pmda.leaflet"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pmda.leaflet</span></code></a><a class="headerlink" href="#leafletfinder-analysis-tool-pmda-leaflet" title="Permalink to this headline">¶</a></h1>
 <p>This module contains parallel versions of analysis tasks in
-<a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#module-MDAnalysis.analysis.leaflet" title="(in MDAnalysis v1.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.leaflet</span></code></a>.</p>
+<a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/leaflet.html#module-MDAnalysis.analysis.leaflet" title="(in MDAnalysis v1.0.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">MDAnalysis.analysis.leaflet</span></code></a>.</p>
 <dl class="py class">
 <dt id="pmda.leaflet.LeafletFinder">
 <em class="property">class </em><code class="sig-prename descclassname">pmda.leaflet.</code><code class="sig-name descname">LeafletFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">universe</span></em>, <em class="sig-param"><span class="n">atomgroups</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pmda/leaflet.html#LeafletFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pmda.leaflet.LeafletFinder" title="Permalink to this definition">¶</a></dt>
@@ -196,14 +197,14 @@ This class implements and parallelizes the <em>LeafletFinder</em> algorithm
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Universe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroup</cite> must belong to this Universe)</p></li>
-<li><p><strong>atomgroup</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
+<li><p><strong>atomgroup</strong> (tuple of <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>At the moment, this class has far fewer features than the serial
-version <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/analysis/leaflet.html#MDAnalysis.analysis.leaflet.LeafletFinder" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.leaflet.LeafletFinder</span></code></a>.</p>
+version <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/analysis/leaflet.html#MDAnalysis.analysis.leaflet.LeafletFinder" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.analysis.leaflet.LeafletFinder</span></code></a>.</p>
 <p>This version offers LeafletFinder algorithm 4 (“Tree-based Nearest
 Neighbor and Parallel-Connected Components (Tree-Search)”) in
 <a class="reference internal" href="../references.html#paraskevakos2018" id="id3"><span>[Paraskevakos2018]</span></a>.</p>
@@ -216,7 +217,7 @@ at the moment, no parallelization over trajectory blocks is performed.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Universe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Universe</span></code>) – a <code class="xref py py-class docutils literal notranslate"><span class="pre">MDAnalysis.core.groups.Universe</span></code> (the
 <cite>atomgroups</cite> must belong to this Universe)</p></li>
-<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://www.mdanalysis.org/docs/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
+<li><p><strong>atomgroups</strong> (tuple of <a class="reference external" href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup" title="(in MDAnalysis v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomGroup</span></code></a>) – atomgroups that are iterated in parallel</p></li>
 </ul>
 </dd>
 </dl>
@@ -228,7 +229,7 @@ lists, with each sublist containing the return values from
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">pmda.parallel.ParallelAnalysisBase._single_frame()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -252,10 +253,10 @@ lists, with each sublist containing the return values from
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
-<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
-<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – number of tasks to start, if <cite>-1</cite> use number of logical cpu cores.
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – start frame of analysis</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – stop frame of analysis</p></li>
+<li><p><strong>step</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of frames to skip between each analysed frame</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of tasks to start, if <cite>-1</cite> use number of logical cpu cores.
 This argument will be ignored when the distributed scheduler is
 used</p></li>
 </ul>
