@@ -104,7 +104,7 @@ class TestHydrogenBondAnalysisTIP3P(object):
     def test_universe(self, h, universe):
         ref = universe.atoms.positions
         h.run(n_jobs=4, n_blocks=4)
-        u = h._universe()
+        u = h._universe
         assert_array_almost_equal(u.atoms.positions, ref)
 
 
@@ -269,5 +269,5 @@ class TestNoBond_Topology(object):
         universe = MDAnalysis.Universe(GRO)
         ref = universe.atoms.positions
         h = HydrogenBondAnalysis(universe, **self.kwargs)
-        u = h._universe()
+        u = h._universe
         assert_array_almost_equal(u.atoms.positions, ref)
