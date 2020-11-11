@@ -59,7 +59,8 @@ class TestLeafLet(object):
     def test_leaflet_single_frame(self,
                                   u_one_frame,
                                   correct_values_single_frame,
-                                  n_jobs):
+                                  n_jobs,
+                                  scheduler):
         lipid_heads = u_one_frame.select_atoms("name PO4")
         u_one_frame.trajectory.rewind()
         leaflets = leaflet.LeafletFinder(u_one_frame,
