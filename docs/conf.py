@@ -40,6 +40,7 @@ mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?
 
 # for sitemap with https://github.com/jdillard/sphinx-sitemap
 site_url = "https://www.mdanalysis.org/pmda/"
+sitemap_url_scheme = "{link}"
 
 # https://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
 autoclass_content = 'both'
@@ -232,7 +233,7 @@ texinfo_documents = [
 # Configuration for intersphinx: refer to the Python standard library
 # and other packages used by MDAnalysis
 intersphinx_mapping = {'https://docs.python.org/': None,
-                       'https://www.mdanalysis.org/docs/': None,
+                       'https://docs.mdanalysis.org/stable/': None,
                        'https://docs.dask.org/en/latest/': None,
                        'https://distributed.readthedocs.io/en/latest/': None,
                        }
