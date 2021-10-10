@@ -33,7 +33,7 @@ Fixes
   * raise ValueError when n_blocks > n_frames (Issue #137, PR #138)
 
 Changes
-  * requires MDAnalysis >= 1.0.0 (#122)
+  * requires MDAnalysis >= 1.0.0 and <2.0.0 (#122)
   * dropped official support for Python 3.5 (2.7 and >= 3.6 are supported)
 
 

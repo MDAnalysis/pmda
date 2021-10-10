@@ -1,0 +1,152 @@
+name: GH Actions CI
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
+
+concurrency:
+  # Probably overly cautious group naming.
+  # Commits to develop/master will cancel each other, but PRs will only cancel
+  # commits within the same PR
+  group: "${{ github.ref }}-${{ github.head_ref }}"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  unittests:
+    if: "github.repository == 'MDAnalysis/pmda'"
+    runs-on: ${{ matrix.os }}
+    strategy:
+        fail-fast: false
+        matrix:
+          os: [ubuntu-latest, ]
+          python-version: [2.7, 3.7, 3.8]
+          include:
+            - name: macOS_bigsur_py39
+              os: macOS-11
+              python-version: 3.8
+            - name: macOS_catalina_py37
+              os: macOS-10.15
+              python-version: 3.7
+    env:
+      CYTHON_TRACE_NOGIL: 1
+      MPLBACKEND: agg
+      GH_OS: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: setup_miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        auto-update-conda: true
+        channel-priority: flexible
+        # The order of these channel matters: both provide "fundamental"
+        # software (curl, ssh, ...), but the version in biobuilds are very
+        # outdated. This can lead to problem when loading shared libraries,
+        # see https://github.com/MDAnalysis/mdanalysis/pull/3126#issuecomment-813112080
+        channels: conda-forge, biobuilds
+        add-pip-as-python-dependency: true
+        mamba-version: "*"
+        architecture: x64
+
+    - name: install_deps
+      run: |
+        mamba install 'mdanalysis>=1.1.1,<2' 'mdanalysistests>=1.1.1,<2' dask distributed joblib mock codecov
+        pip install 'coverage<5' 'pytest-cov==2.10.1' pytest-xdist
+
+    - name: check_setup
+      run: |
+        # Check OS and python setup
+        echo "OS: ${OS_NAME}"
+        which python
+        which pip
+        pip list
+        conda info
+        conda list
+
+    - name: install PMDA package
+      run: python -m pip install -v .
+
+    - name: run tests
+      run: |
+         pytest -v --cov=pmda --cov-report=xml --color=yes ./pmda/test
+
+    - name: codecov
+      uses: codecov/codecov-action@v2
+      with:
+        file: coverage.xml
+        fail_ci_if_error: True
+        verbose: True
+
+  pylint_check:
+    if: "github.repository == 'MDAnalysis/pmda'"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: setup_miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: 3.7
+        auto-update-conda: true
+        channel-priority: flexible
+        channels: conda-forge
+        add-pip-as-python-dependency: true
+        architecture: x64
+
+    - name: install
+      run: |
+        which pip
+        which python
+        pip install pylint
+
+    - name: pylint
+      env:
+        PYLINTRC: .pylintrc
+      run: |
+        pylint pmda
+
+
+  pypi_check:
+    if: "github.repository == 'MDAnalysis/pmda'"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: setup_miniconda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: 3.7
+        auto-update-conda: true
+        channel-priority: flexible
+        channels: conda-forge
+        add-pip-as-python-dependency: true
+        # mamba not enabled as install longer than deps install
+        architecture: x64
+
+    - name: install_conda
+      run: |
+        conda install setuptools twine
+
+    - name: install PMDA
+      run: |
+        python setup.py sdist
+
+    - name: check package build
+      run: |
+        DISTRIBUTION=$(ls -t1 dist/pmda-*.tar.gz | head -n 1)
+        test -n "${DISTRIBUTION}" || { echo "no distribution dist/pmda-*.tar.gz found"; exit 1; }
+        echo "twine check $DISTRIBUTION"
+        twine check $DISTRIBUTION
