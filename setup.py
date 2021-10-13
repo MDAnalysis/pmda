@@ -8,7 +8,15 @@
 # Released under the GNU Public Licence, v2 or any higher version
 
 from setuptools import setup, find_packages
+import sys
 import versioneer
+
+# Make sure I have the right Python version.
+if sys.version_info[:2] < (3, 6):
+    print('PMDA requires Python 3.6 or better. Python {0:d}.{1:d} detected'.format(*
+          sys.version_info[:2]))
+    print('Please upgrade your version of Python.')
+    sys.exit(-1)
 
 with open('README.rst', 'r') as f:
     long_description = f.read()
@@ -33,8 +41,6 @@ setup(
                  'Programming Language :: Python',
                  'Topic :: Scientific/Engineering',
                  'Topic :: Software Development :: Libraries :: Python Modules',
-                 'Programming Language :: Python :: 2',
-                 'Programming Language :: Python :: 2.7',
                  'Programming Language :: Python :: 3',
                  'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7',
@@ -48,7 +54,8 @@ setup(
     },
     packages=find_packages(),
     install_requires=[
-        'MDAnalysis>=1.0.0',
+        #  'MDAnalysis>=2.0.0',
+        'mdanalysis @ git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysis&subdirectory=package',
         'dask>=0.18',
         'distributed',
         'six',
@@ -58,5 +65,6 @@ setup(
     ],
     tests_require=[
         'pytest',
-        'MDAnalysisTests>=1.0.0',  # keep
+        #  'MDAnalysisTests>=2.0.0',  # keep
+        'mdanalysistests @ git+https://github.com/MDAnalysis/mdanalysis#egg=mdanalysistests&subdirectory=testsuite'
     ], )

@@ -14,17 +14,18 @@ A collection of useful building blocks for creating Analysis
 classes.
 
 """
-from __future__ import absolute_import, division
 from contextlib import contextmanager
-import warnings
-
-import time
-from six.moves import range
-import MDAnalysis as mda
-from dask.delayed import delayed
-import dask
-import dask.distributed
 from joblib import cpu_count
+import time
+import warnings
+import uuid
+
+import MDAnalysis as mda
+import dask
+from dask.base import DaskMethodsMixin
+import dask.distributed
+from dask.utils import funcname
+from dask.base import tokenize
 import numpy as np
 
 from .util import timeit, make_balanced_slices
@@ -35,7 +36,7 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, universe, prepare,
+    def __init__(self, io, compute, total, prepare, prepare_dask,
                  conclude, wait=None, io_block=None,
                  compute_block=None):
         self._io = io
@@ -44,8 +45,8 @@ class Timing(object):
         self._compute_block = compute_block
         self._total = total
         self._cumulate = np.sum(io) + np.sum(compute)
-        self._universe = universe
         self._prepare = prepare
+        self._prepare_dask = prepare_dask
         self._conclude = conclude
         self._wait = wait
 
@@ -84,14 +85,14 @@ class Timing(object):
         return self._cumulate
 
     @property
-    def universe(self):
-        """time to create a universe for each block"""
-        return self._universe
-
-    @property
     def prepare(self):
         """time to prepare"""
         return self._prepare
+
+    @property
+    def prepare_dask(self):
+        """time to submit jobs to dask"""
+        return self._prepare_dask
 
     @property
     def conclude(self):
@@ -104,7 +105,7 @@ class Timing(object):
         return self._wait
 
 
-class ParallelAnalysisBase(object):
+class ParallelAnalysisBase(DaskMethodsMixin):
     """Base class for defining parallel multi frame analysis
 
     The class it is designed as a template for creating multiframe analyses.
@@ -136,7 +137,7 @@ class ParallelAnalysisBase(object):
        class NewAnalysis(ParallelAnalysisBase):
            def __init__(self, atomgroup, parameter):
                self._ag = atomgroup
-               super(NewAnalysis, self).__init__(atomgroup.universe,
+               super().__init__(atomgroup.universe,
                                                  self._ag)
 
            def _single_frame(self, ts, agroups):
@@ -189,15 +190,12 @@ class ParallelAnalysisBase(object):
 
     """
 
-    def __init__(self, universe, atomgroups):
+    def __init__(self, universe):
         """Parameters
         ----------
-        Universe : :class:`~MDAnalysis.core.groups.Universe`
+        universe : :class:`~MDAnalysis.core.groups.Universe`
             a :class:`MDAnalysis.core.groups.Universe` (the
             `atomgroups` must belong to this Universe)
-
-        atomgroups : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            atomgroups that are iterated in parallel
 
         Attributes
         ----------
@@ -207,10 +205,15 @@ class ParallelAnalysisBase(object):
             :meth:`pmda.parallel.ParallelAnalysisBase._single_frame`.
 
         """
+        self._universe = universe
         self._trajectory = universe.trajectory
-        self._top = universe.filename
-        self._traj = universe.trajectory.filename
-        self._indices = [ag.indices for ag in atomgroups]
+        #  _dsk keeps the dask graph
+        #  (which is a dict of tuples of functions)
+        self._dsk = {}
+        #  _keys keeps the desired results
+        #  in a nested list that represent the outputs of the graph
+        self._keys = []
+        self._job_prepared = False
 
     @contextmanager
     def readonly_attributes(self):
@@ -232,11 +235,15 @@ class ParallelAnalysisBase(object):
         # guards to stop people assigning to self when they shouldn't
         # if locked, the only attribute you can modify is _attr_lock
         # if self._attr_lock isn't set, default to unlocked
-        if key == '_attr_lock' or not getattr(self, '_attr_lock', False):
-            super(ParallelAnalysisBase, self).__setattr__(key, val)
+
+        # keys that can be changed
+        if key in ['_ts', 'prepare_dask_total'] or \
+           key == '_attr_lock' or \
+           not getattr(self, '_attr_lock', False):
+            super().__setattr__(key, val)
         else:
             # raise HalError("I'm sorry Dave, I'm afraid I can't do that")
-            raise AttributeError("Can't set attribute at this time")
+            raise AttributeError("Can't set '{}' at this time".format(key))
 
     def _conclude(self):
         """Finalise the results you've gathered.
@@ -253,23 +260,14 @@ class ParallelAnalysisBase(object):
         """additional preparation to run"""
         pass  # pylint: disable=unnecessary-pass
 
-    def _single_frame(self, ts, atomgroups):
+    def _single_frame(self):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
         from member variables stored in ``self``. Changing them during
-        a run will result in undefined behavior. `ts` and any of the
+        a run will result in undefined behavior. `self._ts` and any of the
         atomgroups can be changed (but changes will be overwritten
         when the next time step is read).
-
-        Parameters
-        ----------
-        ts : :class:`~MDAnalysis.coordinates.base.Timestep`
-            The current coordinate frame (time step) in the
-            trajectory.
-        atomgroups : tuple
-            Tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            instances that are updated to the current frame.
 
         Returns
         -------
@@ -283,6 +281,98 @@ class ParallelAnalysisBase(object):
 
         """
         raise NotImplementedError
+
+    def prepare(self,
+                start=None,
+                stop=None,
+                step=None,
+                n_jobs=1,
+                n_blocks=None):
+        """Prepare the jobs
+
+        Parameters
+        ----------
+        start : int, optional
+            start frame of analysis
+        stop : int, optional
+            stop frame of analysis
+        step : int, optional
+            number of frames to skip between each analysed frame
+        n_blocks : int, optional
+            number of blocks to divide trajectory into. If ``None`` set equal
+            to n_jobs or number of available workers in scheduler.
+        """
+        start, stop, step = self._universe.trajectory.check_slice_indices(start,
+                                                                     stop, step)
+        n_frames = len(range(start, stop, step))
+
+        self.start, self.stop, self.step = start, stop, step
+
+        self.n_frames = n_frames
+
+        # record prepare time
+        with timeit() as prepare_time:
+            self._prepare()
+        self.time_prepare = prepare_time.elapsed
+
+        #  get global scheduler
+        scheduler = dask.config.get('scheduler', None)
+        if scheduler == 'processes':
+            self.__dask_scheduler__ = dask.multiprocessing.get
+        elif scheduler == 'synchronous':
+            self.__dask_scheduler__ = dask.get
+        elif isinstance(scheduler, dask.distributed.Client):
+            self.__dask_scheduler__ = dask.distributed.Client.get
+        elif scheduler is not None:
+            raise ValueError(f"PMDA doesn't support other"
+                             f"schedulers: {scheduler}")
+
+        if n_jobs == -1:
+            n_jobs = cpu_count()
+
+        if scheduler is None and n_jobs == 1:
+            #  synchronous
+            self.__dask_scheduler__ = dask.get
+
+        #  setting n_blocks
+        if n_blocks is None:
+            if self.__dask_scheduler__ == dask.multiprocessing.get:
+                n_blocks = n_jobs
+            elif self.__dask_scheduler__ == dask.distributed.Client.get:
+                n_blocks = len(dask.distributed.worker.get_client().ncores())
+            else:
+                n_blocks = 1
+                warnings.warn(
+                    "Couldn't guess ideal number of blocks from scheduler. "
+                    "Setting n_blocks=1. "
+                    "Please provide `n_blocks` in call to method.")
+
+        if n_frames == 0:
+            warnings.warn("analyses no frames: check start/stop/step")
+        if n_frames < n_blocks:
+            warnings.warn("uses more blocks than frames: "
+                          "will decrease n_blocks")
+
+        slices = make_balanced_slices(n_frames, n_blocks,
+                                      start=start, stop=stop, step=step)
+
+        self._blocks = []
+        with timeit() as prepare_dask:
+            for bslice in slices:
+                self._frame_index = bslice
+
+                self._keys.append(self._append_job_to_dsk(self._map_chunk,
+                                                          bslice))
+
+                # save the frame numbers for each block
+                self._blocks.append(range(bslice.start,
+                                          bslice.stop,
+                                          bslice.step))
+
+        self.time_prepare_dask = prepare_dask.elapsed
+        self._job_prepared = True
+        self.wait_start = time.time()
+        return self
 
     def run(self,
             start=None,
@@ -307,140 +397,48 @@ class ParallelAnalysisBase(object):
         n_blocks : int, optional
             number of blocks to divide trajectory into. If ``None`` set equal
             to n_jobs or number of available workers in scheduler.
-
         """
-        # are we using a distributed scheduler or should we use
-        # multiprocessing?
-        scheduler = dask.config.get('scheduler', None)
-        if scheduler is None:
-            # maybe we can grab a global worker
-            try:
-                scheduler = dask.distributed.worker.get_client()
-            except ValueError:
-                pass
-
-        if n_jobs == -1:
-            n_jobs = cpu_count()
-
-        # we could not find a global scheduler to use and we ask for a single
-        # job. Therefore we run this on the single threaded scheduler for
-        # debugging.
-        if scheduler is None and n_jobs == 1:
-            scheduler = 'synchronous'
-
-        # fall back to multiprocessing, we tried everything
-        if scheduler is None:
-            scheduler = 'processes'
-
-        if n_blocks is None:
-            if scheduler == 'processes':
-                n_blocks = n_jobs
-            elif isinstance(scheduler, dask.distributed.Client):
-                n_blocks = len(scheduler.ncores())
-            else:
-                n_blocks = 1
-                warnings.warn(
-                    "Couldn't guess ideal number of blocks from scheduler. "
-                    "Setting n_blocks=1. "
-                    "Please provide `n_blocks` in call to method.")
-
-        scheduler_kwargs = {'scheduler': scheduler}
-        if scheduler == 'processes':
-            scheduler_kwargs['num_workers'] = n_jobs
-
-        start, stop, step = self._trajectory.check_slice_indices(start,
-                                                                 stop, step)
-        n_frames = len(range(start, stop, step))
-
-        self.start, self.stop, self.step = start, stop, step
-
-        self.n_frames = n_frames
-
-        if n_frames == 0:
-            warnings.warn("run() analyses no frames: check start/stop/step")
-        if n_frames < n_blocks:
-            warnings.warn("run() uses more blocks than frames: "
-                          "decrease n_blocks")
-
-        slices = make_balanced_slices(n_frames, n_blocks,
-                                      start=start, stop=stop, step=step)
-
-        # record total time
         with timeit() as total:
-            # record prepare time
-            with timeit() as prepare:
-                self._prepare()
-            time_prepare = prepare.elapsed
-            blocks = []
-            _blocks = []
-            with self.readonly_attributes():
-                for bslice in slices:
-                    task = delayed(
-                         self._dask_helper, pure=False)(
-                             bslice,
-                             self._indices,
-                             self._top,
-                             self._traj, )
-                    blocks.append(task)
-                    # save the frame numbers for each block
-                    _blocks.append(range(bslice.start,
-                                   bslice.stop, bslice.step))
-                blocks = delayed(blocks)
+            if not self._job_prepared:
+                self.prepare(start, stop, step, n_jobs, n_blocks)
 
-                # record the time when scheduler starts working
-                wait_start = time.time()
-                res = blocks.compute(**scheduler_kwargs)
-            # hack to handle n_frames == 0 in this framework
-            if len(res) == 0:
-                # everything else wants list of block tuples
-                res = [([], [], [], 0, wait_start, 0, 0)]
-            # record conclude time
-            with timeit() as conclude:
-                self._results = np.asarray([el[0] for el in res])
-                # save the frame numbers for all blocks
-                self._blocks = _blocks
-                self._conclude()
-        # put all time information into the timing object
-        self.timing = Timing(
-            np.hstack([el[1] for el in res]),
-            np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare,
-            conclude.elapsed,
-            # waiting time = wait_end - wait_start
-            np.array([el[4]-wait_start for el in res]),
-            np.array([el[5] for el in res]),
-            np.array([el[6] for el in res]))
+            if n_jobs == -1:
+                n_jobs = cpu_count()
+            scheduler_kwargs = {'num_workers': n_jobs}
+
+            _ = self.compute(**scheduler_kwargs)
+
+            #  empty the dask jobs
+            self._dsk = {}
+            self._keys = []
+        self.timing._total = total.elapsed
         return self
 
-    def _dask_helper(self, bslice, indices, top, traj):
-        """helper function to actually setup dask graph"""
+    def _map_chunk(self, bslice):
+        """function to setup chunk dask graph"""
         # wait_end needs to be first line for accurate timing
         wait_end = time.time()
-        # record time to generate universe and atom groups
-        with timeit() as b_universe:
-            u = mda.Universe(top, traj)
-            agroups = [u.atoms[idx] for idx in indices]
-
         res = []
         times_io = []
         times_compute = []
         # NOTE: bslice.stop cannot be None! Always make sure
         #       that it comes from  _trajectory.check_slice_indices()!
         for i in range(bslice.start, bslice.stop, bslice.step):
+            self._frame_index = i
             # record io time per frame
             with timeit() as b_io:
                 # explicit instead of 'for ts in u.trajectory[bslice]'
                 # so that we can get accurate timing.
-                ts = u.trajectory[i]
+                self._ts = self._trajectory[i]
             # record compute time per frame
             with timeit() as b_compute:
-                res = self._reduce(res, self._single_frame(ts, agroups))
+                res = self._reduce(res, self._single_frame())
             times_io.append(b_io.elapsed)
             times_compute.append(b_compute.elapsed)
 
         # calculate io and compute time per block
         return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed, wait_end, np.sum(
+            times_compute), wait_end, np.sum(
             times_io), np.sum(times_compute)
 
     @staticmethod
@@ -448,3 +446,76 @@ class ParallelAnalysisBase(object):
         """ 'append' action for a time series"""
         res.append(result_single_frame)
         return res
+
+    #  dask-related functions
+
+    def __dask_graph__(self):
+        return self._dsk
+
+    def __dask_keys__(self):
+        return self._keys
+
+    #  it uses multiprocessing scheduler in default
+    __dask_scheduler__ = staticmethod(dask.multiprocessing.get)
+
+    def __dask_postcompute__(self):
+        return self._post_reduce, ()
+
+    def _post_reduce(self, res):
+        # hack to handle n_frames == 0 in this framework
+        if len(res) == 0:
+            # everything else wants list of block tuples
+            res = [([], [], [], self.wait_start, 0, 0)]
+        # record conclude time
+        with timeit() as conclude:
+            self._results = np.asarray([el[0] for el in res])
+            # save the frame numbers for all blocks
+            self._conclude()
+        # put all time information into the timing object
+        self.timing = Timing(
+            np.hstack([el[1] for el in res]),
+            np.hstack([el[2] for el in res]), 0,
+            self.time_prepare,
+            self.time_prepare_dask,
+            conclude.elapsed,
+            # waiting time = wait_end - wait_start
+            np.array([el[3] - self.wait_start for el in res]),
+            np.array([el[4] for el in res]),
+            np.array([el[5] for el in res]))
+
+        #  To make sure the trajectory is reset to initial state,
+        #  if we are not running the analysis through the whole trajectory.
+        #  With this,  we get the same result (state of the trajectory) from
+        #  ParallelAnalysisBase and MDAnalysis.AnalaysisBase.
+        self._trajectory.rewind()
+        self._dsk = {}
+        self._keys = []
+        self._job_prepared = False
+
+    def __dask_postpersist__(self):
+        #  we don't need persist implementation.
+        raise NotImplementedError
+
+    def __dask_tokenize__(self):
+        return tuple(self._keys)
+
+    def _append_job_to_dsk(self, func, *args, pure=False, **kwargs):
+        #  If pure is True, a consistent hash function is tried on the input.
+        #  If False (default), then a unique identifier is always used.
+
+        #  When True, args, current_frame_index, func will all be
+        #  used for tokenization. This is much slower and requires the class
+        #  to be pickled during this process.
+        #  (any reason to use tokenize instead of uuid?
+
+        if not pure:
+            name = "%s-%s" % (funcname(func), str(uuid.uuid4()))
+        else:
+            name = "%s-%s" % (funcname(func), tokenize(func,
+                                                       args,
+                                                       kwargs,
+                                                       self._frame_index))
+        self._dsk[name] = (func, *args)
+        #  return name to be added to self._keys
+        #  which means this function itself does not modify the _keys
+        return name

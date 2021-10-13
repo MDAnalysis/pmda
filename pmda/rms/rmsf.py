@@ -24,9 +24,6 @@ See Also
 MDAnalysis.analysis.rms.RMSF
 
 """
-
-from __future__ import absolute_import, division
-
 import numpy as np
 
 from pmda.parallel import ParallelAnalysisBase
@@ -172,14 +169,12 @@ class RMSF(ParallelAnalysisBase):
 
     def __init__(self, atomgroup):
         u = atomgroup.universe
-        super(RMSF, self).__init__(u, (atomgroup, ))
+        super().__init__(u)
         self._atomgroup = atomgroup
-        self._top = u.filename
-        self._traj = u.trajectory.filename
 
-    def _single_frame(self, ts, atomgroups):
+    def _single_frame(self):
         # mean and sum of squares calculations done in _reduce()
-        return atomgroups[0]
+        return self._atomgroup
 
     def _conclude(self):
         """
