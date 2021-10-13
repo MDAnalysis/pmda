@@ -14,12 +14,10 @@ A collection of useful building blocks for creating Analysis
 classes.
 
 """
-from __future__ import absolute_import, division
 from contextlib import contextmanager
 import warnings
 
 import time
-from six.moves import range
 import MDAnalysis as mda
 from dask.delayed import delayed
 import dask
@@ -35,7 +33,7 @@ class Timing(object):
     store various timeing results of obtained during a parallel analysis run
     """
 
-    def __init__(self, io, compute, total, universe, prepare,
+    def __init__(self, io, compute, total, prepare, prepare_dask,
                  conclude, wait=None, io_block=None,
                  compute_block=None):
         self._io = io
@@ -44,8 +42,8 @@ class Timing(object):
         self._compute_block = compute_block
         self._total = total
         self._cumulate = np.sum(io) + np.sum(compute)
-        self._universe = universe
         self._prepare = prepare
+        self._prepare_dask = prepare_dask
         self._conclude = conclude
         self._wait = wait
 
@@ -84,14 +82,14 @@ class Timing(object):
         return self._cumulate
 
     @property
-    def universe(self):
-        """time to create a universe for each block"""
-        return self._universe
-
-    @property
     def prepare(self):
         """time to prepare"""
         return self._prepare
+
+    @property
+    def prepare_dask(self):
+        """time to submit jobs to dask"""
+        return self._prepare_dask
 
     @property
     def conclude(self):
@@ -136,16 +134,16 @@ class ParallelAnalysisBase(object):
        class NewAnalysis(ParallelAnalysisBase):
            def __init__(self, atomgroup, parameter):
                self._ag = atomgroup
-               super(NewAnalysis, self).__init__(atomgroup.universe,
-                                                 self._ag)
+               self.parameter = parameter
+               super().__init__(atomgroup.universe)
 
-           def _single_frame(self, ts, agroups):
+           def _single_frame(self):
                # REQUIRED
-               # called for every frame. ``ts`` contains the current time step
-               # and ``agroups`` a tuple of atomgroups that are updated to the
-               # current frame. Return result of `some_function` for a single
-               # frame
-               return some_function(agroups[0], self._parameter)
+               # called for every frame. It can read all the attributes of
+               # of itself e.g. current timestep (``self._ts``), atomgroups
+               # (``self._ag``) that are updated to the current frame and etc.
+               # Return result of `some_function` for a single frame
+               return some_function(self._ag, self._parameter)
 
            def _conclude(self):
                # REQUIRED
@@ -155,7 +153,7 @@ class ParallelAnalysisBase(object):
                # sensible new variable.
                self.results = np.concatenate(self._results)
                # Apply normalisation and averaging to results here if wanted.
-               self.results /= np.sum(self.results
+               self.results /= np.sum(self.results)
 
            @staticmethod
            def _reduce(res, result_single_frame):
@@ -189,15 +187,12 @@ class ParallelAnalysisBase(object):
 
     """
 
-    def __init__(self, universe, atomgroups):
+    def __init__(self, universe):
         """Parameters
         ----------
-        Universe : :class:`~MDAnalysis.core.groups.Universe`
+        universe : :class:`~MDAnalysis.core.groups.Universe`
             a :class:`MDAnalysis.core.groups.Universe` (the
             `atomgroups` must belong to this Universe)
-
-        atomgroups : tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            atomgroups that are iterated in parallel
 
         Attributes
         ----------
@@ -207,10 +202,8 @@ class ParallelAnalysisBase(object):
             :meth:`pmda.parallel.ParallelAnalysisBase._single_frame`.
 
         """
+        self._universe = universe
         self._trajectory = universe.trajectory
-        self._top = universe.filename
-        self._traj = universe.trajectory.filename
-        self._indices = [ag.indices for ag in atomgroups]
 
     @contextmanager
     def readonly_attributes(self):
@@ -232,11 +225,15 @@ class ParallelAnalysisBase(object):
         # guards to stop people assigning to self when they shouldn't
         # if locked, the only attribute you can modify is _attr_lock
         # if self._attr_lock isn't set, default to unlocked
-        if key == '_attr_lock' or not getattr(self, '_attr_lock', False):
-            super(ParallelAnalysisBase, self).__setattr__(key, val)
+
+        # keys that can be changed
+        if key in ['_ts', 'prepare_dask_total'] or \
+           key == '_attr_lock' or \
+           not getattr(self, '_attr_lock', False):
+            super().__setattr__(key, val)
         else:
             # raise HalError("I'm sorry Dave, I'm afraid I can't do that")
-            raise AttributeError("Can't set attribute at this time")
+            raise AttributeError("Can't set '{}' at this time".format(key))
 
     def _conclude(self):
         """Finalise the results you've gathered.
@@ -253,23 +250,14 @@ class ParallelAnalysisBase(object):
         """additional preparation to run"""
         pass  # pylint: disable=unnecessary-pass
 
-    def _single_frame(self, ts, atomgroups):
+    def _single_frame(self):
         """Perform computation on a single trajectory frame.
 
         Must return computed values as a list. You can only **read**
         from member variables stored in ``self``. Changing them during
-        a run will result in undefined behavior. `ts` and any of the
+        a run will result in undefined behavior. `self._ts` and any of the
         atomgroups can be changed (but changes will be overwritten
         when the next time step is read).
-
-        Parameters
-        ----------
-        ts : :class:`~MDAnalysis.coordinates.base.Timestep`
-            The current coordinate frame (time step) in the
-            trajectory.
-        atomgroups : tuple
-            Tuple of :class:`~MDAnalysis.core.groups.AtomGroup`
-            instances that are updated to the current frame.
 
         Returns
         -------
@@ -374,18 +362,15 @@ class ParallelAnalysisBase(object):
             blocks = []
             _blocks = []
             with self.readonly_attributes():
-                for bslice in slices:
-                    task = delayed(
-                         self._dask_helper, pure=False)(
-                             bslice,
-                             self._indices,
-                             self._top,
-                             self._traj, )
-                    blocks.append(task)
-                    # save the frame numbers for each block
-                    _blocks.append(range(bslice.start,
-                                   bslice.stop, bslice.step))
-                blocks = delayed(blocks)
+                with timeit() as prepare_dask:
+                    for bslice in slices:
+                        task = delayed(self._dask_helper, pure=False)(bslice)
+                        blocks.append(task)
+                        # save the frame numbers for each block
+                        _blocks.append(range(bslice.start,
+                                       bslice.stop, bslice.step))
+                    blocks = delayed(blocks)
+                time_prepare_dask = prepare_dask.elapsed
 
                 # record the time when scheduler starts working
                 wait_start = time.time()
@@ -393,7 +378,7 @@ class ParallelAnalysisBase(object):
             # hack to handle n_frames == 0 in this framework
             if len(res) == 0:
                 # everything else wants list of block tuples
-                res = [([], [], [], 0, wait_start, 0, 0)]
+                res = [([], [], [], wait_start, 0, 0)]
             # record conclude time
             with timeit() as conclude:
                 self._results = np.asarray([el[0] for el in res])
@@ -404,23 +389,25 @@ class ParallelAnalysisBase(object):
         self.timing = Timing(
             np.hstack([el[1] for el in res]),
             np.hstack([el[2] for el in res]), total.elapsed,
-            np.array([el[3] for el in res]), time_prepare,
+            time_prepare,
+            time_prepare_dask,
             conclude.elapsed,
             # waiting time = wait_end - wait_start
-            np.array([el[4]-wait_start for el in res]),
-            np.array([el[5] for el in res]),
-            np.array([el[6] for el in res]))
+            np.array([el[3] - wait_start for el in res]),
+            np.array([el[4] for el in res]),
+            np.array([el[5] for el in res]))
+
+        #  To make sure the trajectory is reset to initial state,
+        #  if we are not running the analysis through the whole trajectory.
+        #  With this, we get the same result (state of the trajectory) from
+        #  ParallelAnalysisBase and MDAnalysis.AnalaysisBase.
+        self._trajectory.rewind()
         return self
 
-    def _dask_helper(self, bslice, indices, top, traj):
+    def _dask_helper(self, bslice):
         """helper function to actually setup dask graph"""
         # wait_end needs to be first line for accurate timing
         wait_end = time.time()
-        # record time to generate universe and atom groups
-        with timeit() as b_universe:
-            u = mda.Universe(top, traj)
-            agroups = [u.atoms[idx] for idx in indices]
-
         res = []
         times_io = []
         times_compute = []
@@ -431,16 +418,16 @@ class ParallelAnalysisBase(object):
             with timeit() as b_io:
                 # explicit instead of 'for ts in u.trajectory[bslice]'
                 # so that we can get accurate timing.
-                ts = u.trajectory[i]
+                self._ts = self._trajectory[i]
             # record compute time per frame
             with timeit() as b_compute:
-                res = self._reduce(res, self._single_frame(ts, agroups))
+                res = self._reduce(res, self._single_frame())
             times_io.append(b_io.elapsed)
             times_compute.append(b_compute.elapsed)
 
         # calculate io and compute time per block
         return np.asarray(res), np.asarray(times_io), np.asarray(
-            times_compute), b_universe.elapsed, wait_end, np.sum(
+            times_compute), wait_end, np.sum(
             times_io), np.sum(times_compute)
 
     @staticmethod

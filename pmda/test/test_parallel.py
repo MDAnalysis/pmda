@@ -24,23 +24,23 @@ def test_timeing():
     io = np.arange(5)
     compute = np.arange(5) + 1
     total = 5
-    universe = np.arange(2)
     prepare = 3
+    prepare_dask = 4
     conclude = 6
     wait = 12
     io_block = np.sum(io)
     compute_block = np.sum(compute)
 
     timing = parallel.Timing(io, compute, total,
-                             universe, prepare, conclude, wait,
+                             prepare, prepare_dask, conclude, wait,
                              io_block, compute_block,)
 
     np.testing.assert_equal(timing.io, io)
     np.testing.assert_equal(timing.compute, compute)
     np.testing.assert_equal(timing.total, total)
-    np.testing.assert_equal(timing.universe, universe)
     np.testing.assert_equal(timing.cumulate_time, np.sum(io) + np.sum(compute))
     np.testing.assert_equal(timing.prepare, prepare)
+    np.testing.assert_equal(timing.prepare_dask, prepare_dask)
     np.testing.assert_equal(timing.conclude, conclude)
     np.testing.assert_equal(timing.wait, wait)
     np.testing.assert_equal(timing.io_block, io_block)
@@ -50,7 +50,8 @@ def test_timeing():
 class NoneAnalysis(parallel.ParallelAnalysisBase):
     def __init__(self, atomgroup):
         universe = atomgroup.universe
-        super(NoneAnalysis, self).__init__(universe, (atomgroup, ))
+        super().__init__(universe)
+        self._atomgroup = atomgroup
 
     def _prepare(self):
         pass
@@ -58,8 +59,8 @@ class NoneAnalysis(parallel.ParallelAnalysisBase):
     def _conclude(self):
         self.res = np.concatenate(self._results)
 
-    def _single_frame(self, ts, atomgroups):
-        return ts.frame
+    def _single_frame(self):
+        return self._ts.frame
 
 
 @pytest.fixture
@@ -72,7 +73,7 @@ def analysis():
 @pytest.mark.parametrize('n_jobs', (1, 2))
 def test_all_frames(analysis, n_jobs):
     analysis.run(n_jobs=n_jobs)
-    u = mda.Universe(analysis._top, analysis._traj)
+    u = analysis._universe
     assert len(analysis.res) == u.trajectory.n_frames
 
 
@@ -84,7 +85,7 @@ def test_sub_frames(analysis, n_jobs):
 
 @pytest.mark.parametrize('n_jobs', (1, 2, 3))
 def test_no_frames(analysis, n_jobs):
-    u = mda.Universe(analysis._top, analysis._traj)
+    u = analysis._universe
     n_frames = u.trajectory.n_frames
     with pytest.warns(UserWarning):
         analysis.run(start=n_frames, stop=n_frames+1, n_jobs=n_jobs)
@@ -95,7 +96,6 @@ def test_no_frames(analysis, n_jobs):
     np.testing.assert_equal(analysis.timing.io_block, [0])
     np.testing.assert_equal(analysis.timing.compute_block, [0])
     np.testing.assert_equal(analysis.timing.wait, [0])
-    assert analysis.timing.universe == 0
 
 
 def test_scheduler(analysis, scheduler):
@@ -103,7 +103,7 @@ def test_scheduler(analysis, scheduler):
 
 
 def test_nframes_less_nblocks_warning(analysis):
-    u = mda.Universe(analysis._top, analysis._traj)
+    u = analysis._universe
     n_frames = u.trajectory.n_frames
     with pytest.raises(ValueError):
         analysis.run(stop=2, n_blocks=4, n_jobs=2)
@@ -124,7 +124,7 @@ def test_guess_nblocks(analysis):
 @pytest.mark.parametrize('n_blocks', np.arange(1, 11))
 def test_blocks(analysis, n_blocks):
     analysis.run(n_blocks=n_blocks)
-    u = mda.Universe(analysis._top, analysis._traj)
+    u = analysis._universe
     n_frames = u.trajectory.n_frames
     start, stop, step = u.trajectory.check_slice_indices(
                             None, None, None)
@@ -137,7 +137,7 @@ def test_blocks(analysis, n_blocks):
 
 def test_attrlock():
     u = mda.Universe(PSF, DCD)
-    pab = parallel.ParallelAnalysisBase(u, (u.atoms,))
+    pab = parallel.ParallelAnalysisBase(u)
 
     # Should initially be allowed to set attributes
     pab.thing1 = 24

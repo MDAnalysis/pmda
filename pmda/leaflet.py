@@ -71,10 +71,9 @@ class LeafletFinder(ParallelAnalysisBase):
     """
 
     def __init__(self, universe, atomgroups):
+        super().__init__(universe)
         self._atomgroup = atomgroups
         self._results = list()
-
-        super(LeafletFinder, self).__init__(universe, (atomgroups,))
 
     def _find_connected_components(self, data, cutoff=15.0):
         """Perform the Connected Components discovery for the atoms in data.
@@ -157,7 +156,7 @@ class LeafletFinder(ParallelAnalysisBase):
         return comp
 
     # pylint: disable=arguments-differ
-    def _single_frame(self, ts, atomgroups, scheduler_kwargs, n_jobs,
+    def _single_frame(self, scheduler_kwargs, n_jobs,
                       cutoff=15.0):
         """Perform computation on a single trajectory frame.
 
@@ -187,7 +186,7 @@ class LeafletFinder(ParallelAnalysisBase):
         """
 
         # Get positions of the atoms in the atomgroup and find their number.
-        atoms = ts.positions[atomgroups.indices]
+        atoms = self._atomgroup.positions
         matrix_size = atoms.shape[0]
         arranged_coord = list()
         part_size = int(matrix_size / n_jobs)
@@ -199,10 +198,13 @@ class LeafletFinder(ParallelAnalysisBase):
                                       [i, j]))
         # Distribute the data over the available cores, apply the map function
         # and execute.
-        parAtoms = db.from_sequence(arranged_coord,
-                                    npartitions=len(arranged_coord))
-        parAtomsMap = parAtoms.map_partitions(self._find_connected_components,
-                                              cutoff=cutoff)
+        with timeit() as prepare_dask:
+            parAtoms = db.from_sequence(arranged_coord,
+                                        npartitions=len(arranged_coord))
+            parAtomsMap = parAtoms.map_partitions(
+                self._find_connected_components,
+                cutoff=cutoff)
+        self.prepare_dask_total += prepare_dask.elapsed
         Components = parAtomsMap.compute(**scheduler_kwargs)
 
         # Gather the results and start the reduction. TODO: think if it can go
@@ -277,11 +279,11 @@ class LeafletFinder(ParallelAnalysisBase):
         if scheduler == 'multiprocessing':
             scheduler_kwargs['num_workers'] = n_jobs
 
-        with timeit() as b_universe:
-            universe = mda.Universe(self._top, self._traj)
-
         start, stop, step = self._trajectory.check_slice_indices(
             start, stop, step)
+
+        self.prepare_dask_total = 0
+
         with timeit() as total:
             with timeit() as prepare:
                 self._prepare()
@@ -291,15 +293,14 @@ class LeafletFinder(ParallelAnalysisBase):
                 times_io = []
                 for frame in range(start, stop, step):
                     with timeit() as b_io:
-                        ts = universe.trajectory[frame]
+                        self._ts = self._universe.trajectory[frame]
                     times_io.append(b_io.elapsed)
                     with timeit() as b_compute:
                         components = self. \
-                               _single_frame(ts=ts,
-                                             atomgroups=self._atomgroup,
-                                             scheduler_kwargs=scheduler_kwargs,
-                                             n_jobs=n_jobs,
-                                             cutoff=cutoff)
+                            _single_frame(
+                                scheduler_kwargs=scheduler_kwargs,
+                                n_jobs=n_jobs,
+                                cutoff=cutoff)
                     timings.append(b_compute.elapsed)
                     leaflet1 = self._atomgroup[components[0]]
                     leaflet2 = self._atomgroup[components[1]]
@@ -308,7 +309,7 @@ class LeafletFinder(ParallelAnalysisBase):
                 self._conclude()
         self.timing = Timing(times_io,
                              np.hstack(timings), total.elapsed,
-                             b_universe.elapsed, prepare.elapsed,
+                             prepare.elapsed, self.prepare_dask_total,
                              conclude.elapsed)
         return self
 

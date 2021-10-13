@@ -24,8 +24,6 @@ See Also
     :inherited-members:
 
 """
-from __future__ import absolute_import
-
 from MDAnalysis.analysis import rms
 
 import numpy as np
@@ -127,7 +125,8 @@ class RMSD(ParallelAnalysisBase):
     """
     def __init__(self, mobile, ref, superposition=True):
         universe = mobile.universe
-        super(RMSD, self).__init__(universe, (mobile, ))
+        super().__init__(universe)
+        self._mobile = mobile
         self._ref_pos = ref.positions.copy()
         self.superposition = superposition
 
@@ -137,7 +136,7 @@ class RMSD(ParallelAnalysisBase):
     def _conclude(self):
         self.rmsd = np.vstack(self._results)
 
-    def _single_frame(self, ts, atomgroups):
-        return (ts.frame, ts.time,
-                rms.rmsd(atomgroups[0].positions, self._ref_pos,
+    def _single_frame(self):
+        return (self._ts.frame, self._ts.time,
+                rms.rmsd(self._mobile.positions, self._ref_pos,
                          superposition=self.superposition))
