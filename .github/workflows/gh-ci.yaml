@@ -27,12 +27,9 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-          os: [ubuntu-latest, ]
-          python-version: [2.7, 3.7, 3.8]
+          os: [ubuntu-latest,]
+          python-version: [3.6, 3.7, 3.8]
           include:
-            - name: macOS_bigsur_py39
-              os: macOS-11
-              python-version: 3.8
             - name: macOS_catalina_py37
               os: macOS-10.15
               python-version: 3.7
@@ -140,7 +137,7 @@ jobs:
       run: |
         conda install setuptools twine
 
-    - name: install PMDA
+    - name: package PMDA
       run: |
         python setup.py sdist
 

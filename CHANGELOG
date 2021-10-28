@@ -18,6 +18,11 @@ MM/DD/YYYY VOD555, lilyminium, orbeckst, yuxuanzhuang
 
   * 0.4.0
 
+Changes
+  * requires MDAnalysis >= 1.0.0 and <2.0.0 (#122)
+  * dropped official support for Python 2.7 and 3.5 (all versions
+    of Python >= 3.6 supported by MDAnalysis 1.x are supported) (#152)
+
 Enhancements
   * Update doc theme to use sphinx-rtd-theme (Issue #124, PR #126)
   * add parallel hbond analysis class (Issue #95)
@@ -31,10 +36,6 @@ Fixes
   * fixed InterRDF_s function (gave wrong results if density=True) (#120)
   * fixed Contact fails with uneven blocks. (#140)
   * raise ValueError when n_blocks > n_frames (Issue #137, PR #138)
-
-Changes
-  * requires MDAnalysis >= 1.0.0 and <2.0.0 (#122)
-  * dropped official support for Python 3.5 (2.7 and >= 3.6 are supported)
 
 
 10/14/2019 VOD555, nawtrey
