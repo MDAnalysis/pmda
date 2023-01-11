@@ -166,8 +166,8 @@ def make_balanced_slices(n_frames, n_blocks, start=None, stop=None, step=None):
         # not very useful but allows calling code to work more gracefully
         return []
 
-    bsizes = np.ones(n_blocks, dtype=np.int64) * n_frames // n_blocks
-    bsizes += (np.arange(n_blocks, dtype=np.int64) < n_frames % n_blocks)
+    bsizes = np.ones(n_blocks, dtype="int64") * n_frames // n_blocks
+    bsizes += (np.arange(n_blocks, dtype="int64") < n_frames % n_blocks)
     # This can give a last index that is larger than the real last index;
     # this is not a problem for slicing but it's not pretty.
     # Example: original [0:20:3] -> n_frames=7, start=0, step=3:
