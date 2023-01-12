@@ -214,7 +214,7 @@ class RMSF(ParallelAnalysisBase):
         'sum' action for time series
         """
         atoms = result_single_frame
-        positions = atoms.positions.astype(np.float64)
+        positions = atoms.positions.astype("float64")
         # initial time step case
         if isinstance(res, list) and len(res) == 0:
             # initial mean position = initial position

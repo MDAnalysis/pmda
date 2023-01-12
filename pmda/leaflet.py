@@ -145,7 +145,7 @@ class LeafletFinder(ParallelAnalysisBase):
             res[0] = res[0] + i_index - 1
             res[1] = res[1] - num + j_index - 1
         if res.shape[1] == 0:
-            res = np.zeros((2, 1), dtype=np.int)
+            res = np.zeros((2, 1), dtype="int")
 
         edges = [(res[0, k], res[1, k]) for k in range(0, res.shape[1])]
         graph.add_edges_from(edges)

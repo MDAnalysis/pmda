@@ -491,7 +491,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         indices /= self.step
 
         counts = np.zeros_like(self.frames)
-        counts[indices.astype(np.int)] = tmp_counts
+        counts[indices.astype("int")] = tmp_counts
         return counts
 
     def count_by_type(self):
@@ -511,8 +511,8 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         bond.
         """
         u = self._universe()
-        d = u.atoms[self.hbonds[:, 1].astype(np.int)]
-        a = u.atoms[self.hbonds[:, 3].astype(np.int)]
+        d = u.atoms[self.hbonds[:, 1].astype("int")]
+        a = u.atoms[self.hbonds[:, 3].astype("int")]
 
         tmp_hbonds = np.array([d.resnames, d.types, a.resnames, a.types],
                               dtype=np.str).T
@@ -544,9 +544,9 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         """
 
         u = self._universe()
-        d = u.atoms[self.hbonds[:, 1].astype(np.int)]
-        h = u.atoms[self.hbonds[:, 2].astype(np.int)]
-        a = u.atoms[self.hbonds[:, 3].astype(np.int)]
+        d = u.atoms[self.hbonds[:, 1].astype("int")]
+        h = u.atoms[self.hbonds[:, 2].astype("int")]
+        a = u.atoms[self.hbonds[:, 3].astype("int")]
 
         tmp_hbonds = np.array([d.ids, h.ids, a.ids]).T
         hbond_ids, ids_counts = np.unique(tmp_hbonds, axis=0,

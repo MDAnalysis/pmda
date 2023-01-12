@@ -134,7 +134,7 @@ class InterRDF(ParallelAnalysisBase):
         count = np.histogram(dist, **self.rdf_settings)[0]
         volume = u.trajectory.ts.volume
 
-        return np.array([count, np.array(volume, dtype=np.float64)])
+        return np.array([count, np.array(volume, dtype="float64")])
 
     def _conclude(self, ):
         self.count = np.sum(self._results[:, 0])
@@ -292,7 +292,7 @@ class InterRDF_s(ParallelAnalysisBase):
     def _single_frame(self, ts, atomgroups):
         ags = [[atomgroups[2*i], atomgroups[2*i+1]] for i in range(self.n)]
         count = [np.zeros((ag1.n_atoms, ag2.n_atoms, self.len),
-                 dtype=np.float64) for ag1, ag2 in ags]
+                 dtype="float64") for ag1, ag2 in ags]
         for i, (ag1, ag2) in enumerate(ags):
             u = ag1.universe
             pairs, dist = distances.capped_distance(ag1.positions,
@@ -306,7 +306,7 @@ class InterRDF_s(ParallelAnalysisBase):
 
         volume = u.trajectory.ts.volume
 
-        return np.array([np.array(count), np.array(volume, dtype=np.float64)])
+        return np.array([np.array(count), np.array(volume, dtype="float64")])
 
     def _conclude(self):
         self.count = np.sum(self._results[:, 0])

@@ -146,8 +146,8 @@ def sumofsquares(a):
     sos : array
         `n x m` array of the sum of squares for 'n' atoms
     """
-    dev = a - np.mean(a, axis=0, dtype=np.float64)
-    sos = np.sum(dev**2, axis=0, dtype=np.float64)
+    dev = a - np.mean(a, axis=0, dtype="float64")
+    sos = np.sum(dev**2, axis=0, dtype="float64")
     return sos
 
 
@@ -156,7 +156,7 @@ def pos():
     """Generates array of random positions in range [-100, 100]"""
     return 200*(np.random.random(size=(100000,
                                        1000,
-                                       3)) - 0.5).astype(np.float64)
+                                       3)) - 0.5).astype("float64")
 
 
 @pytest.mark.parametrize('n_frames', [3, 4, 10, 19, 101, 331, 1000])
@@ -197,7 +197,7 @@ def test_fold_second_order_moments(pos, n_frames, n_blocks):
     # slice "trajectory" pos into random length blocks to test more than two
     # cases per iteration
     blocks = [pos[i:j] for i, j in zip(start_indices, stop_indices)]
-    S = [(len(block), block.mean(axis=0, dtype=np.float64),
+    S = [(len(block), block.mean(axis=0, dtype="float64"),
           sumofsquares(block)) for block in blocks]
     # combine block results using fold method
     results = fold_second_order_moments(S)
