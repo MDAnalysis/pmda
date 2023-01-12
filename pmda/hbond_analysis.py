@@ -515,7 +515,7 @@ class HydrogenBondAnalysis(ParallelAnalysisBase):
         a = u.atoms[self.hbonds[:, 3].astype("int")]
 
         tmp_hbonds = np.array([d.resnames, d.types, a.resnames, a.types],
-                              dtype=np.str).T
+                              dtype="str").T
         hbond_type, type_counts = np.unique(tmp_hbonds, axis=0,
                                             return_counts=True)
         hbond_type_list = []
