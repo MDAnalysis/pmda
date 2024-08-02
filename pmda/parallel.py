@@ -396,7 +396,7 @@ class ParallelAnalysisBase(object):
                 res = [([], [], [], 0, wait_start, 0, 0)]
             # record conclude time
             with timeit() as conclude:
-                self._results = np.asarray([el[0] for el in res])
+                self._results = [el[0] for el in res]
                 # save the frame numbers for all blocks
                 self._blocks = _blocks
                 self._conclude()
